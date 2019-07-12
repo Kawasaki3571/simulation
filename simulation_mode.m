@@ -1,7 +1,7 @@
 range = 0;
 boundary = 0;
-mode = 0; %0...通常シミュレーション 1...初期印加位置表示
-mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行
+mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示
+mode_plot = 3; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
 
 dx = 0.001;
 % dx、発散しないために
@@ -123,11 +123,12 @@ w = 2 * pai * freq ;
 switch SC
     case 0
         for t = 1 : tx 
+            time = t * dt * 1.47;
             tr = w * dt * t / WN;
             if tr <= pai
-                pin(t) = sin((w * dt * t));
+                pin(t) = sin(w * time);
             else
-                pin(t) = sin(w * dt * t);
+                pin(t) = sin(w * time);
             end
         end
     case 1
