@@ -1,10 +1,7 @@
 xrange = 2.02;
 yrange = 0.02;
 dx = 0.001;
-% dxã€ç™ºæ•£ã—ãªã„ãŸã‚ã«
-% dt = 0.000008;
 dt =   0.000002;
-% ã‚¯ãƒ¼æ•°ã‹ã‚‰æ¡ä»¶ã‚’ç«‹ã¦ã‚‹
 cal_time = 0.01;
 x1 = 0.03;
 x2 = 0.04;
@@ -18,47 +15,46 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 disp_hensu = 0;
-f = 1000; %å‘¨æ³¢æ•°
-c0 = 340; %éŸ³é€Ÿ
-rou0 = 1.293; %å¯†åº¦ï¼ˆkg/m^3
-absp0 = - 0.5; % å¸åä¿‚æ•°
-gensui0 = (f*absp0) / (8.686*c0); % æ¸›è¡°ä¿‚æ•°
-ix = round(xrange / dx); %xç©ºé–“æ„Ÿè¦šã®æ•°
-jx = round(yrange / dx); %yç©ºé–“æ„Ÿè¦šã®æ•°
-tx = fix(cal_time / dt ); %æ™‚é–“æ„Ÿè¦šã®æ•°
-%  ï¼‘ãŠã‚
-td = 15; % å‘¨æ³¢æ•°ã®ä»£å…¥ï¼ˆï¼Ÿï¼‰
-id = round(xd / dx);%xã®ä½ç½®ï¼ˆï¼Ÿï¼‰
+f = 1000; %ü”g”
+c0 = 340; %‰¹‘¬
+rou0 = 1.293; %–§“xikg/m^3
+absp0 = - 0.5; % ‹zûŒW”
+gensui0 = (f*absp0) / (8.686*c0); % Œ¸ŠŒW”
+ix = round(xrange / dx); %x‹óŠÔŠ´Šo‚Ì”
+jx = round(yrange / dx); %y‹óŠÔŠ´Šo‚Ì”
+tx = fix(cal_time / dt ); %ŠÔŠ´Šo‚Ì”
+td = 15; % ü”g”‚Ì‘ã“üiHj
+id = round(xd / dx);%x‚ÌˆÊ’uiHj
 id2 = round(xd2 / dx ) ;
-jd = round(yd / dx) ; %yç©ºé–“æ„Ÿè¦šã®ä»£å…¥ï¼ˆï¼Ÿï¼‰
+jd = round(yd / dx) ; %y‹óŠÔŠ´Šo‚Ì‘ã“üiHj
 jd2 = round(yd2/dx);
-snap = 10 ;%éŸ³åœ§ãƒ•ã‚¡ã‚¤ãƒ«ã®å‡ºåŠ›æ„Ÿè¦š
-del_T = round((cal_time/dt)/snap);%ã‚¹ãƒŠãƒƒãƒ—ã‚·ãƒ§ãƒƒãƒˆã®æ™‚é–“æ„Ÿè¦šã®ä»£å…¥
+snap = 10 ;%‰¹ˆ³ƒtƒ@ƒCƒ‹‚Ìo—ÍŠ´Šo
+del_T = round((cal_time/dt)/snap);%ƒXƒiƒbƒvƒVƒ‡ƒbƒg‚ÌŠÔŠ´Šo‚Ì‘ã“ü
 ix1 = round(x1/dx);
 ix2 = round(x2/dx);
 jx1 = round(y1/dx);
 jx2 = round(y2/dx);
-p1 = zeros(ix+1,jx+1);
-p2 = zeros(ix+1,jx+1);
+% p1 = zeros(ix+1,jx+1);
+% p2 = zeros(ix+1,jx+1);
 p3 = zeros(ix+1,jx+1);
 u1 = zeros(ix+1,jx+1);
 u2 = zeros(ix+1,jx+1);
 v1 = zeros(ix+1,jx+1);
 v2 = zeros(ix+1,jx+1);
-mo = zeros(ix+1,jx+1); %ãƒãƒ¥ãƒ¼ãƒ–ãƒ¢ãƒ‡ãƒ«
+mo = zeros(ix+1,jx+1); %ƒ`ƒ…[ƒuƒ‚ƒfƒ‹
 pressure = zeros(ix + 1 , jx + 1);
-SC = 0 ;%åŠ±æŒ¯é–¢æ•° ï¼ãªã‚‰é€£ç¶š1ãªã‚‰ã‚¬ã‚¦ã‚·ã‚¢ãƒ³2ãƒãƒ‹ãƒ³ã‚°3æ­£å¼¦æ³¢æ•°æ³¢
+SC = 0 ;%—ãUŠÖ” ‚O‚È‚ç˜A‘±1‚È‚çƒKƒEƒVƒAƒ“2ƒnƒjƒ“ƒO3³Œ·”g””g
 WN = 1;
 W_end = round(2*WN/(f*dt)) - 1 ;
-% pin = zeros((round(2*WN/(f*dt))) - 1)
 pin = zeros(1,tx);
-crn =(c0 * dt)/dx ; %ã‚¯ãƒ¼ãƒ©ãƒ³æ•°
+crn =(c0 * dt)/dx ; %ƒN[ƒ‰ƒ“”
+% crn = 0.2;
 dd = 199/200 ;%higdons absorption boundary
 pai = 3.1415 ;
-hasu_o0 = 2*pai*f/c0 ;%å®Ÿéš›ã®æ³¢æ•°
-hasu0 = sqrt(hasu_o0*hasu_o0 - gensui0^2);%æå¤±ã‚ã‚‹å ´åˆã®æ³¢æ•°
-c_m0 = 2*pai*f/hasu0;%æå¤±ã®ã‚ã‚‹å ´åˆã®éŸ³é€Ÿ
-alpha0 = 2*hasu_o0*rou0*c_m0/hasu0;%å¸åé …
+hasu_o0 = 2*pai*f/c0 ;%ÀÛ‚Ì”g”
+hasu0 = sqrt(hasu_o0*hasu_o0 - gensui0^2);%‘¹¸‚ ‚éê‡‚Ì”g”
+c_m0 = 2*pai*f/hasu0;%‘¹¸‚Ì‚ ‚éê‡‚Ì‰¹‘¬
+alpha0 = 2*hasu_o0*rou0*c_m0/hasu0;%‹zû€
 kap0 = c_m0^2*rou0;
 % cp1 = 1;
 cp1 = 1;
@@ -67,12 +63,12 @@ cp2 = rou0*c_m0^2*dt/dx;
 % cv1 = (2*rou0 - alpha0*dt)/(2*rou0 + alpha0*dt);
 cv1 = 1;
 % cv2 = dt*2 /((2*rou0 + alpha0*dt)*dx);
-cv2 = dt / (rou0 * dx)
+cv2 = dt / (rou0 * dx);
 a = 2*(crn - 1)/(crn + 1);
-b = ((crn - 1)/(crn + 1))*2;%è¦æ¤œè¨è¦æ¤œè¨
+b = ((crn - 1)/(crn + 1))*2;%—vŒŸ“¢—vŒŸ“¢
 c = 2 * (crn - 1) / (crn + 1) * dd;
 d = dd * 2;
-e = dd *2; %è¦æ¤œè¨è¦æ¤œè¨
+e = dd *2; %—vŒŸ“¢—vŒŸ“¢
 a1 = 1 / cos(0);
 a2 = 1 / cos(0);
 d1 = 0.005;
@@ -87,8 +83,7 @@ b = cah1 * cah2;
 c = cah1 * (1 - d2) + cah2 * (1 - d1);
 d = ((1 - d1) + (1 - d2));
 e = ((1 - d1) * (1 - d2));
-%%åˆæœŸåŒ–â‘ 
-
+%%‰Šú‰»‡@
 for i = 1 : ix + 1
     for j = 1 : jx + 1
         p1(i,j) = 0;
@@ -98,10 +93,8 @@ for i = 1 : ix + 1
         u2(i,j) = 0;
         v1(i,j) = 0;
         v2(i,j) = 0;
-        %mo(i,j) = 1;
     end
 end
-
 x=0:dx:xrange; 
 y=0:dx:yrange;
 for i = jx1 : jx2
@@ -111,57 +104,51 @@ for i = jx1 : jx2
 end
 sn = 0;
 w = 2 * pai * f ;
-switch SC
-    case 0
+% switch SC
+%     case 0
+%         for t = 1 : tx
+%             tr = w * dt * t / WN;
+%             if tr <= pai
+%                 pin(t) = sin((w * dt * t));
+%             else
+%                 pin(t) = sin(w * dt * t);
+%             end
+%         end
+%     case 1
+%         tau = WN / f;
+%         for t = 1:W_end
+%             al = (4/tau) * (4/tau);
+%             pin =exp(-al * (dt*t - tau)*(dt*t - tau)) * sin(w*(dt*t - tau));
+%         end
+%     case 2
 %         for t = 1 : W_end
-        for t = 1 : tx
-            tr = w * dt * t / WN;
-            if tr <= pai
-                pin(t) = sin((w * dt * t));
-            else
-                pin(t) = sin(w * dt * t);
-            end
-        end
-    case 1
-        tau = WN / f;
-        for t = 1:W_end
-            al = (4/tau) * (4/tau);
-            pin =exp(-al * (dt*t - tau)*(dt*t - tau)) * sin(w*(dt*t - tau));
-        end
-            %%â‘¡
-    case 2
-        for t = 1 : W_end
-            pin = (1-cos(w*dt*t/WN)) * sin(w*dt*t)/2;
-        end
+%             pin = (1-cos(w*dt*t/WN)) * sin(w*dt*t)/2;
+%         end
+%     case 3
+%         for t = 1 : W_end
+%         pin = sin(w * dt * real(t - 1));
+%         end
+% end
 
-        %%â‘¡
-    case 3
-        for t = 1 : W_end
-        pin = sin(w * dt * real(t - 1));
-        end
-end
+p1 , p2 = p_in(SC,ix,jx,id,id2,jd,jd2,f,tx,dt,WN,t);
+disp("s—ñ‚ÌƒTƒCƒY‚Í");
+disp(mean2(p1));
+disp(mean2(p2));
+disp(size(p1));
+disp(size(p2));
+disp(size(u2));
+disp(size(v2));
 %%timeloop
 for t = 1: tx
+    break;
    time = t * dt * 1.47;
    if crn >= 1
-       disp("ã‚¯ãƒ¼ãƒ©ãƒ³æ•°ãŒä¸é©åˆ‡ã§ã™ã€‚");
+       disp("ƒN[ƒ‰ƒ“”‚ª•s“KØ‚Å‚·B");
        break;
    end
-%      if t <= tx
-%           for i = id : id2
-%              for j = jd : jd2
-%                  p1(i,j) = pin(t);
-%              end
-%           end
-%       end
     for i = 2:ix
         for j = 2:jx
-            if t <= tx && i >= id && i <= id2 && j >= jd && j <= jd2
-                p1(i,j) = pin(t);
-            else
-%                  p1(i,j) = cp1 .* p2(i,j) - cp2 .* (u2(i + 1,j) - u2(i-1,j) + v2(i,j + 1) - v2 (i,j-1));
-                p1(i,j) = cp1 .* p2(i,j) - cp2 .* (u2(i, j) - u2(i-1, j) + v2(i, j) - v2 (i, j-1));
-            end
+            p1(i,j) = cp1 .* p2(i,j) - cp2 .* (u2(i,j) - u2(i-1,j) + v2(i,j) - v2 (i,j-1));
         end
     end
 
@@ -175,7 +162,6 @@ for t = 1: tx
     for j = 2 : jx
         p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
     end
-%     â‘¤ãŠã‚
     j = 1;
     for i = 2 : ix
         p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
@@ -184,77 +170,86 @@ for t = 1: tx
     for i = 2 : ix
         p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
     end
-% ã‚ã‚ã‚ã‚ã‚ã‚
-    %soundpressureã®ã‚¹ãƒ¯ãƒƒãƒ—
+    
+    p_in(SC,ix,jx,id,id2,jd,jd2)
+    
     for i = 1 : ix + 1
         for j = 1 : jx + 1
             p3(i,j) = p2(i,j);
             p2(i,j) = p1(i,j);
         end
     end
-    %xã®velocityã®æ›´æ–°
     for i = 1 : ix
         for j = 2 : jx
             u1(i,j) = cv1 .* u2(i,j) - cv2 .* (p2(i + 1, j) - p2(i,j));
         end
     end
-    %y
     for i = 2 : ix
         for j = 1 : jx
-            v1(i,j) = cv1 .* v2(i,j) - cv2 .* (p2(i, j + 1) - p2(i,j));
+            v1(i,j) = cv1 * v2(i,j) - cv2 * (p2(i, j + 1) - p2(i,j));
         end
     end
-%     for i = 1 : ix
-%         for j = 1 : jx
-%             if mo(i,j) ~= mo(i + 1,j) then
-%                 u1(i,j) = 0;
-%             end
-%             if mo(i,j) ~= mo(i,j + 1) then
-%                 v1(i,j) = 0;
-%             end
-%         end
-%     end
     for i = 1 : ix + 1
         for j = 1 : jx + 1
             u2(i,j) = u1(i,j);
             v2(i,j) = v1(i,j);
         end
     end
-    %â‘£
-    if  mod(t, snap) == 0
-        sn = sn + 1;
-    end
     for i = 1 : ix + 1
         for j = 1 : jx + 1
             pressure(i,j) = (p1(i,j) .^2).^0.5 ;
         end
     end
-    if t1 == 0
-        if p1(200,11) > 0
-            t1 = time;
-        end
-    end
-    if t2 == 0
-        if p1(400,11) > 0
-            t2 = time;
-        end
-    end
     disp(t);
-%     if t2 > 0
-%         speed = 0.2/(t2 - t1);
-%         disp(t1);
-%         disp(t2);
-%         disp(speed);
-%     end
-    x = 1 : ix + 1;
     y = 1 : jx + 1 ;
-     imagesc(x,y,pressure(x,y));
-%       colorbar
+    x = 1 : ix + 1;
+     imagesc(y,x,pressure(x,y));
         title(['pressure when ',num2str(time),'seconds have passed'])
-        xlabel('x(mm)')
-        ylabel('y(mm)')
+        xlabel('y(mm)')
+        ylabel('x(mm)')
      grid on;
      drawnow
 end
 
-% jjjaa
+function [p1, p2] = p_in(SC,ix,jx,id,id2,jd,jd2,f,tx,dt,WN,t)
+    pin = p_in_f(SC, f, tx, dt, WN);
+    for i = id : id2
+        for j = jd : jd2
+            p1(i,j) = pin(t);
+            p2(i,j) = pin(t);
+        end
+    end
+end
+
+function pin = p_in_f(SC, f, tx, dt, WN)
+    pai = 3.1415;
+    w = 2 * pai * f ;
+    switch SC
+        case 0
+            for t = 1 : tx
+                tr = w * dt * t / WN;
+                if tr <= pai
+                    pin(t) = sin((w * dt * t));
+                else
+                    pin(t) = sin(w * dt * t);
+                end
+            end
+        case 1
+            tau = WN / f;
+            for t = 1:W_end
+                al = (4/tau) * (4/tau);
+                pin =exp(-al * (dt*t - tau)*(dt*t - tau)) * sin(w*(dt*t - tau));
+            end
+        case 2
+            for t = 1 : W_end
+                pin = (1-cos(w*dt*t/WN)) * sin(w*dt*t)/2;
+            end
+        case 3
+            for t = 1 : W_end
+            pin = sin(w * dt * real(t - 1));
+            end
+    end
+end
+    
+            
+            

@@ -1,19 +1,4 @@
- ix = 100;
- jx = 100;
- % p = zeros(ix + 1, jx + 1);
- % for i = 1 : ix + 1
- %     for j = 1 : jx + 1
- %         p(i,j) = sin(3.14 * 0.01 * (i^2 + j^2)^0.5);
- %     end
- % end
- dec_p(ix,jx);
- p = dec_p(ix,jx);
- disp(p);
- function p = dec_p(ix,jx)
- for i = 1 : ix + 1
-     for j = 1 : jx + 1
-         p(i,j) = sin(3.14 * 0.01 * (i^2 + j^2)^0.5);
-     end
- end
- end
-
+C = [0 2 4 6; 8 10 12 14; 16 18 20 22;0 2 4 6; 8 10 12 14];
+image(C)
+colorbar
+disp(size(C));
