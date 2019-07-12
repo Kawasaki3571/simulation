@@ -1,6 +1,6 @@
-range = 1;
+range = 0;
 boundary = 0;
-mode = 0; %0...通常シミュレーション 1...初期印加位置表示
+mode = 2; %0...通常シミュレーション 1...初期印加位置表示
 mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行
 
 dx = 0.001;
@@ -34,7 +34,7 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 disp_hensu = 0;
-f = 1000; %周波数
+f = 1000000; %周波数
 c0 = 340; %音速
 rou0 = 1.293; %密度（kg/m^3
 absp0 = - 0.5; % 吸収係数
@@ -158,7 +158,7 @@ end
 
 if mode == 0
 for t = 1: tx
-   time = t * dt * 1.47;
+   
    if crn >= 1
        disp("クーラン数が不適切です。");
        break;
@@ -196,47 +196,47 @@ for t = 1: tx
     
     switch(boundary)
         case 0
-           i = 1;
+            i = 1;
                 for j = 2 : jx
-        p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
-%         p1(i + 1, j) = p1_taihi(i + 1, j);
-    end
-    i = ix + 1;
-    for j = 2 : jx
-        p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-         p1(i - 1, j) = p1_taihi(i - 1, j);
-    end
-    j = 1;
-    for i = 2 : ix
-        p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
-%         p1(i ,j + 1) = p1_taihi(i, j + 1);
-    end
-    j = jx + 1;
-    for i = 2 : ix
-        p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
-%         p1(i, j - 1) = p1_taihi(i,j - 1);
-    end
+                    p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
+%                   p1(i + 1, j) = p1_taihi(i + 1, j);
+                end
+            i = ix + 1;
+                for j = 2 : jx
+                    p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
+                    p1(i - 1, j) = p1_taihi(i - 1, j);
+                end
+            j = 1;
+                for i = 2 : ix
+                    p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
+%                   p1(i ,j + 1) = p1_taihi(i, j + 1);
+                end
+            j = jx + 1;
+                for i = 2 : ix
+                    p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
+%                   p1(i, j - 1) = p1_taihi(i,j - 1);
+                end
         case 1
-                i = 1;
-    for j = 2 : jx
-        p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
-%         p1(i + 1, j) = p1_taihi(i + 1, j);
-    end
-    i = ix + 1;
-    for j = 2 : jx
-        p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-         p1(i - 1, j) = p1_taihi(i - 1, j);
-    end
-    j = 1;
-    for i = 2 : ix
-        p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
-%         p1(i ,j + 1) = p1_taihi(i, j + 1);
-    end
-    j = jx + 1;
-    for i = 2 : ix
-        p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
-%         p1(i, j - 1) = p1_taihi(i,j - 1);
-    end
+            i = 1;
+                for j = 2 : jx
+                    p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
+                    p1(i + 1, j) = p1_taihi(i + 1, j);
+                end
+            i = ix + 1;
+                for j = 2 : jx
+                    p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
+                    p1(i - 1, j) = p1_taihi(i - 1, j);
+                end
+            j = 1;
+                for i = 2 : ix
+                    p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
+                    p1(i ,j + 1) = p1_taihi(i, j + 1);
+                end
+            j = jx + 1;
+                for i = 2 : ix
+                    p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
+                    p1(i, j - 1) = p1_taihi(i,j - 1);
+                end
     end
     
     for i = 1 : ix + 1
@@ -272,7 +272,7 @@ for t = 1: tx
     y = 1 : jx + 1 ;
     x = 1 : ix + 1;
     if mode_plot == 0
-        if mod(t,10) == 0
+        if mod(t,5) == 0
         imagesc(y,x,pressure(x,y));
 %           colorbar
             title(['pressure when ',num2str(time),'seconds have passed'])
@@ -298,7 +298,9 @@ for t = 1: tx
     if mode_plot == 3
         if t == 5000
             t_x = 1 : t;
-            plot(t_x,p_keisoku_taihi(t_x));
+            time = t_x * dt * 1.47;
+            plot(time,p_keisoku_taihi(t_x));
+            
             break;
         end
     end
@@ -328,4 +330,8 @@ if mode == 1
     disp("クーラン数は" + crn );
     disp(size(p1));
     disp(size(pressure));
+end
+if mode == 2
+    disp(w);
+    
 end
