@@ -188,7 +188,7 @@ for t = 1: tx
     i = ix + 1;
     for j = 2 : jx
         p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-        p1(i - 1, j) = p1_taihi(i - 1, j);
+        p1(i - 1, j) =  p1_taihi(i - 1, j);
 %         p1(i,j) = 0.1;
     end
 %     ⑤おわ
@@ -201,7 +201,7 @@ for t = 1: tx
     j = jx + 1;
     for i = 2 : ix
         p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
-        p1(i, j - 1) = p1_taihi(i, j - 1);
+        p1(i, j - 1) =p1_taihi(i, j - 1);
 %         p1(i,j) = 0.1;
     end
     if t <= w
@@ -295,8 +295,9 @@ for t = 1: tx
 %    mesh(X,Y,Z);
 %    surf(X,Y,Z)
 %        imagesc(y,x,pressure(x,y))
+    if mod(t,10) == 0
     imagesc(x,y,pressure(x,y));
-    colorbar;
+%     colorbar;
        title(['pressure when ',num2str(time),'seconds have passed, α = ',num2str(crn)])
        xlabel('x(mm)')
        ylabel('y(mm)')
@@ -304,6 +305,7 @@ for t = 1: tx
     grid on;
     drawnow
     disp("クーラン数は" + crn );
+    end
 end
 end
 if mode == 1
