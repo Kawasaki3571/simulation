@@ -1,7 +1,7 @@
 range = 0;
-boundary = 1;
+boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示
-mode_plot = 3; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行
+mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行
 
 dx = 0.001;
 % dx、発散しないために
@@ -158,7 +158,7 @@ end
 
 if mode == 0
 for t = 1: tx
-   time = t * dt * 1.47;
+   
    if crn >= 1
        disp("クーラン数が不適切です。");
        break;
@@ -274,7 +274,7 @@ for t = 1: tx
     if mode_plot == 0
         if mod(t,5) == 0
         imagesc(y,x,pressure(x,y));
-%           colorbar
+            colorbar
             title(['pressure when ',num2str(time),'seconds have passed'])
             xlabel('y(mm)')
             ylabel('x(mm)')
@@ -298,7 +298,9 @@ for t = 1: tx
     if mode_plot == 3
         if t == 5000
             t_x = 1 : t;
-            plot(t_x,p_keisoku_taihi(t_x));
+            time = t_x * dt * 1.47;
+            plot(time,p_keisoku_taihi(t_x));
+            
             break;
         end
     end
@@ -328,4 +330,7 @@ if mode == 1
     disp("クーラン数は" + crn );
     disp(size(p1));
     disp(size(pressure));
+end
+if mode == 2
+    disp(w);  
 end
