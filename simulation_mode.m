@@ -34,11 +34,11 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 disp_hensu = 0;
-f = 1000; %ü”g”
+freq = 1000000; %ü”g”
 c0 = 340; %‰¹‘¬
 rou0 = 1.293; %–§“xikg/m^3
 absp0 = - 0.5; % ‹zûŒW”
-gensui0 = (f*absp0) / (8.686*c0); % Œ¸ŠŒW”
+gensui0 = (freq*absp0) / (8.686*c0); % Œ¸ŠŒW”
 ix = round(xrange / dx); %x‹óŠÔŠ´Šo‚Ì”
 jx = round(yrange / dx); %y‹óŠÔŠ´Šo‚Ì”
 tx = fix(cal_time / dt ); %ŠÔŠ´Šo‚Ì”
@@ -65,15 +65,15 @@ mo = zeros(ix+1,jx+1); %ƒ`ƒ…[ƒuƒ‚ƒfƒ‹
 pressure = zeros(ix + 1 , jx + 1);
 SC = 0 ;%—ãUŠÖ” ‚O‚È‚ç˜A‘±1‚È‚çƒKƒEƒVƒAƒ“2ƒnƒjƒ“ƒO3³Œ·”g””g
 WN = 1;
-W_end = round(2*WN/(f*dt)) - 1 ;
+W_end = round(2*WN/(freq*dt)) - 1 ;
 pin = zeros(1,tx);
 p_keisoku_taihi = zeros(1,tx);
 crn =(c0 * dt)/dx ; %ƒN[ƒ‰ƒ“”
 dd = 199/200 ;%higdons absorption boundary
 pai = 3.1415 ;
-hasu_o0 = 2*pai*f/c0 ;%ÀÛ‚Ì”g”
+hasu_o0 = 2*pai*freq/c0 ;%ÀÛ‚Ì”g”
 hasu0 = sqrt(hasu_o0*hasu_o0 - gensui0^2);%‘¹¸‚ ‚éê‡‚Ì”g”
-c_m0 = 2*pai*f/hasu0;%‘¹¸‚Ì‚ ‚éê‡‚Ì‰¹‘¬
+c_m0 = 2*pai*freq/hasu0;%‘¹¸‚Ì‚ ‚éê‡‚Ì‰¹‘¬
 alpha0 = 2*hasu_o0*rou0*c_m0/hasu0;%‹zû€
 kap0 = c_m0^2*rou0;
 cp1 = 1;
@@ -119,7 +119,7 @@ for i = jx1 : jx2
     end
 end
 sn = 0;
-w = 2 * pai * f ;
+w = 2 * pai * freq ;
 switch SC
     case 0
         for t = 1 : tx 
@@ -131,7 +131,7 @@ switch SC
             end
         end
     case 1
-        tau = WN / f;
+        tau = WN / freq;
         for t = 1:W_end
             al = (4/tau) * (4/tau);
             pin =exp(-al * (dt*t - tau)*(dt*t - tau)) * sin(w*(dt*t - tau));
@@ -332,5 +332,6 @@ if mode == 1
     disp(size(pressure));
 end
 if mode == 2
-    disp(w);  
+    disp(w); 
+    disp(freq);
 end
