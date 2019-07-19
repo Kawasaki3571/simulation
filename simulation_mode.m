@@ -1,6 +1,6 @@
 range = 2;
-boundary = 0;
-mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示
+boundary = 2;
+mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
 
 dx = 0.001;
@@ -26,20 +26,21 @@ if range == 1
     yd2 = 0.11;
 end
 if range == 2
+    b_haba = 0.02;
     xrange = 0.52;
     yrange = 0.52;
-    xd = 0.001;
-    xd2 = 0.002;
-    yd_a = 0.245;
-    yd_a2 = 0.246;
-    yd_b = 0.247;
-    yd_b2 = 0.248;
-    yd_c = 0.249;
-    yd_c2 = 0.251;
-    yd_d = 0.253;
-    yd_d2 = 0.254;
-    yd_e = 0.255;
-    yd_e2 = 0.256;
+    xd = 0.249;
+    xd2 = 0.251;
+    yd_a = 0.25;
+    yd_a2 = 0.25;
+    yd_b = 0.25 + b_haba;
+    yd_b2 = 0.25 + b_haba;
+    yd_c = 0.25 + 2*b_haba;
+    yd_c2 = 0.25 + 2*b_haba;
+    yd_d = 0.25 - b_haba;
+    yd_d2 = 0.25 - b_haba;
+    yd_e = 0.25 - 2*b_haba;
+    yd_e2 = 0.25 - 2*b_haba;
 end
     
 x1 = 0.03;
@@ -50,7 +51,7 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 disp_hensu = 0;
-freq = 1000000; %周波数
+freq = 500000; %周波数
 c0 = 340; %音速
 rou0 = 1.293; %密度（kg/m^3
 absp0 = - 0.5; % 吸収係数
@@ -307,6 +308,27 @@ for t = 1: tx
                     p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
                     p1(i, j - 1) = p1_taihi(i,j - 1);
                 end
+        case 2
+            i = 1;
+            for j = 2 : jx
+                    p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
+%                   p1(i + 1, j) = p1_taihi(i + 1, j);
+                end
+            i = ix + 1;
+                for j = 2 : jx
+                    p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
+%                    p1(i - 1, j) = p1_taihi(i - 1, j);
+                end
+            j = 1;
+                for i = 2 : ix
+                    p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
+%                   p1(i ,j + 1) = p1_taihi(i, j + 1);
+                end
+            j = jx + 1;
+                for i = 2 : ix
+                    p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
+%                   p1(i, j - 1) = p1_taihi(i,j - 1);
+                end
     end
     
     for i = 1 : ix + 1
@@ -445,4 +467,11 @@ if mode == 2
     y = sin(x);
     Y = fft(y);
     plot(Y)
+end
+if mode == 3
+   theta = pi:0.01:3*pi;
+   %dhi = (sin(5*3.14*b*freq*sin(theta)/340))/(5 * sin(3.14*b*freq*sin(theta))/340)
+   dhi1 = (sin(5*3.14*b_haba*freq*sin(theta)/340)) ./(5 * sin(3.14*b_haba*freq*sin(theta)/340)) ;
+    
+   polarplot(theta,abs(dhi1));
 end

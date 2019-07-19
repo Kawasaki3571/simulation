@@ -1,7 +1,7 @@
 range = 2;
-boundary = 0;
-mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示
-mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
+boundary = 2;
+mode = ; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示
+mode_plot = 4; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
 
 dx = 0.001;
 % dx、発散しないために
@@ -26,20 +26,21 @@ if range == 1
     yd2 = 0.11;
 end
 if range == 2
+    b_haba = 0.002;
     xrange = 0.52;
     yrange = 0.52;
-    xd = 0.001;
-    xd2 = 0.002;
-    yd_a = 0.247;
-    yd_a2 = 0.248;
-    yd_b = 0.248;
-    yd_b2 = 0.249;
-    yd_c = 0.25;
-    yd_c2 = 0.251;
-    yd_d = 0.251;
-    yd_d2 = 0.252;
-    yd_e = 0.252
-    yd_e2 = 0.253;
+    xd = 0.249;
+    xd2 = 0.251;
+    yd_a = 0.25;
+    yd_a2 = 0.25;
+    yd_b = 0.25 + b_haba;
+    yd_b2 = 0.25 + b_haba;
+    yd_c = 0.25 + 2*b_haba;
+    yd_c2 = 0.25 + 2*b_haba;
+    yd_d = 0.25 - b_haba;
+    yd_d2 = 0.25 - b_haba;
+    yd_e = 0.25 - 2*b_haba;
+    yd_e2 = 0.25 - 2*b_haba;
 end
     
 x1 = 0.03;
@@ -50,7 +51,7 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 disp_hensu = 0;
-freq = 1000000; %周波数
+freq = 2000000; %周波数
 c0 = 340; %音速
 rou0 = 1.293; %密度（kg/m^3
 absp0 = - 0.5; % 吸収係数
@@ -218,25 +219,28 @@ for t = 1: tx
                     if i >= id && i <= id2
                         if j >= jd_a && j <= jd_a2
                             p1(i,j) = pin(t);
-                            p2(i,j) = pin(t);
+                            %p2(i,j) = pin(t);
                         elseif j >= jd_b && j <= jd_b2
                             p1(i,j) = pin(t);
-                            p2(i,j) = pin(t);
+                            %p2(i,j) = pin(t);
                         elseif j >= jd_c && j <= jd_c2
                             p1(i,j) = pin(t);
-                            p2(i,j) = pin(t);
+                            %p2(i,j) = pin(t);
                         elseif j >= jd_d && j <= jd_d2
                             p1(i,j) = pin(t);
-                            p2(i,j) = pin(t);
+                            %p2(i,j) = pin(t);
                         elseif j >= jd_e && j <= jd_e2
                             p1(i,j) = pin(t);
-                            p2(i,j) = pin(t);
+                            %p2(i,j) = pin(t);
                         else
                             p1(i,j) = cp1 .* p2(i,j) - cp2 .* (u2(i,j) - u2(i-1,j) + v2(i,j) - v2 (i,j-1));
                         end
-                   else
+                    else
                         p1(i,j) = cp1 .* p2(i,j) - cp2 .* (u2(i,j) - u2(i-1,j) + v2(i,j) - v2 (i,j-1));
-                   end
+                    end 
+                else
+                    p1(i,j) = cp1 .* p2(i,j) - cp2 .* (u2(i,j) - u2(i-1,j) + v2(i,j) - v2 (i,j-1));
+                end
             end
         end
     end
@@ -303,6 +307,27 @@ for t = 1: tx
                 for i = 2 : ix
                     p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
                     p1(i, j - 1) = p1_taihi(i,j - 1);
+                end
+        case 2
+            i = 1;
+            for j = 2 : jx
+                    p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
+%                   p1(i + 1, j) = p1_taihi(i + 1, j);
+                end
+            i = ix + 1;
+                for j = 2 : jx
+                    p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
+%                    p1(i - 1, j) = p1_taihi(i - 1, j);
+                end
+            j = 1;
+                for i = 2 : ix
+                    p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
+%                   p1(i ,j + 1) = p1_taihi(i, j + 1);
+                end
+            j = jx + 1;
+                for i = 2 : ix
+                    p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
+%                   p1(i, j - 1) = p1_taihi(i,j - 1);
                 end
     end
     
@@ -442,4 +467,14 @@ if mode == 2
     y = sin(x);
     Y = fft(y);
     plot(Y)
+end
+if mode == 3
+   theta = 0:0.01:2*pi;
+   %dhi = (sin(5*3.14*b*freq*sin(theta)/340))/(5 * sin(3.14*b*freq*sin(theta))/340)
+   dhi1 = (sin(5*3.14*b_haba*freq*sin(theta)/340)) ./(5 * sin(3.14*b_haba*freq*sin(theta)/340)) ;
+   dhia = dhi1 / dhi2 ;
+   rho = sin(2*theta).*cos(2*theta);
+   polarplot(theta,abs(dhi1));
+   b_haba
+   freq
 end
