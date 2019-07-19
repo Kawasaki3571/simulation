@@ -1,7 +1,7 @@
-range = 0;
+range = 2;
 boundary = 0;
-mode = 2; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示
-mode_plot = 3; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
+mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示
+mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
 
 dx = 0.001;
 % dx、発散しないために
@@ -14,8 +14,8 @@ if range == 0
     yrange = 0.02;
     yd = 0.003;
     yd2 = 0.017;
-    xd = 0.001;
-    xd2 = 0.002;
+    xd = 0.002;
+    xd2 = 0.003;
 end
 if range == 1
     xrange = 0.2;
@@ -24,6 +24,22 @@ if range == 1
     xd2 = 0.11;
     yd = 0.09;
     yd2 = 0.11;
+end
+if range == 2
+    xrange = 0.52;
+    yrange = 0.52;
+    xd = 0.001;
+    xd2 = 0.002;
+    yd_a = 0.245;
+    yd_a2 = 0.246;
+    yd_b = 0.247;
+    yd_b2 = 0.248;
+    yd_c = 0.249;
+    yd_c2 = 0.251;
+    yd_d = 0.253;
+    yd_d2 = 0.254;
+    yd_e = 0.255;
+    yd_e2 = 0.256;
 end
     
 x1 = 0.03;
@@ -46,8 +62,23 @@ tx = fix(cal_time / dt ); %時間感覚の数
 td = 15; % 周波数の代入（？）
 id = round(xd / dx);%xの位置（？）
 id2 = round(xd2 / dx ) ;
-jd = round(yd / dx) ; %y空間感覚の代入（？）
-jd2 = round(yd2/dx);
+if range ~= 2
+    jd = round(yd / dx) ; %y空間感覚の代入（？）
+    jd_2 = round(yd2/dx);
+else
+    jd_a = round(yd_a / dx) ; %y空間感覚の代入（？）
+    jd_a2 = round(yd_a2/dx);
+    jd_b = round(yd_b / dx) ; %y空間感覚の代入（？）
+    jd_b2 = round(yd_b2/dx);
+    jd_c = round(yd_c / dx) ; %y空間感覚の代入（？）
+    jd_c2 = round(yd_c2/dx);
+    jd_d = round(yd_d / dx) ; %y空間感覚の代入（？）
+    jd_d2 = round(yd_d2/dx);
+    jd_e = round(yd_e / dx) ; %y空間感覚の代入（？）
+    jd_e2 = round(yd_e2/dx);
+end
+
+
 snap = 10 ;%音圧ファイルの出力感覚
 del_T = round((cal_time/dt)/snap);%スナップショットの時間感覚の代入
 ix1 = round(x1/dx);
@@ -153,8 +184,17 @@ end
 if yd > yd2
     error("yrangeがおかしい")
 end
-if id <= dx || id2 > ix || jd <= dx || jd2 > jx
-    error("rangeおかしい");
+if range ~= 2
+    if id <= 1 || id2 > ix || jd <= 1 || jd_2 > jx
+    id
+    dx
+    id2
+    ix
+    jd
+    jd_2
+    jx
+        error("rangeおかしい");
+    end
 end
 
 if mode == 0
@@ -166,11 +206,40 @@ for t = 1: tx
    end
     for i = 2:ix
         for j = 2:jx
-            if t <= tx && i >= id && i <= id2 && j >= jd && j <= jd2
-                p1(i,j) = pin(t);
-                p2(i,j) = pin(t);
+            if range ~= 2
+                if t <= tx && i >= id && i <= id2 && j >= jd && j <= jd2
+                    p1(i,j) = pin(t);
+                    p2(i,j) = pin(t);
+                else
+                    p1(i,j) = cp1 .* p2(i,j) - cp2 .* (u2(i,j) - u2(i-1,j) + v2(i,j) - v2 (i,j-1));
+                end
             else
-                 p1(i,j) = cp1 .* p2(i,j) - cp2 .* (u2(i,j) - u2(i-1,j) + v2(i,j) - v2 (i,j-1));
+                if t <= tx
+                    if i >= id && i <= id2
+                        if j >= jd_a && j <= jd_a2
+                            p1(i,j) = pin(t);
+                            %p2(i,j) = pin(t);
+                        elseif j >= jd_b && j <= jd_b2
+                            p1(i,j) = pin(t);
+                            %p2(i,j) = pin(t);
+                        elseif j >= jd_c && j <= jd_c2
+                            p1(i,j) = pin(t);
+                            %p2(i,j) = pin(t);
+                        elseif j >= jd_d && j <= jd_d2
+                            p1(i,j) = pin(t);
+                            %p2(i,j) = pin(t);
+                        elseif j >= jd_e && j <= jd_e2
+                            p1(i,j) = pin(t);
+                            %p2(i,j) = pin(t);
+                        else
+                            p1(i,j) = cp1 .* p2(i,j) - cp2 .* (u2(i,j) - u2(i-1,j) + v2(i,j) - v2 (i,j-1));
+                        end
+                    else
+                        p1(i,j) = cp1 .* p2(i,j) - cp2 .* (u2(i,j) - u2(i-1,j) + v2(i,j) - v2 (i,j-1));
+                    end 
+                else
+                    p1(i,j) = cp1 .* p2(i,j) - cp2 .* (u2(i,j) - u2(i-1,j) + v2(i,j) - v2 (i,j-1));
+                end
             end
         end
     end
@@ -276,6 +345,7 @@ for t = 1: tx
         if mod(t,5) == 0
         imagesc(y,x,pressure(x,y));
             colorbar
+            %colormap gray ;
             title(['pressure when ',num2str(time),'seconds have passed'])
             xlabel('y(mm)')
             ylabel('x(mm)')
@@ -324,9 +394,29 @@ for t = 1: tx
 end
 end
 if mode == 1
-    for i = id : id2
-        for j = jd : jd2
-            p1(i,j) = 100;
+    if range ~= 2
+        for i = id : id2
+            for j = jd : jd2
+                p1(i,j) = 100;
+            end
+        end
+    else
+        for i = id : id2
+            for j = jd_a : jd_a2
+                p1(i,j) = 100;
+            end
+            for j = jd_b : jd_b2
+                p1(i,j) = 100;
+            end
+            for j = jd_c : jd_c2
+                p1(i,j) = 100;
+            end
+            for j = jd_d : jd_d2
+                p1(i,j) = 100;
+            end
+            for j = jd_e : jd_e2
+                p1(i,j) = 100;
+            end
         end
     end
      for i = 1 : ix + 1
