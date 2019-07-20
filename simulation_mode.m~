@@ -1,4 +1,4 @@
-range = 1;
+range = 3;
 boundary = 1;
 mode = 0; %0...’ÊíƒVƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“ 1...‰Šúˆó‰ÁˆÊ’u•\¦ 2...•Ï”•\¦3...wŒü«‚Ì‹ÉƒOƒ‰ƒt
 mode_plot = 0; %ƒvƒƒbƒgƒ‚[ƒh‘I‘ğ 0...ƒJƒ‰[ƒ}ƒbƒvis 1...xƒvƒƒbƒg 2...xƒvƒƒbƒgis 3...‚ ‚é’n“_‚ÌŠÔ•Ï‰»
@@ -6,7 +6,7 @@ mode_plot = 0; %ƒvƒƒbƒgƒ‚[ƒh‘I‘ğ 0...ƒJƒ‰[ƒ}ƒbƒvis 1...xƒvƒƒbƒg 2...xƒvƒƒ
 dx = 0.001;
 % dxA”­U‚µ‚È‚¢‚½‚ß‚É
 % dt = 0.000008;
-dt =   0.000001;
+dt =   0.000002;
 % ƒN[”‚©‚çğŒ‚ğ—§‚Ä‚é
 cal_time = 0.01;
 if range == 0
@@ -20,13 +20,13 @@ end
 if range == 1
     xrange = 0.2;
     yrange = 0.2;
-    xd = 0.09;
-    xd2 = 0.11;
-    yd = 0.09;
-    yd2 = 0.11;
+    xd = 0.099;
+    xd2 = 0.101;
+    yd = 0.099;
+    yd2 = 0.101;
 end
 if range == 2
-    b_haba = 0.002;
+    b_haba = 0.02;
     xrange = 0.52;
     yrange = 0.52;
     xd = 0.249;
@@ -68,7 +68,7 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 disp_hensu = 0;
-freq = 1000; %ü”g”
+freq = 5000; %ü”g”
 c0 = 340; %‰¹‘¬
 rou0 = 1.293; %–§“xikg/m^3
 absp0 = - 0.5; % ‹zûŒW”
@@ -80,7 +80,7 @@ tx = fix(cal_time / dt ); %ŠÔŠ´Šo‚Ì”
 td = 15; % ü”g”‚Ì‘ã“üiHj
 id = round(xd / dx);%x‚ÌˆÊ’uiHj
 id2 = round(xd2 / dx ) ;
-if range < 2
+if range ~= 2
     jd = round(yd / dx) ; %y‹óŠÔŠ´Šo‚Ì‘ã“üiHj
     jd_2 = round(yd2/dx);
 else
@@ -192,10 +192,7 @@ switch SC
         end
     case 3
         for t = 1 : W_end
-            pin = sin(w * dt * real(t - 1));
-        end
-    case 4
-        for t = 1 : W_end
+        pin = sin(w * dt * real(t - 1));
         end
 end
 %%timeloop
@@ -205,7 +202,7 @@ end
 if yd > yd2
     error("yrange‚ª‚¨‚©‚µ‚¢")
 end
-if range < 2
+if range ~= 2
     if id <= 1 || id2 > ix || jd <= 1 || jd_2 > jx
     id
     dx
@@ -227,7 +224,7 @@ for t = 1: tx
    end
     for i = 2:ix
         for j = 2:jx
-            if range < 2
+            if range ~= 2
                 if t <= tx && i >= id && i <= id2 && j >= jd && j <= jd_2
                     p1(i,j) = pin(t);
                     p2(i,j) = pin(t);
@@ -267,24 +264,99 @@ for t = 1: tx
     i = 1;
     for j = 2 : jx
         p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
-%          p1(i + 1, j) = p1_taihi(i + 1, j);
+%         p1(i + 1, j) = p1_taihi(i + 1, j);
     end
     i = ix + 1;
     for j = 2 : jx
         p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-%          p1(i - 1, j) = p1_taihi(i - 1, j);
+         p1(i - 1, j) = p1_taihi(i - 1, j);
     end
     j = 1;
     for i = 2 : ix
         p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
-%          p1(i ,j + 1) = p1_taihi(i, j + 1);
+%         p1(i ,j + 1) = p1_taihi(i, j + 1);
     end
     j = jx + 1;
     for i = 2 : ix
         p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
-%          p1(i, j - 1) = p1_taihi(i,j - 1);
+%         p1(i, j - 1) = p1_taihi(i,j - 1);
     end
-%     disp("ƒN[ƒ‰ƒ“”‚Í" + num2str(crn));
+    
+    switch(boundary)
+        case 0
+            i = 1;
+                for j = 2 : jx
+                    p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
+%                   p1(i + 1, j) = p1_taihi(i + 1, j);
+                end
+            i = ix + 1;
+                for j = 2 : jx
+                    p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
+                    p1(i - 1, j) = p1_taihi(i - 1, j);
+                end
+            j = 1;
+                for i = 2 : ix
+                    p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
+%                   p1(i ,j + 1) = p1_taihi(i, j + 1);
+                end
+            j = jx + 1;
+                for i = 2 : ix
+                    p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
+%                   p1(i, j - 1) = p1_taihi(i,j - 1);
+                end
+        case 1
+            i = 1;
+                for j = 2 : jx
+                    p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
+                    p1(i + 1, j) = p1_taihi(i + 1, j);
+                end
+            i = ix + 1;
+                for j = 2 : jx
+                    p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
+                    p1(i - 1, j) = p1_taihi(i - 1, j);
+                end
+            j = 1;
+                for i = 2 : ix
+                    p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
+                    p1(i ,j + 1) = p1_taihi(i, j + 1);
+                end
+            j = jx + 1;
+                for i = 2 : ix
+                    p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
+                    p1(i, j - 1) = p1_taihi(i,j - 1);
+                end
+        case 2
+            i = 1;
+            for j = 2 : jx
+                    p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
+%                   p1(i + 1, j) = p1_taihi(i + 1, j);
+                end
+            i = ix + 1;
+                for j = 2 : jx
+                    p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
+%                    p1(i - 1, j) = p1_taihi(i - 1, j);
+                end
+            j = 1;
+                for i = 2 : ix
+                    p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
+%                   p1(i ,j + 1) = p1_taihi(i, j + 1);
+                end
+            j = jx + 1;
+                for i = 2 : ix
+                    p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
+%                   p1(i, j - 1) = p1_taihi(i,j - 1);
+                end
+    end
+    if boundary = 0
+        
+    end
+    
+    for i = 1 : ix + 1
+        for j = 1 : jx + 1
+            p3(i,j) = p2(i,j);
+            p2(i,j) = p1(i,j);
+        end
+    end
     for i = 1 : ix
         for j = 2 : jx
             u1(i,j) = cv1 .* u2(i,j) - cv2 .* (p2(i + 1, j) - p2(i,j));
@@ -295,102 +367,52 @@ for t = 1: tx
             v1(i,j) = cv1 * v2(i,j) - cv2 * (p2(i, j + 1) - p2(i,j));
         end
     end
+    
     switch(boundary)
         case 0
             i = 1;
                 for j = 2 : jx
-                    p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
-                    u1(i,j) = 0;
-                    v1(i,j) = 0;
-%                   p1(i + 1, j) = p1_taihi(i + 1, j);
+%                     u1(i,j) = 0;
+%                     v1(i,j) = 0;
                 end
             i = ix + 1;
                 for j = 2 : jx
-                    p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
                     u1(i,j) = 0;
                     v1(i,j) = 0;
-                    p1(i - 1, j) = p1_taihi(i - 1, j);
                 end
             j = 1;
                 for i = 2 : ix
-                    p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
-%                   u1(i,j) = 0;
-                    v1(i,j) = 0;
-                    p1(i ,j + 1) = p1_taihi(i, j + 1);
+%                     u1(i,j) = 0;
+%                     v1(i,j) = 0;
                 end
             j = jx + 1;
                 for i = 2 : ix
-                    p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
-%                   u1(i,j) = 0;
-                    v1(i,j) = 0;
-                    p1(i, j - 1) = p1_taihi(i,j - 1);
+%                     u1(i,j) = 0;
+%                     v1(i,j) = 0;
                 end
         case 1
             i = 1;
                 for j = 2 : jx
-                    p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
                     u1(i,j) = 0;
                     v1(i,j) = 0;
-                    p1(i + 1, j) = p1_taihi(i + 1, j);
                 end
             i = ix + 1;
                 for j = 2 : jx
-                    p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
                     u1(i,j) = 0;
                     v1(i,j) = 0;
-                    p1(i - 1, j) = p1_taihi(i - 1, j);
                 end
             j = 1;
                 for i = 2 : ix
-                    p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
                     u1(i,j) = 0;
                     v1(i,j) = 0;
-                    p1(i ,j + 1) = p1_taihi(i, j + 1);
                 end
             j = jx + 1;
                 for i = 2 : ix
-                    p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
                     u1(i,j) = 0;
                     v1(i,j) = 0;
-                    p1(i, j - 1) = p1_taihi(i,j - 1);
-                end
-        case 2
-            i = 1;
-            for j = 2 : jx
-                    p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
-%                   u1(i,j) = 0;
-                    v1(i,j) = 0;
-                    p1(i + 1, j) = p1_taihi(i + 1, j);
-                end
-            i = ix + 1;
-                for j = 2 : jx
-                    p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-%                   u1(i,j) = 0;
-                    v1(i,j) = 0;
-                    p1(i - 1, j) = p1_taihi(i - 1, j);
-                end
-            j = 1;
-                for i = 2 : ix
-                    p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
-%                   u1(i,j) = 0;
-                    v1(i,j) = 0;
-                    p1(i ,j + 1) = p1_taihi(i, j + 1);
-                end
-            j = jx + 1;
-                for i = 2 : ix
-                    p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
-%                   u1(i,j) = 0;
-                    v1(i,j) = 0;
-                    p1(i, j - 1) = p1_taihi(i,j - 1);
                 end
     end
     
-    for i = 1 : ix + 1
-        for j = 1 : jx + 1
-            p3(i,j) = p2(i,j);
-            p2(i,j) = p1(i,j);
-        end
-    end
     for i = 1 : ix + 1
         for j = 1 : jx + 1
             u2(i,j) = u1(i,j);
@@ -408,9 +430,9 @@ for t = 1: tx
     y = 1 : jx + 1 ;
     x = 1 : ix + 1;
     if mode_plot == 0
-        if mod(t,2) == 0
+        if mod(t,5) == 0
         imagesc(y,x,pressure(x,y));
-%             colorbar
+            colorbar
             %colormap gray ;
             title(['pressure when ',num2str(time),'seconds have passed'])
             xlabel('y(mm)')
@@ -460,7 +482,7 @@ for t = 1: tx
 end
 end
 if mode == 1
-    if range < 2
+    if range ~= 2
         for i = id : id2
             for j = jd : jd_2
                 p1(i,j) = 100;
@@ -500,11 +522,7 @@ if mode == 1
        ylabel('x(mm)')
     grid on;
     drawnow
-    jd
-    jd_2
-    id
-    id2
-%     disp("ƒN[ƒ‰ƒ“”‚Í" + crn );
+    disp("ƒN[ƒ‰ƒ“”‚Í" + crn );
     disp(size(p1));
     disp(size(pressure));
 end
@@ -517,13 +535,9 @@ if mode == 2
     plot(Y)
 end
 if mode == 3
-   for freq = 10000 : 1000 : 1000000
    theta = pi:0.01:3*pi;
    %dhi = (sin(5*3.14*b*freq*sin(theta)/340))/(5 * sin(3.14*b*freq*sin(theta))/340)
    dhi1 = (sin(5*3.14*b_haba*freq*sin(theta)/340)) ./(5 * sin(3.14*b_haba*freq*sin(theta)/340)) ;
     
    polarplot(theta,abs(dhi1));
-   freq
-   drawnow
-   end
 end

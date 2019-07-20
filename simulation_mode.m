@@ -1,4 +1,4 @@
-range = 1;
+range = 0;
 boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
@@ -12,8 +12,8 @@ cal_time = 0.01;
 if range == 0
     xrange = 0.52;
     yrange = 0.02;
-    yd = 0.003;
-    yd2 = 0.017;
+    yd = 0.006;
+    yd2 = 0.014;
     xd = 0.002;
     xd2 = 0.003;
 end
@@ -364,6 +364,52 @@ for t = 1: tx
             v1(i,j) = cv1 * v2(i,j) - cv2 * (p2(i, j + 1) - p2(i,j));
         end
     end
+    
+    switch(boundary)
+        case 0
+            i = 1;
+                for j = 2 : jx
+%                     u1(i,j) = 0;
+%                     v1(i,j) = 0;
+                end
+            i = ix + 1;
+                for j = 2 : jx
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
+                end
+            j = 1;
+                for i = 2 : ix
+%                     u1(i,j) = 0;
+%                     v1(i,j) = 0;
+                end
+            j = jx + 1;
+                for i = 2 : ix
+%                     u1(i,j) = 0;
+%                     v1(i,j) = 0;
+                end
+        case 1
+            i = 1;
+                for j = 2 : jx
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
+                end
+            i = ix + 1;
+                for j = 2 : jx
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
+                end
+            j = 1;
+                for i = 2 : ix
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
+                end
+            j = jx + 1;
+                for i = 2 : ix
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
+                end
+    end
+    
     for i = 1 : ix + 1
         for j = 1 : jx + 1
             u2(i,j) = u1(i,j);
