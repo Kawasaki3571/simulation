@@ -1,7 +1,8 @@
 range = 0;
-boundary = 1;
+boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
+hekomi = 0;
 
 dx = 0.001;
 % dx、発散しないために
@@ -68,14 +69,20 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 disp_hensu = 0;
-freq = 5000; %周波数
+freq = 1000; %周波数
 c0 = 340; %音速
 rou0 = 1.293; %密度（kg/m^3
 absp0 = - 0.5; % 吸収係数
+b_po = 0.3 ; %凹み位置
+h = 0.01;%凹み幅
+w = 0.001;%凹みふかさ
 gensui0 = (freq*absp0) / (8.686*c0); % 減衰係数
 ix = round(xrange / dx); %x空間感覚の数
 jx = round(yrange / dx); %y空間感覚の数
 tx = fix(cal_time / dt ); %時間感覚の数
+b_x = round(b_po / dx);
+h_x = round(h / dx);
+w_x = round(w / dx);
 %  １おわ
 td = 15; % 周波数の代入（？）
 id = round(xd / dx);%xの位置（？）
@@ -172,12 +179,13 @@ w = 2 * pai * freq ;
 switch SC
     case 0
         for t = 1 : tx 
-            time = t * dt * 1.47;
-            tr = w * dt * t / WN;
-            if tr <= pai
+            time = t * dt;
+            tr = w * dt * t;
+            if t < pai / (w * dt)
                 pin(t) = sin(w * time);
             else
-                pin(t) = sin(w * time);
+                 pin(t) = sin(w * time);
+%                pin(t) = 0;
             end
         end
     case 1
@@ -269,7 +277,7 @@ for t = 1: tx
     i = ix + 1;
     for j = 2 : jx
         p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-         p1(i - 1, j) = p1_taihi(i - 1, j);
+%          p1(i - 1, j) = p1_taihi(i - 1, j);
     end
     j = 1;
     for i = 2 : ix
@@ -292,7 +300,7 @@ for t = 1: tx
             i = ix + 1;
                 for j = 2 : jx
                     p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-                    p1(i - 1, j) = p1_taihi(i - 1, j);
+                    p1(i - 1, j) = p3(i-1,j);
                 end
             j = 1;
                 for i = 2 : ix
@@ -308,22 +316,22 @@ for t = 1: tx
             i = 1;
                 for j = 2 : jx
                     p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
-                    p1(i + 1, j) = p1_taihi(i + 1, j);
+                    p1(i + 1, j) = p3(i + 1, j);
                 end
             i = ix + 1;
                 for j = 2 : jx
                     p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-                    p1(i - 1, j) = p1_taihi(i - 1, j);
+                    p1(i - 1, j) = p3(i - 1, j);
                 end
             j = 1;
                 for i = 2 : ix
                     p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
-                    p1(i ,j + 1) = p1_taihi(i, j + 1);
+                    p1(i ,j + 1) = p3(i, j + 1);
                 end
             j = jx + 1;
                 for i = 2 : ix
                     p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
-                    p1(i, j - 1) = p1_taihi(i,j - 1);
+                    p1(i, j - 1) = p3(i,j - 1);
                 end
         case 2
             i = 1;
@@ -346,6 +354,27 @@ for t = 1: tx
                     p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
 %                   p1(i, j - 1) = p1_taihi(i,j - 1);
                 end
+    end
+    if hekomi == 1
+        for i = b_x : b_x + h_x
+            for j = 1 : w_x
+                p1(i,j) = 0;
+                u1(i,j) = 0;
+                v1(i,j) = 0;
+            end
+        end
+        i = b_x - 1;
+        for j = 1 : w_x + 1
+            p1(i,j) = p3(i,j);
+        end
+        j = w_x + 1;
+        for i = b_x - 1 : b_x + h_x + 1
+            p1(i,j) = p3(i,j);
+        end
+        i = b_x + h_x + 1;
+        for j = 1 : w_x + 1
+            p1(i,j) = p3(i,j);
+        end
     end
     
     for i = 1 : ix + 1
@@ -409,7 +438,6 @@ for t = 1: tx
                     v1(i,j) = 0;
                 end
     end
-    
     for i = 1 : ix + 1
         for j = 1 : jx + 1
             u2(i,j) = u1(i,j);
@@ -501,6 +529,13 @@ if mode == 1
             end
             for j = jd_e : jd_e2
                 p1(i,j) = 100;
+            end
+        end
+    end
+    if range == 0
+        for i = b_x : b_x + h_x
+            for j = 1 : w_x
+                p1(i,j) = 50;
             end
         end
     end
