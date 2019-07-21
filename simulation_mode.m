@@ -1,5 +1,5 @@
-range = 0;
-boundary = 0;
+range = 2;
+boundary = 2;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
 hekomi = 0;
@@ -13,8 +13,8 @@ cal_time = 0.01;
 if range == 0
     xrange = 0.52;
     yrange = 0.02;
-    yd = 0.006;
-    yd2 = 0.014;
+    yd = 0.002;
+    yd2 = 0.018;
     xd = 0.002;
     xd2 = 0.003;
 end
@@ -27,9 +27,9 @@ if range == 1
     yd2 = 0.101;
 end
 if range == 2
-    b_haba = 0.02;
-    xrange = 0.52;
-    yrange = 0.52;
+    b_haba = 0.002;
+    xrange = 0.5;
+    yrange = 0.5;
     xd = 0.249;
     xd2 = 0.251;
     yd_a = 0.25;
@@ -69,7 +69,7 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 disp_hensu = 0;
-freq = 1000; %周波数
+freq = 205000; %周波数
 c0 = 340; %音速
 rou0 = 1.293; %密度（kg/m^3
 absp0 = - 0.5; % 吸収係数
@@ -459,7 +459,8 @@ for t = 1: tx
         imagesc(y,x,pressure(x,y));
             colorbar
             %colormap gray ;
-            title(['pressure when ',num2str(time),'seconds have passed'])
+%             title(['pressure when ',num2str(time),'seconds have passed'])
+            title(['pressure when frequency =',num2str(freq),'Hz'])
             xlabel('y(mm)')
             ylabel('x(mm)')
         grid on;
@@ -565,11 +566,18 @@ if mode == 2
     y = sin(x);
     Y = fft(y);
     plot(Y)
+    crn
 end
 if mode == 3
-   theta = pi:0.01:3*pi;
-   %dhi = (sin(5*3.14*b*freq*sin(theta)/340))/(5 * sin(3.14*b*freq*sin(theta))/340)
-   dhi1 = (sin(5*3.14*b_haba*freq*sin(theta)/340)) ./(5 * sin(3.14*b_haba*freq*sin(theta)/340)) ;
-    
-   polarplot(theta,abs(dhi1));
+  for freq = 100 : 100 : 1000000
+    theta = pi:0.01:3*pi;
+    %dhi = (sin(5*3.14*b*freq*sin(theta)/340))/(5 * sin(3.14*b*freq*sin(theta))/340)
+    dhi1 = (sin(5*3.14*b_haba*freq*sin(theta)/340)) ./(5 * sin(3.14*b_haba*freq*sin(theta)/340)) ;
+    if mod(freq,5000) == 0
+        polarplot(theta,abs(dhi1));
+        title(['Directivity when frequency is',num2str(freq),'Hz'])
+        drawnow
+        pause(1);
+    end
+  end
 end
