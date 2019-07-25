@@ -1,8 +1,9 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 3; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
-hekomi = 1;
+mode_plot = 1; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
+hekomi = 0;
+
 
 dx = 0.001;
 % dx、発散しないために
@@ -211,7 +212,7 @@ if yd > yd2
     error("yrangeがおかしい")
 end
 if range ~= 2
-    if id <= 1 || id2 > ix || jd <= 1 || jd_2 > jx
+    if id < 1 || id2 > ix || jd < 1 || jd_2 > jx
     id
     dx
     id2
@@ -225,7 +226,7 @@ end
 
 if mode == 0
 for t = 1: tx
-   
+   time = t * dt;
    if crn >= 1
        disp("クーラン数が不適切です。");
        break;
@@ -450,17 +451,20 @@ for t = 1: tx
         end
     end
     
-    p_keisoku_taihi(t) = p1(490,10);
+    p_keisoku_taihi(t) = p1(10,10);
     disp(t);
+    time
     y = 1 : jx + 1 ;
     x = 1 : ix + 1;
+    x_p = x * dx;
+    y_p = y * dx;
     if mode_plot == 0
         if mod(t,5) == 0
-        imagesc(y,x,pressure(x,y));
+        imagesc(y_p,x_p,pressure(x,y));
             colorbar
             %colormap gray ;
 %             title(['pressure when ',num2str(time),'seconds have passed'])
-            title(['pressure when frequency =',num2str(freq),'Hz'])
+            title(['pressure when frequency =',num2str(freq),'Hz&&', num2str(time), '(s) have passed'])
             xlabel('y(mm)')
             ylabel('x(mm)')
         grid on;
@@ -468,14 +472,28 @@ for t = 1: tx
         end
     end
     if mode_plot == 1
-        if t == 5000
-            plot(x,p1(x, 10));
+        if time == cal_time
+            plot(x_p,p1(x, 10));
+            min_v = min(p1(x, 10));
+            max_v = max(p1(x, 10));
+            for i = 1 : ix + 1
+                if p1(i,10) == min_v
+                    min_x = i * dx;
+                elseif p1(i,10) == max_v
+                    max_x = i * dx;
+                end
+            end
+            hacho = (max_x - min_x) * 2;
+            min_x
+            max_x
+            hacho
+            crn
             break;
         end
     end
     if mode_plot ==2
         if mod(t,10) == 0
-        plot(x,pressure(x, 10));
+        plot(x_p,pressure(x, 10));
         grid on;
         drawnow
         end
@@ -483,7 +501,7 @@ for t = 1: tx
     if mode_plot == 3
         if t == 5000
             t_x = 1 : t;
-            time = t_x * 1.47;
+            time = t_x * dt;
 %            plot(time,p_keisoku_taihi(t_x));
 %             bekutoru(time) = p_keisoku_taihi(t_x);
 %             X = bekutoru(time);
