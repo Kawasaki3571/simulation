@@ -1,7 +1,7 @@
 range = 2;
 boundary = 2;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
+mode_plot = 1; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
 hekomi = 0;
 
 freq = 5000; %周波数
@@ -209,9 +209,9 @@ end
 if xd > xd2
     error("xrangeがおかしい")
 end
-if yd > yd2
-    error("yrangeがおかしい")
-end
+% if yd > yd2
+%     error("yrangeがおかしい")
+% end
 if range ~= 2
     if id < 1 || id2 > ix || jd < 1 || jd_2 > jx
     id
@@ -460,7 +460,7 @@ for t = 1: tx
     x_p = x * dx;
     y_p = y * dx;
     if mode_plot == 0
-        if mod(t,5) == 0
+        if mod(t,10) == 0
         imagesc(y_p,x_p,pressure(x,y));
             colorbar
             %colormap gray ;
@@ -474,13 +474,14 @@ for t = 1: tx
     end
     if mode_plot == 1
         if t == tx
-            plot(x_p,p1(x, 10));
-             min_v = min(p1(x, 10));
-             max_v = max(p1(x, 10));
+            y_half = round(jx / 2);
+            plot(x_p,p1(x, y_half));
+             min_v = min(p1(x, y_half));
+             max_v = max(p1(x, y_half));
              for i = 1 : ix + 1
-                 if p1(i,10) == min_v
+                 if p1(i,y_half) == min_v
                      min_x = i * dx;
-                 elseif p1(i,10) == max_v
+                 elseif p1(i,y_half) == max_v
                      max_x = i * dx;
                  end
              end
@@ -488,6 +489,9 @@ for t = 1: tx
             min_x
             max_x
             hacho
+            min_v
+            v_c = hacho * freq;
+            v_c
             crn
             break;
         end
