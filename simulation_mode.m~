@@ -8,7 +8,7 @@ hekomi = 0;
 dx = 0.001;
 % dxÅAî≠éUÇµÇ»Ç¢ÇΩÇﬂÇ…
 % dt = 0.000008;
-dt =   0.0000005;
+dt =   0.000002;
 % ÉNÅ[êîÇ©ÇÁèåèÇóßÇƒÇÈ
 cal_time = 0.01;
 if range == 0
@@ -472,18 +472,18 @@ for t = 1: tx
         end
     end
     if mode_plot == 1
-        if t == tx
+        if time == cal_time
             plot(x_p,p1(x, 10));
-             min_v = min(p1(x, 10));
-             max_v = max(p1(x, 10));
-             for i = 1 : ix + 1
-                 if p1(i,10) == min_v
-                     min_x = i * dx;
-                 elseif p1(i,10) == max_v
-                     max_x = i * dx;
-                 end
-             end
-            hacho = abs(max_x - min_x) * 2;
+            min_v = min(p1(x, 10));
+            max_v = max(p1(x, 10));
+            for i = 1 : ix + 1
+                if p1(i,10) == min_v
+                    min_x = i * dx;
+                elseif p1(i,10) == max_v
+                    max_x = i * dx;
+                end
+            end
+            hacho = (max_x - min_x) * 2;
             min_x
             max_x
             hacho
@@ -604,7 +604,6 @@ if mode == 4
     x = 1 : ix + 1;
     x_p = x * dx;
     t_time = 0.01;
-    j = sqrt(-1);
     p = exp(j *(hasu * x_p - w * t_time));
-    plot(x_p,p)
+    plot(x_p,p
 end
