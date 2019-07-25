@@ -1,8 +1,8 @@
-range = 2;
-boundary = 2;
+range = 0;
+boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
-hekomi = 0;
+mode_plot = 3; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
+hekomi = 1;
 
 dx = 0.001;
 % dx、発散しないために
@@ -69,7 +69,7 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 disp_hensu = 0;
-freq = 205000; %周波数
+freq = 1000; %周波数
 c0 = 340; %音速
 rou0 = 1.293; %密度（kg/m^3
 absp0 = - 0.5; % 吸収係数
@@ -450,7 +450,7 @@ for t = 1: tx
         end
     end
     
-    p_keisoku_taihi(t) = p1(10,10);
+    p_keisoku_taihi(t) = p1(490,10);
     disp(t);
     y = 1 : jx + 1 ;
     x = 1 : ix + 1;
@@ -483,17 +483,17 @@ for t = 1: tx
     if mode_plot == 3
         if t == 5000
             t_x = 1 : t;
-            time = t_x * dt * 1.47;
+            time = t_x * 1.47;
 %            plot(time,p_keisoku_taihi(t_x));
-            bekutoru(time) = p_keisoku_taihi(t_x);
-            X = bekutoru(time);
+%             bekutoru(time) = p_keisoku_taihi(t_x);
+%             X = bekutoru(time);
             plot(time,p_keisoku_taihi(t_x));
             Fs = 1000;            % Sampling frequency                    
             T = 1/Fs;             % Sampling period       
             L = 1500;             % Length of signal
             ft = (0:L-1)*T;        % Time vector
             Y = fft(X);
-            plot(1:5000,Y);
+%             plot(1:5000,Y);
             %P2 = abs(Y/L);
             %P1 = P2(1:L/2+1);
             %P1(2:end-1) = 2*P1(2:end-1);
