@@ -1,14 +1,14 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 1; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
+mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
 hekomi = 0;
 
 
 dx = 0.001;
 % dx、発散しないために
 % dt = 0.000008;
-dt =   0.0000005;
+dt =   0.000002;
 % クー数から条件を立てる
 cal_time = 0.01;
 if range == 0
@@ -88,7 +88,7 @@ w_x = round(w / dx);
 td = 15; % 周波数の代入（？）
 id = round(xd / dx);%xの位置（？）
 id2 = round(xd2 / dx ) ;
-if range ~= 2
+if range < 2
     jd = round(yd / dx) ; %y空間感覚の代入（？）
     jd_2 = round(yd2/dx);
 else
@@ -120,7 +120,7 @@ v1 = zeros(ix+1,jx+1);
 v2 = zeros(ix+1,jx+1);
 mo = zeros(ix+1,jx+1); %チューブモデル
 pressure = zeros(ix + 1 , jx + 1);
-SC = 0 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波
+SC = 4 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波
 WN = 1;
 W_end = round(2*WN/(freq*dt)) - 1 ;
 pin = zeros(1,tx);
@@ -203,15 +203,23 @@ switch SC
         for t = 1 : W_end
         pin = sin(w * dt * real(t - 1));
         end
+    case 4
+        j = sqrt(-1)
+        for t = 1 : tx
+            time = t * dt;
+            pin(t) = exp(-1 * j * w * time);
+        end
 end
 %%timeloop
 if xd > xd2
     error("xrangeがおかしい")
 end
-if yd > yd2
-    error("yrangeがおかしい")
+if range < 2
+    if yd > yd2
+        error("yrangeがおかしい")
+    end
 end
-if range ~= 2
+if range < 2
     if id < 1 || id2 > ix || jd < 1 || jd_2 > jx
     id
     dx
@@ -233,7 +241,7 @@ for t = 1: tx
    end
     for i = 2:ix
         for j = 2:jx
-            if range ~= 2
+            if range < 2
                 if t <= tx && i >= id && i <= id2 && j >= jd && j <= jd_2
                     p1(i,j) = pin(t);
                     p2(i,j) = pin(t);
@@ -447,7 +455,7 @@ for t = 1: tx
     end
     for i = 1 : ix + 1
         for j = 1 : jx + 1
-            pressure(i,j) = (p1(i,j) .^2).^0.5 ;
+            pressure(i,j) = (real(p1(i,j)) .^2).^0.5 ;
         end
     end
     
@@ -587,10 +595,10 @@ if mode == 2
     crn
 end
 if mode == 3
-  for freq = 100 : 100 : 1000000
+  for freq = 165000
     theta = pi:0.01:3*pi;
     %dhi = (sin(5*3.14*b*freq*sin(theta)/340))/(5 * sin(3.14*b*freq*sin(theta))/340)
-    dhi1 = (sin(5*3.14*b_haba*freq*sin(theta)/340)) ./(5 * sin(3.14*b_haba*freq*sin(theta)/340)) ;
+    dhi1 = (sin(5*3.14*b_haba*freq*sin(theta + 0.5*pi)/340)) ./(5 * sin(3.14*b_haba*freq*sin(theta + 0.5*pi)/340)) ;
     if mod(freq,5000) == 0
         polarplot(theta,abs(dhi1));
         title(['Directivity when frequency is',num2str(freq),'Hz'])
