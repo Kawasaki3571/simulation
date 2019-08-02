@@ -7,7 +7,7 @@ hekomi = 0;
 freq = 5000; %ü”g”
 c = 340;
 ramuda = c / freq;
-dx = ramuda/40;
+dx = ramuda/25;
 % dxA”­U‚µ‚È‚¢‚½‚ß‚É
 % dt =   0.000002;
 dt = dx / (5 * c);
@@ -136,7 +136,6 @@ alpha0 = 2*hasu_o0*rou0*c_m0/hasu0;%‹zû€
 kap0 = c_m0^2*rou0;
 cp1 = 1;
 cp2 = rou0*c_m0^2*dt/dx;
-%cp2 = crn;
 cv1 = 1;
 cv2 = dt / (rou0 * dx)
 a = 2*(crn - 1)/(crn + 1);
