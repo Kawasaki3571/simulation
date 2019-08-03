@@ -1,7 +1,7 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 4; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究
+mode_plot = 2; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究
 hekomi = 0;
 
 freq = 5000; %周波数
@@ -159,8 +159,7 @@ c = cah1 * (1 - d2) + cah2 * (1 - d1);
 d = ((1 - d1) + (1 - d2));
 e = ((1 - d1) * (1 - d2));
 y_half = round(jx / 2);
-p_kei = zeros(1, tx);
-% y_half_g = round(y_half / dx);
+y_half_g = round(y_half / dx);
 for i = 1 : ix + 1
     for j = 1 : jx + 1
         p1(i,j) = 0;
@@ -532,12 +531,11 @@ for t = 1: tx
         end
     end
     if mode_plot == 4
-        p_kei(t) = p1(1, y_half);
-        p_kei(t)
+        p_kei = zeros(1, tx);
+        p_kei(t) = p1(dx, y_half_g);
         if time == cal_time
-            t_x = 1 : tx;
-            plot(t_x * dt , p_kei(t_x))
-            disp("計算が終了しました")
+            time = dx : dx : tx * dx
+            plot(
         end
     end
 end
