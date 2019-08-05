@@ -233,7 +233,7 @@ if mode == 0
 %time loop start
 for t = 1: tx
    time = t * dt;
-   freq = 5000 * 3000*(time/cal_time);%
+   freq = 5000 * 3000*(time/%
    if crn >= 1
        disp("クーラン数が不適切です。");
        break;
