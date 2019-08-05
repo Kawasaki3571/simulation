@@ -1,7 +1,7 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 3; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究
+mode_plot = 2; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究
 hekomi = 1;
 sweep = 1;
 
@@ -13,9 +13,9 @@ dx = ramuda/25;
 % dt =   0.000002;
 dt = dx / (5 * c);
 % クー数から条件を立てる
-cal_time = 0.18;
+cal_time = 0.018;
 if range == 0
-    xrange = 2.02;
+    xrange = 0.52;
     yrange = 0.02;
     yd = 0.01 - 2*dx;
     yd2 = 0.01 + 3*dx;
@@ -207,7 +207,8 @@ w = 2 * pai * freq ;
             for tc = 1 : tx 
                 time = tc * dt;
                 tr = w * dt * tc;
-                freq = 2000 * 7000*(time/cal_time);
+                 freq = 2000 + 7000*(time/cal_time);
+%                 freq = 5000;
                 w = 2 * pai * freq ;
                 if tc < pai / (w * dt)
                     pin(tc) = sin(w * time);
@@ -236,7 +237,7 @@ if mode == 0
 for t = 1: tx
    time = t * dt;
    if sweep == 1
-       freq = 2000 * 7000*(time/cal_time);
+       freq = 2000 + 7000*(time/cal_time);
    end
    if crn >= 1
        disp("クーラン数が不適切です。");
