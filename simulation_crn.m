@@ -1,8 +1,9 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 4; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究
-hekomi = 0;
+mode_plot = 3; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究
+hekomi = 1;
+sweep = 1;
 
 freq = 5000; %周波数
 c = 340;
@@ -12,7 +13,7 @@ dx = ramuda/25;
 % dt =   0.000002;
 dt = dx / (5 * c);
 % クー数から条件を立てる
-cal_time = 0.01;
+cal_time = 0.18;
 if range == 0
     xrange = 0.52;
     yrange = 0.02;
@@ -181,34 +182,6 @@ for i = jx1 : jx2
     end
 end
 sn = 0;
-w = 2 * pai * freq ;
-switch SC
-    case 0
-        for t = 1 : tx 
-            time = t * dt;
-            tr = w * dt * t;
-            if t < pai / (w * dt)
-                pin(t) = sin(w * time);
-            else
-                 pin(t) = sin(w * time);
-%                pin(t) = 0;
-            end
-        end
-    case 1
-        tau = WN / freq;
-        for t = 1:W_end
-            al = (4/tau) * (4/tau);
-            pin =exp(-al * (dt*t - tau)*(dt*t - tau)) * sin(w*(dt*t - tau));
-        end
-    case 2
-        for t = 1 : W_end
-            pin = (1-cos(w*dt*t/WN)) * sin(w*dt*t)/2;
-        end
-    case 3
-        for t = 1 : W_end
-        pin = sin(w * dt * real(t - 1));
-        end
-end
 %%timeloop
 if xd > xd2
     error("xrangeがおかしい")
@@ -232,10 +205,41 @@ end
 if mode == 0
 for t = 1: tx
    time = t * dt;
+   if sweep == 1
+       freq = 2000 * 7000*(time/cal_time);
+   end
    if crn >= 1
        disp("クーラン数が不適切です。");
        break;
    end
+    w = 2 * pai * freq ;
+    switch SC
+        case 0
+            for tc = 1 : tx 
+%                 time = t * dt;
+                tr = w * dt * tc;
+                if tc < pai / (w * dt)
+                    pin(tc) = sin(w * time);
+                else
+                    pin(tc) = sin(w * time);
+%                   pin(t) = 0;
+                end
+            end
+        case 1
+            tau = WN / freq;
+            for t = 1:W_end
+                al = (4/tau) * (4/tau);
+                pin =exp(-al * (dt*t - tau)*(dt*t - tau)) * sin(w*(dt*t - tau));
+            end
+        case 2
+            for t = 1 : W_end
+                pin = (1-cos(w*dt*t/WN)) * sin(w*dt*t)/2;
+            end
+        case 3
+            for t = 1 : W_end
+            pin = sin(w * dt * real(t - 1));
+            end
+    end
     for i = 2:ix
         for j = 2:jx
             if range ~= 2
@@ -456,7 +460,7 @@ for t = 1: tx
         end
     end
     
-    p_keisoku_taihi(t) = p1(10,y_half);
+    p_keisoku_taihi(t) = p1(7, y_half);
     disp(t);
     time
     y = 1 : jx + 1 ;
