@@ -15,7 +15,7 @@ dt = dx / (5 * c);
 % クー数から条件を立てる
 cal_time = 0.18;
 if range == 0
-    xrange = 0.52;
+    xrange = 2.02;
     yrange = 0.02;
     yd = 0.01 - 2*dx;
     yd2 = 0.01 + 3*dx;
@@ -201,23 +201,14 @@ if range ~= 2
         error("rangeおかしい");
     end
 end
-
-if mode == 0
-for t = 1: tx
-   time = t * dt;
-   if sweep == 1
-       freq = 2000 * 7000*(time/cal_time);
-   end
-   if crn >= 1
-       disp("クーラン数が不適切です。");
-       break;
-   end
-    w = 2 * pai * freq ;
+w = 2 * pai * freq ;
     switch SC
         case 0
             for tc = 1 : tx 
-%                 time = t * dt;
+                time = tc * dt;
                 tr = w * dt * tc;
+                freq = 2000 * 7000*(time/cal_time);
+                w = 2 * pai * freq ;
                 if tc < pai / (w * dt)
                     pin(tc) = sin(w * time);
                 else
@@ -240,6 +231,17 @@ for t = 1: tx
             pin = sin(w * dt * real(t - 1));
             end
     end
+
+if mode == 0
+for t = 1: tx
+   time = t * dt;
+   if sweep == 1
+       freq = 2000 * 7000*(time/cal_time);
+   end
+   if crn >= 1
+       disp("クーラン数が不適切です。");
+       break;
+   end
     for i = 2:ix
         for j = 2:jx
             if range ~= 2
