@@ -1,12 +1,16 @@
-range = 0;
+range = 2;
 boundary = 0;
-mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 2; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究
-hekomi = 1;
-sweep = 1;
+mode = 3; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
+mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究
+hekomi = 0;
+sweep = 0;
 
+c0 = 340; %音速
+c0 = 1482.7;
+% rou0 = 1.293; %密度（kg/m^3
+rou0 = 1000;
 freq = 5000; %周波数
-c = 340;
+c = c0;
 ramuda = c / freq;
 dx = ramuda/25;
 % dx、発散しないために
@@ -73,8 +77,6 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 disp_hensu = 0;
-c0 = 340; %音速
-rou0 = 1.293; %密度（kg/m^3
 absp0 = - 0.5; % 吸収係数
 b_po = 0.3 ; %凹み位置
 h = 0.01;%凹み幅
@@ -125,7 +127,7 @@ pressure = zeros(ix + 1 , jx + 1);
 SC = 0 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波
 WN = 1;
 W_end = round(2*WN/(freq*dt)) - 1 ;
-pin = zeros(1,tx);
+pin = zeros(1,tx+100);
 p_keisoku_taihi = zeros(1,tx);
 crn =(c0 * dt)/dx ; %クーラン数
 dd = 199/200 ;%higdons absorption boundary
@@ -204,7 +206,7 @@ end
 w = 2 * pai * freq ;
     switch SC
         case 0
-            for tc = 1 : tx 
+            for tc = 1 : tx+100 
                 time = tc * dt;
                 tr = w * dt * tc;
                  freq = 2000 + 7000*(time/cal_time);
@@ -541,7 +543,7 @@ for t = 1: tx
     if mode_plot == 4
         p_kei(t) = p1(1, y_half);
         p_kei(t)
-        if time == cal_time
+        if time == cal_time - 0.001
             t_x = 1 : tx;
             plot(t_x * dt , p_kei(t_x))
             disp("計算が終了しました")
@@ -614,15 +616,18 @@ if mode == 2
     dt
 end
 if mode == 3
-  for freq = 100 : 100 : 1000000
+  for freq = 100 : 100 : 10000000
     theta = pi:0.01:3*pi;
+    dhi = 0.01;
+    enu = 100;
+    b_haba = dhi / enu;
     %dhi = (sin(5*3.14*b*freq*sin(theta)/340))/(5 * sin(3.14*b*freq*sin(theta))/340)
-    dhi1 = (sin(5*3.14*b_haba*freq*sin(theta)/340)) ./(5 * sin(3.14*b_haba*freq*sin(theta)/340)) ;
+    dhi1 = (sin(enu*3.14*b_haba*freq*sin(theta)/340)) ./(enu * sin(3.14*b_haba*freq*sin(theta)/340)) ;
     if mod(freq,5000) == 0
         polarplot(theta,abs(dhi1));
         title(['Directivity when frequency is',num2str(freq),'Hz'])
         drawnow
-        pause(1);
+        pause(0.3);
     end
   end
 end
