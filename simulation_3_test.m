@@ -1,16 +1,16 @@
-range = 0;
+range = 2;
 boundary = 0;
-mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
+mode = 1; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究
 hekomi = 0;
 
-freq_f = 5000; %周波数
+freq_f = 70000; %周波数
 c = 340;
 ramuda = c / freq_f;
-dx = ramuda/25;
+dx = 0.0001;
 % dx、発散しないために
 % dt =   0.000002;
-dt = dx / (5 * c);
+dt = 0.0000001;
 % クー数から条件を立てる
 cal_time = 0.01;
 if range == 0
@@ -261,16 +261,16 @@ for t = 1: tx
                             p1(i,j) = pin(t);
                             %p2(i,j) = pin(t);
                         elseif j >= jd_b && j <= jd_b2
-                            p1(i,j) = pin(t);
+                            p1(i,j) = pin(t + 7);
                             %p2(i,j) = pin(t);
                         elseif j >= jd_c && j <= jd_c2
-                            p1(i,j) = pin(t);
+                            p1(i,j) = pin(t + 7);
                             %p2(i,j) = pin(t);
                         elseif j >= jd_d && j <= jd_d2
-                            p1(i,j) = pin(t);
+                            p1(i,j) = pin(t + 7);
                             %p2(i,j) = pin(t);
                         elseif j >= jd_e && j <= jd_e2
-                            p1(i,j) = pin(t);
+                            p1(i,j) = pin(t + 7);
                             %p2(i,j) = pin(t);
                         else
                             p1(i,j) = cp1 .* p2(i,j) - cp2 .* (u2(i,j) - u2(i-1,j) + v2(i,j) - v2 (i,j-1));
@@ -565,16 +565,16 @@ if mode == 1
         end
     else
         for i = id : id2
-            for j = jd_a : jd_a2
+            for j = jd_a : jd_a2+100
                 p1(i,j) = 100;
             end
-            for j = jd_b : jd_b2
+            for j = jd_b : jd_b2+100
                 p1(i,j) = 100;
             end
-            for j = jd_c : jd_c2
+            for j = jd_c : jd_c2+100
                 p1(i,j) = 100;
             end
-            for j = jd_d : jd_d2
+            for j = jd_d : jd_d2+100
                 p1(i,j) = 100;
             end
             for j = jd_e : jd_e2
