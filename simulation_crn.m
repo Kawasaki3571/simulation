@@ -1,9 +1,11 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 3; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究
+mode_plot = 3; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+% 6...3を細かい時間で追う
 hekomi = 1;
 sweep = 1;
+SC = 4 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
 
 c = 340; %音速
 c0 = 340;
@@ -14,10 +16,10 @@ ramuda = c / freq;
 dx = ramuda/25;
 dt = dx / (5 * c);
 % クー数から条件を立てる
-cal_time = 0.018;
+cal_time = 0.18;
 if range == 0
-%     xrange = 2.01;
-    xrange = 0.52;
+    xrange = 2.01;
+%     xrange = 0.52;
     yrange = 0.02;
     yd = 0.01 - 2*dx;
     yd2 = 0.01 + 3*dx;
@@ -76,7 +78,7 @@ t2 = 0;
 speed = 0;
 disp_hensu = 0;
 absp0 = - 0.5; % 吸収係数
-b_po = 0.1 ; %凹み位置
+b_po = 0.5 ; %凹み位置
 h = 0.01;%凹み幅
 w = 0.001;%凹みふかさ
 gensui0 = (freq*absp0) / (8.686*c0); % 減衰係数
@@ -122,7 +124,6 @@ v1 = zeros(ix+1,jx+1);
 v2 = zeros(ix+1,jx+1);
 mo = zeros(ix+1,jx+1); %チューブモデル
 pressure = zeros(ix + 1 , jx + 1);
-SC = 0 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波
 WN = 1;
 W_end = round(2*WN/(freq*dt)) - 1 ;
 pin = zeros(1,tx+100);
@@ -207,15 +208,18 @@ w = 2 * pai * freq ;
             for tc = 1 : tx+100 
                 time = tc * dt;
                 tr = w * dt * tc;
-                    if hekomi == 1
+                    if sweep == 1
                         freq = 2000 + 7000*(time/cal_time);
                     end
 %                 freq = 5000;
                 w = 2 * pai * freq ;
+                j = sqrt(-1);
                 if tc < pai / (w * dt)
-                    pin(tc) = sin(w * time);
+                     pin(tc) = cos(w * time);
+%                     pin(tc) = exp(j * w * time);
                 else
-                    pin(tc) = sin(w * time);
+                     pin(tc) = cos(w * time);
+%                     pin(tc) = exp(j * w * time);
 %                   pin(t) = 0;
                 end
             end
@@ -232,6 +236,25 @@ w = 2 * pai * freq ;
         case 3
             for t = 1 : W_end
             pin = sin(w * dt * real(t - 1));
+            end
+        case 4
+            for tc = 1 : tx+100 
+                time = tc * dt;
+                tr = w * dt * tc;
+                    if sweep == 1
+                        freq = 2000 + 7000*(time/cal_time);
+                    end
+%                 freq = 5000;
+                w = 2 * pai * freq ;
+                j = sqrt(-1);
+                if tc < pai / (w * dt)
+%                     pin(tc) = sin(w * time);
+                    pin(tc) = exp(j * w * time);
+                else
+%                     pin(tc) = sin(w * time);
+                    pin(tc) = exp(j * w * time);
+%                   pin(t) = 0;
+                end
             end
     end
 
@@ -462,7 +485,7 @@ for t = 1: tx
     end
     for i = 1 : ix + 1
         for j = 1 : jx + 1
-            pressure(i,j) = (p1(i,j) .^2).^0.5 ;
+            pressure(i,j) = (real(p1(i,j)) .^2).^0.5 ;
         end
     end
     
@@ -470,7 +493,7 @@ for t = 1: tx
     
     
     disp(t);
-    time;
+    time
     
     y = 1 : jx + 1 ;
     x = 1 : ix + 1;
@@ -521,6 +544,7 @@ for t = 1: tx
     end
     if mode_plot == 3
         if t == 5000
+%         if mod(t,50) == 0
             t_x = 1 : t;
             time = t_x * dt;
 %            plot(time,p_keisoku_taihi(t_x));
@@ -551,6 +575,35 @@ for t = 1: tx
             t_x = 1 : tx;
             plot(t_x * dt , p_kei(t_x))
             disp("計算が終了しました")
+        end
+    end
+    if mode_plot == 5
+        if t == tx
+            t_x = 1 : t;
+            time = t_x * dt;
+            p_keisoku_spec = abs(p_keisoku_taihi).^2;
+            plot(time,p_keisoku_spec(t_x));
+            Fs = 1000;            % Sampling frequency                    
+            T = 1/Fs;             % Sampling period       
+            L = 1500;             % Length of signal
+            ft = (0:L-1)*T;        % Time vector
+            Y = fft(p_keisoku_spec,L);
+%             disp(size(Y))
+%             plot(1:L,Y)
+            break;
+        end
+    end
+    if mode_plot == 6
+        if t == 5000
+            t_x = 1 : t;
+            time = t_x * dt;
+            plot(time,p_keisoku_taihi(t_x));
+            Fs = 1000;            % Sampling frequency                    
+            T = 1/Fs;             % Sampling period       
+            L = 1500;             % Length of signal
+            ft = (0:L-1)*T;        % Time vector
+            Y = fft(X);
+            break;
         end
     end
 end
