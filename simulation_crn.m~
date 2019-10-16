@@ -207,9 +207,7 @@ w = 2 * pai * freq ;
             for tc = 1 : tx+100 
                 time = tc * dt;
                 tr = w * dt * tc;
-                    if hekomi == 1
-                        freq = 2000 + 7000*(time/cal_time);
-                    end
+%                  freq = 2000 + 7000*(time/cal_time);
 %                 freq = 5000;
                 w = 2 * pai * freq ;
                 if tc < pai / (w * dt)
@@ -219,6 +217,7 @@ w = 2 * pai * freq ;
 %                   pin(t) = 0;
                 end
             end
+            dip
         case 1
             tau = WN / freq;
             for t = 1:W_end
@@ -467,11 +466,8 @@ for t = 1: tx
     end
     
     p_keisoku_taihi(t) = p1(4, y_half);
-    
-    
     disp(t);
-    time;
-    
+    time
     y = 1 : jx + 1 ;
     x = 1 : ix + 1;
     x_p = x * dx;
