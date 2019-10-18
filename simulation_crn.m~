@@ -595,22 +595,16 @@ for t = 1: tx
     end
     if mode_plot == 6
         if mod(t,10) == 0
-            t_x = 100 : t;
+            t_x = 1 : t;
             time = t_x * dt;
             p_keisoku_spec = (abs(p_keisoku_taihi)).^2;
-            plot(time,p_keisoku_spec(t_x));
-%             plot(time, real(p_keisoku_taihi(t_x)),time , image(p_keisoku_taihi(t_x)),time , p_keisoku_spec(t_x));
-%             plot(time, real(p_keisoku_taihi(t_x)));
-%             hold on;
-%             plot(time, imag(p_keisoku_taihi(t_x)))
-%             hold on;
-%             plot(time, abs(p_keisoku_taihi(t_x)))
-%             legend("real", "image", "abs");
+%             plot(time,p_keisoku_spec(t_x));
+            plot(time, real(p_keisoku_taihi(t_x)), image(p_keisoku_taihi(t_x), abs(p_));
             grid on;
             drawnow;
             if t == 500
-%                 p_keisoku_taihi(1:500)
-%                 break;
+                p_keisoku_taihi(1:500)
+                break;
             end
         end
     end
