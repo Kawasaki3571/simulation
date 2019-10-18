@@ -1,7 +1,7 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 3; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 1;
 sweep = 1;
@@ -588,22 +588,28 @@ for t = 1: tx
             L = 1500;             % Length of signal
             ft = (0:L-1)*T;        % Time vector
             Y = fft(p_keisoku_spec,L);
-%             disp(size(Y))
-%             plot(1:L,Y)
+            disp(size(Y))
+            plot(1:L,Y)
             break;
         end
     end
     if mode_plot == 6
-        if t == 5000
+        if mod(t,10) == 0
             t_x = 1 : t;
             time = t_x * dt;
-            plot(time,p_keisoku_taihi(t_x));
-            Fs = 1000;            % Sampling frequency                    
-            T = 1/Fs;             % Sampling period       
-            L = 1500;             % Length of signal
-            ft = (0:L-1)*T;        % Time vector
-            Y = fft(X);
-            break;
+            p_keisoku_spec = (abs(p_keisoku_taihi)).^2;
+            plot(time,p_keisoku_spec(t_x));
+            grid on;
+            drawnow;
+%             Fs = 1000;            % Sampling frequency                    
+%             T = 1/Fs;             % Sampling period       
+%             L = 1500;             % Length of signal
+%             ft = (0:L-1)*T;        % Time vector
+%             Y = fft(X);
+            if t == 500
+                p_keisoku_taihi(1:500)
+                break;
+            end
         end
     end
 end
