@@ -1,25 +1,32 @@
-range = 2;
-boundary = 2;
+range = 0;
+boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 1; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化
-hekomi = 0;
+mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+% 6...3を細かい時間で追う
+hekomi = 1;
+sweep = 1;
+SC = 4 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
 
+f1 = figure;
+
+c = 340; %音速
+c0 = 340;
+% rou0 = 1.293; %密度（kg/m^3
+rou0 = 1000;
 freq = 5000; %周波数
-c = 340;
 ramuda = c / freq;
-dx = ramuda/40;
-% dx、発散しないために
-% dt =   0.000002;
+dx = ramuda/25;
 dt = dx / (5 * c);
 % クー数から条件を立てる
-cal_time = 0.01;
+cal_time = 0.18;
 if range == 0
-    xrange = 0.52;
+    xrange = 2.01;
+%    xrange = 0.52;
     yrange = 0.02;
-    yd = 0.002;
-    yd2 = 0.018;
-    xd = 0.002;
-    xd2 = 0.003;
+    yd = 0.01 - 2*dx;
+    yd2 = 0.01 + 2*dx;
+    xd = 3 * dx;
+    xd2 = 4 * dx;
 end
 if range == 1
     xrange = 0.2;
@@ -72,12 +79,10 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 disp_hensu = 0;
-c0 = 340; %音速
-rou0 = 1.293; %密度（kg/m^3
 absp0 = - 0.5; % 吸収係数
 b_po = 0.3 ; %凹み位置
-h = 0.01;%凹み幅
-w = 0.001;%凹みふかさ
+h = 0.005;%凹み幅
+w = 0.015;%凹みふかさ
 gensui0 = (freq*absp0) / (8.686*c0); % 減衰係数
 ix = round(xrange / dx); %x空間感覚の数
 jx = round(yrange / dx); %y空間感覚の数
@@ -121,10 +126,9 @@ v1 = zeros(ix+1,jx+1);
 v2 = zeros(ix+1,jx+1);
 mo = zeros(ix+1,jx+1); %チューブモデル
 pressure = zeros(ix + 1 , jx + 1);
-SC = 0 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波
 WN = 1;
 W_end = round(2*WN/(freq*dt)) - 1 ;
-pin = zeros(1,tx);
+pin = zeros(1,tx+100);
 p_keisoku_taihi = zeros(1,tx);
 crn =(c0 * dt)/dx ; %クーラン数
 dd = 199/200 ;%higdons absorption boundary
@@ -135,7 +139,8 @@ c_m0 = 2*pai*freq/hasu0;%損失のある場合の音速
 alpha0 = 2*hasu_o0*rou0*c_m0/hasu0;%吸収項
 kap0 = c_m0^2*rou0;
 cp1 = 1;
-%cp2 = rou0*c_m0^2*dt/dx;
+cp2 = rou0*c_m0^2*dt/dx;
+%cp2 = crn;
 cv1 = 1;
 cv2 = dt / (rou0 * dx)
 a = 2*(crn - 1)/(crn + 1);
@@ -157,6 +162,9 @@ b = cah1 * cah2;
 c = cah1 * (1 - d2) + cah2 * (1 - d1);
 d = ((1 - d1) + (1 - d2));
 e = ((1 - d1) * (1 - d2));
+y_half = round(jx / 2);
+p_kei = zeros(1, tx);
+% y_half_g = round(y_half / dx);
 for i = 1 : ix + 1
     for j = 1 : jx + 1
         p1(i,j) = 0;
@@ -177,34 +185,6 @@ for i = jx1 : jx2
     end
 end
 sn = 0;
-w = 2 * pai * freq ;
-switch SC
-    case 0
-        for t = 1 : tx 
-            time = t * dt;
-            tr = w * dt * t;
-            if t < pai / (w * dt)
-                pin(t) = sin(w * time);
-            else
-                 pin(t) = sin(w * time);
-%                pin(t) = 0;
-            end
-        end
-    case 1
-        tau = WN / freq;
-        for t = 1:W_end
-            al = (4/tau) * (4/tau);
-            pin =exp(-al * (dt*t - tau)*(dt*t - tau)) * sin(w*(dt*t - tau));
-        end
-    case 2
-        for t = 1 : W_end
-            pin = (1-cos(w*dt*t/WN)) * sin(w*dt*t)/2;
-        end
-    case 3
-        for t = 1 : W_end
-        pin = sin(w * dt * real(t - 1));
-        end
-end
 %%timeloop
 if xd > xd2
     error("xrangeがおかしい")
@@ -224,10 +204,69 @@ if range ~= 2
         error("rangeおかしい");
     end
 end
+w = 2 * pai * freq ;
+    switch SC
+        case 0
+            for tc = 1 : tx+100 
+                time = tc * dt;
+                tr = w * dt * tc;
+                    if sweep == 1
+                        freq = 2000 + 7000*(time/cal_time);
+                    end
+%                 freq = 5000;
+                w = 2 * pai * freq ;
+                j = sqrt(-1);
+                if tc < pai / (w * dt)
+                     pin(tc) = cos(w * time);
+%                     pin(tc) = exp(j * w * time);
+                else
+                     pin(tc) = cos(w * time);
+%                     pin(tc) = exp(j * w * time);
+%                   pin(t) = 0;
+                end
+            end
+        case 1
+            tau = WN / freq;
+            for t = 1:W_end
+                al = (4/tau) * (4/tau);
+                pin =exp(-al * (dt*t - tau)*(dt*t - tau)) * sin(w*(dt*t - tau));
+            end
+        case 2
+            for t = 1 : W_end
+                pin = (1-cos(w*dt*t/WN)) * sin(w*dt*t)/2;
+            end
+        case 3
+            for t = 1 : W_end
+            pin = sin(w * dt * real(t - 1));
+            end
+        case 4
+            for tc = 1 : tx+100 
+                time = tc * dt;
+                tr = w * dt * tc;
+                    if sweep == 1
+                        %freq = 2000 + 7000*(time/cal_time);
+                        freq = 2000 + 7000*(time/cal_time);
+                    end
+%                 freq = 5000;
+                w = 2 * pai * freq ;
+                j = sqrt(-1);
+                if tc < pai / (w * dt)
+%                     pin(tc) = sin(w * time);
+                    pin(tc) = exp(j * w * time + j * pi/2);
+                else
+%                     pin(tc) = sin(w * time);
+                    pin(tc) = exp(j * w * time + j * pi / 2);
+%                   pin(t) = 0;
+                end
+            end
+    end
 
 if mode == 0
 for t = 1: tx
    time = t * dt;
+   if sweep == 1
+       freq = 2000 + 7000*(time/cal_time);
+   end
    if crn >= 1
        disp("クーラン数が不適切です。");
        break;
@@ -244,20 +283,21 @@ for t = 1: tx
             else
                 if t <= tx
                     if i >= id && i <= id2
+                        s = 7;
                         if j >= jd_a && j <= jd_a2
                             p1(i,j) = pin(t);
                             %p2(i,j) = pin(t);
                         elseif j >= jd_b && j <= jd_b2
-                            p1(i,j) = pin(t);
+                            p1(i,j) = pin(t + s);
                             %p2(i,j) = pin(t);
                         elseif j >= jd_c && j <= jd_c2
-                            p1(i,j) = pin(t);
+                            p1(i,j) = pin(t + 2*s);
                             %p2(i,j) = pin(t);
                         elseif j >= jd_d && j <= jd_d2
-                            p1(i,j) = pin(t);
+                            p1(i,j) = pin(t + 3*s);
                             %p2(i,j) = pin(t);
                         elseif j >= jd_e && j <= jd_e2
-                            p1(i,j) = pin(t);
+                            p1(i,j) = pin(t + 4*s);
                             %p2(i,j) = pin(t);
                         else
                             p1(i,j) = cp1 .* p2(i,j) - cp2 .* (u2(i,j) - u2(i-1,j) + v2(i,j) - v2 (i,j-1));
@@ -317,27 +357,31 @@ for t = 1: tx
         case 1
             i = 1;
                 for j = 2 : jx
-                    p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
+                    %p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
                     p1(i + 1, j) = p3(i + 1, j);
+                    %p1(i,j) = 0;
                 end
             i = ix + 1;
                 for j = 2 : jx
-                    p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
+                    %p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
                     p1(i - 1, j) = p3(i - 1, j);
+                    %p1(i,j) = 0;
                 end
             j = 1;
                 for i = 2 : ix
-                    p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
+                    %p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
                     p1(i ,j + 1) = p3(i, j + 1);
+                    %p1(i,j) = 0;
                 end
             j = jx + 1;
                 for i = 2 : ix
-                    p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
+                    %p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
                     p1(i, j - 1) = p3(i,j - 1);
+                    %p1(i,j) = 0;
                 end
         case 2
             i = 1;
-            for j = 2 : jx
+                for j = 2 : jx
                     p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
 %                   p1(i + 1, j) = p1_taihi(i + 1, j);
                 end
@@ -448,19 +492,22 @@ for t = 1: tx
     end
     for i = 1 : ix + 1
         for j = 1 : jx + 1
-            pressure(i,j) = (p1(i,j) .^2).^0.5 ;
+            pressure(i,j) = (real(p1(i,j)) .^2).^0.5 ;
         end
     end
+    if mod(t,10)==0
+        p_keisoku_taihi(t/10) = p1(6, y_half);
+    end
     
-    p_keisoku_taihi(t) = p1(10,10);
     disp(t);
     time
+    
     y = 1 : jx + 1 ;
     x = 1 : ix + 1;
     x_p = x * dx;
     y_p = y * dx;
     if mode_plot == 0
-        if mod(t,10) == 0
+        if mod(t,100) == 0
         imagesc(y_p,x_p,pressure(x,y));
             colorbar
             %colormap gray ;
@@ -473,8 +520,7 @@ for t = 1: tx
         end
     end
     if mode_plot == 1
-        if t == tx
-            y_half = round(jx / 2);
+        if t == 3000
             plot(x_p,p1(x, y_half));
              min_v = min(p1(x, y_half));
              max_v = max(p1(x, y_half));
@@ -498,13 +544,14 @@ for t = 1: tx
     end
     if mode_plot ==2
         if mod(t,10) == 0
-        plot(x_p,pressure(x, 10));
+        plot(x_p,pressure(x, y_half));
         grid on;
         drawnow
         end
     end
     if mode_plot == 3
         if t == 5000
+%         if mod(t,50) == 0
             t_x = 1 : t;
             time = t_x * dt;
 %            plot(time,p_keisoku_taihi(t_x));
@@ -527,6 +574,72 @@ for t = 1: tx
             %ylabel('|P1(f)|')
             break;
         end
+    end
+    if mode_plot == 4
+        p_kei(t) = p1(1, y_half);
+        p_kei(t)
+        if time == cal_time - 0.001
+            t_x = 1 : tx;
+            plot(t_x * dt , p_kei(t_x))
+            disp("計算が終了しました")
+        end
+    end
+    if mode_plot == 5
+        if t == tx
+            t_x = 0 : 10: t;
+            time = t_x * dt;
+            p_keisoku_spec = abs(p_keisoku_taihi).^2;
+            plot(time,p_keisoku_spec(t_x));
+            Fs = 1000;            % Sampling frequency                    
+            T = 1/Fs;             % Sampling period       
+            L = 1500;             % Length of signal
+            ft = (0:L-1)*T;        % Time vector
+            Y = fft(p_keisoku_spec,L);
+            disp(size(Y))
+            plot(1:L,Y)
+            break;
+        end
+    end
+    if mode_plot == 6
+        if mod(t,10) == 0
+            figure(f1);
+            
+            t_x = 1 : 1: t/10;
+            time = t_x * dt * 10;
+%            freq2 = 2000 +  7000 * (time / cal_time);
+           p_keisoku_spec = (abs(p_keisoku_taihi)).^2;
+           plot(time, p_keisoku_spec(t_x));
+%           plot(time, real(p_keisoku_taihi(t_x)),time , image(p_keisoku_taihi(t_x)),time , p_keisoku_spec(t_x));
+%          figure(f2)
+%          plot(time, real(p_keisoku_taihi(t_x)));
+%          hold on;
+%          plot(time, imag(p_keisoku_taihi(t_x)))
+%          hold on;
+%          plot(time, abs(p_keisoku_taihi(t_x)))
+%          hold on;
+%            legend("real", "image", "abs");
+           grid on;
+           drawnow;
+            
+            
+        end
+%            if mod(t,100) == 0
+%                figure(f3);
+%                imagesc(y_p,x_p,pressure(x,y));
+%$                colorbar
+%                title(['pressure when frequency =',num2str(freq),'Hz&&', num2str(time), '(s) have passed'])
+%                xlabel('y(mm)')
+%                ylabel('x(mm)')
+%                grid on;
+%                drawnow
+%            end
+            if t == (tx - (tx%10))
+                disp(size(time));
+                disp(size(p_keisoku_spec));
+                %csv_array = [time; p_keisoku_spec];
+                csvwrite('myFile.csv',p_keisoku_spec)
+                break;
+            end
     end
 end
 end
@@ -590,17 +703,23 @@ if mode == 2
     Y = fft(y);
     plot(Y)
     crn
+    ramuda
+    dx
+    dt
 end
 if mode == 3
-  for freq = 100 : 100 : 1000000
+  for freq = 100 : 100 : 10000000
     theta = pi:0.01:3*pi;
+    dhi = 0.05;
+    enu = 4;
+    b_haba = dhi / enu;
     %dhi = (sin(5*3.14*b*freq*sin(theta)/340))/(5 * sin(3.14*b*freq*sin(theta))/340)
-    dhi1 = (sin(5*3.14*b_haba*freq*sin(theta)/340)) ./(5 * sin(3.14*b_haba*freq*sin(theta)/340)) ;
-    if mod(freq,5000) == 0
+    dhi1 = (sin(enu*3.14*b_haba*freq*sin(theta)/340)) ./(enu * sin(3.14*b_haba*freq*sin(theta)/340)) ;
+    if mod(freq,1000) == 0
         polarplot(theta,abs(dhi1));
         title(['Directivity when frequency is',num2str(freq),'Hz'])
         drawnow
-        pause(1);
+        pause(0.7);
     end
   end
 end

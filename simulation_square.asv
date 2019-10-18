@@ -1,0 +1,4 @@
+i = 0 : 1000;
+f = i + 2;
+csvwrite('D:\MatrixA.csv', i);
+csvwrite('D:Å_MatrixA.csv', f);
