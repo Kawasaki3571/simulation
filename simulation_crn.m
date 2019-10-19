@@ -3,17 +3,18 @@ boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 1;
+hekomi = 0;
 sweep = 1;
 SC = 4 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
 
 f1 = figure;
+% f2 = figure;
 
 c = 340; %音速
 c0 = 340;
 % rou0 = 1.293; %密度（kg/m^3
 rou0 = 1000;
-freq = 5000; %周波数
+freq = 4000; %周波数
 ramuda = c / freq;
 dx = ramuda/25;
 dt = dx / (5 * c);
@@ -496,7 +497,8 @@ for t = 1: tx
         end
     end
     if mod(t,10)==0
-        p_keisoku_taihi(t/10) = p1(6, y_half);
+%         計測点
+        p_keisoku_taihi(t/10) = p1(5, y_half);
     end
     
     disp(t);
@@ -601,7 +603,7 @@ for t = 1: tx
         end
     end
     if mode_plot == 6
-        if mod(t,10) == 0
+        if mod(t,500) == 0
             figure(f1);
             
             t_x = 1 : 1: t/10;
@@ -609,7 +611,7 @@ for t = 1: tx
 %            freq2 = 2000 +  7000 * (time / cal_time);
            p_keisoku_spec = (abs(p_keisoku_taihi)).^2;
            plot(time, p_keisoku_spec(t_x));
-%           plot(time, real(p_keisoku_taihi(t_x)),time , image(p_keisoku_taihi(t_x)),time , p_keisoku_spec(t_x));
+
 %          figure(f2)
 %          plot(time, real(p_keisoku_taihi(t_x)));
 %          hold on;
@@ -620,8 +622,6 @@ for t = 1: tx
 %            legend("real", "image", "abs");
            grid on;
            drawnow;
-            
-            
         end
 %            if mod(t,100) == 0
 %                figure(f3);
@@ -636,8 +636,11 @@ for t = 1: tx
             if t == tx - rem(tx,10)
                 disp(size(time));
                 disp(size(p_keisoku_spec));
+                disp("終了")
                 %csv_array = [time; p_keisoku_spec];
-                csvwrite('myFile.csv',p_keisoku_spec)
+                p_keisoku_spec_col = p_keisoku_spec.';
+                csvwrite('myFileHekomiY.csv',p_keisoku_spec);
+                csvwrite('myFileHekomi.csv',p_keisoku_spec_col);
                 break;
             end
     end
