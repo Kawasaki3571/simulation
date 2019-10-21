@@ -12,12 +12,12 @@ x = 0 : 0.0001 : 0.1;
 xn = 2 / 0.001 + 1;
 dt = 0.0001;
 t = 0 : dt : cal_time;
-data_size = 500;
+data_size = 17800;
 
 % i = 1 : 17888;
 i = 1 : data_size;
 % M = csvread('hekoari06004000col.csv');
-M = csvread('test.csv');
+M = csvread('hekoari06004000colwi.csv');
 diff = M(i,1);
 % disp(diff)
 
@@ -39,7 +39,7 @@ spec_s = {};
 
 
 % plot(freq,exp(-1*j*2*pi*freq))
-for f = 1 : data_size
+for f = 1 : data_size/2
 %     for n = 1 : xn
 %         spec_s(n,f) = spec(f) .* exp(-1*j*x(n).*freq(f));
 %         fun = @(x) spec(f) .* exp(-1*j*x.*freq(f));
@@ -58,12 +58,12 @@ disp(size(diff))
 
 
 fen = @(x) 0 ;
-for f = 1 : data_size
+for f = 1 : data_size/2
 %     fen = @(x) fen(x) + df * spec_s{f}(x);
-    fen = @(x) fen(x) + df * spec_s{f}(x);
+    fen = @(x) fen(x) + 2*df * spec_s{f}(x);
 %       fen = @(x) df * cumtrapz(spec_s{f}(x));
     f
-    if f == data_size
+    if f == data_size/2
 %         x = 0 : 0.001 : 2;
 %         plot(x, fen(x*4*pi/c))
         break;
