@@ -1,7 +1,7 @@
 range = 0;
-boundary = 1;
+boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 0;
 sweep = 1;
@@ -496,9 +496,9 @@ for t = 1: tx
             pressure(i,j) = (real(p1(i,j)) .^2).^0.5 ;
         end
     end
-    if mod(t,10)==0
+    if mod(t,5)==0
 %         計測点
-        p_keisoku_taihi(t/10) = p1(5, y_half);
+        p_keisoku_taihi(t/5) = p1(5, y_half);
     end
     
     disp(t);
@@ -639,8 +639,8 @@ for t = 1: tx
                 disp("終了")
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
-                csvwrite('myFileHekomiY.csv',p_keisoku_spec);
-                csvwrite('myFileHekomi.csv',p_keisoku_spec_col);
+                csvwrite('myFileHekonashiRow2m.csv',p_keisoku_spec);
+                csvwrite('myFileHekonashicol2m.csv',p_keisoku_spec_col);
                 break;
             end
     end
