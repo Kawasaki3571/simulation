@@ -24,8 +24,10 @@ if range == 0
     xrange = 2.01;
 %    xrange = 0.52;
     yrange = 0.02;
-    yd = 0.01 - 2*dx;
-    yd2 = 0.01 + 2*dx;
+%     yd = 0.01 - 2*dx;
+%     yd2 = 0.01 + 2*dx;
+    yd = dx;
+    yd2 = 0.02 - dx;
     xd = 3 * dx;
     xd2 = 4 * dx;
 end
@@ -501,8 +503,8 @@ for t = 1: tx
         p_keisoku_taihi(t/5) = p1(5, y_half);
     end
     
-%     disp(t);
-%     time
+    disp(t);
+    time
     
     y = 1 : jx + 1 ;
     x = 1 : ix + 1;
@@ -639,8 +641,8 @@ for t = 1: tx
                 disp("èIóπ")
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
-                csvwrite('hekoari06004000.csv',p_keisoku_spec);
-                csvwrite('hekoari06004000col.csv',p_keisoku_spec_col);
+                csvwrite('hekoari06004000wi.csv',p_keisoku_spec);
+                csvwrite('hekoari06004000colwi.csv',p_keisoku_spec_col);
                 break;
             end
     end
