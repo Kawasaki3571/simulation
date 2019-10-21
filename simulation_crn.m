@@ -1,9 +1,9 @@
 range = 0;
-boundary = 0;
+boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 0;
+hekomi = 1;
 sweep = 1;
 SC = 4 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
 
@@ -81,7 +81,7 @@ t2 = 0;
 speed = 0;
 disp_hensu = 0;
 absp0 = - 0.5; % 吸収係数
-b_po = 0.3 ; %凹み位置
+b_po = 0.6 ; %凹み位置
 h = 0.005;%凹み幅
 w = 0.015;%凹みふかさ
 gensui0 = (freq*absp0) / (8.686*c0); % 減衰係数
@@ -143,7 +143,7 @@ cp1 = 1;
 cp2 = rou0*c_m0^2*dt/dx;
 %cp2 = crn;
 cv1 = 1;
-cv2 = dt / (rou0 * dx)
+cv2 = dt / (rou0 * dx);
 a = 2*(crn - 1)/(crn + 1);
 b = ((crn - 1)/(crn + 1))*2;%要検討要検討
 c = 2 * (crn - 1) / (crn + 1) * dd;
@@ -501,8 +501,8 @@ for t = 1: tx
         p_keisoku_taihi(t/5) = p1(5, y_half);
     end
     
-    disp(t);
-    time
+%     disp(t);
+%     time
     
     y = 1 : jx + 1 ;
     x = 1 : ix + 1;
@@ -639,8 +639,8 @@ for t = 1: tx
                 disp("終了")
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
-                csvwrite('myFileHekonashiRow2m.csv',p_keisoku_spec);
-                csvwrite('myFileHekonashicol2m.csv',p_keisoku_spec_col);
+                csvwrite('hekoari06004000.csv',p_keisoku_spec);
+                csvwrite('hekoari06004000col.csv',p_keisoku_spec_col);
                 break;
             end
     end

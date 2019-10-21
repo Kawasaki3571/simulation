@@ -12,22 +12,25 @@ x = 0 : 0.0001 : 0.1;
 xn = 2 / 0.001 + 1;
 dt = 0.0001;
 t = 0 : dt : cal_time;
+data_size = 17900;
 
-
-i = 1 : 17888;
-M = csvread('二万点データ.csv',2,1);
-diff = M(i,4);
+% i = 1 : 17888;
+i = 1 : data_size;
+M = csvread('hekonashi1500col.csv');
+% M = csvread('test.csv');
+diff = M(i,1);
 % disp(diff)
 
 % Q = dt * cumtrapz(pin);
-freq = 2000 + 7000 * i /17888;
+% freq = 2000 + 7000 * i /17888;
+freq = 2000 + 7000 * i /data_size;
 
 disp(freq(1))
 disp("あああ")
 disp(size(freq))
 % disp(size(spec))
 disp(size(x))
-df = 0.5;
+df = 7000/data_size;
 w = 2 * pi * freq;
 spec = p0^2 *(1 + r^2 + 2 * r * cos(2*pi*(2*xL*freq/c)));
 
@@ -36,15 +39,15 @@ spec_s = {};
 
 
 % plot(freq,exp(-1*j*2*pi*freq))
-for f = 1 : 17888
+for f = 1 : data_size/2
 %     for n = 1 : xn
 %         spec_s(n,f) = spec(f) .* exp(-1*j*x(n).*freq(f));
 %         fun = @(x) spec(f) .* exp(-1*j*x.*freq(f));
 %         spec_s{f} = fun;
 %     end
 %     diff(f) = diff(f).*exp(-1*j*x.*freq(f));
-    fun = @(x) diff(f) .* exp(-1*j*x.*freq(f));
-    spec_s{f} = fun;
+    fun = @(x) diff(2*f) .* exp(-1*j*x.*freq(2*f));
+    spec_s{2*f} = fun;
 end
 disp(size(freq))
 
@@ -55,23 +58,23 @@ disp(size(diff))
 
 
 fen = @(x) 0 ;
-for f = 1 : 17888
+for f = 1 : data_size/2
 %     fen = @(x) fen(x) + df * spec_s{f}(x);
-    fen = @(x) fen(x) + df * spec_s{f}(x);
+    fen = @(x) fen(x) + 2*df * spec_s{2*f}(x);
 %       fen = @(x) df * cumtrapz(spec_s{f}(x));
     f
-    if f == 17800
+    if f == data_size/2
 %         x = 0 : 0.001 : 2;
 %         plot(x, fen(x*4*pi/c))
         break;
     end
 end
-% fen(10)
-        x = 0 : 0.001 : 2;
-        plot(x, fen(x*4*pi/c))
+
+x = 0 : 0.001 : 2;
+plot(x, fen(x*4*pi/c))
 
 % plot(x, fin)
-x = 0 :0.001: 1;
+
 % plot(x,fin(x))
 % fin(10)
 % plot(x, fin(x))
