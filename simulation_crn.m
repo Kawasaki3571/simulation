@@ -1,5 +1,5 @@
 range = 0;
-boundary = 1;
+boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
@@ -7,6 +7,8 @@ hekomi = 1;
 sweep = 1;
 SC = 4 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
 
+digits(10)
+format long
 f1 = figure;
 % f2 = figure;
 
@@ -83,9 +85,9 @@ t2 = 0;
 speed = 0;
 disp_hensu = 0;
 absp0 = - 0.5; % 吸収係数
-b_po = 0.6 ; %凹み位置
+b_po = 0.3 ; %凹み位置
 h = 0.005;%凹み幅
-w = 0.015;%凹みふかさ
+w = 0.01;%凹みふかさ
 gensui0 = (freq*absp0) / (8.686*c0); % 減衰係数
 ix = round(xrange / dx); %x空間感覚の数
 jx = round(yrange / dx); %y空間感覚の数
@@ -625,6 +627,12 @@ for t = 1: tx
            grid on;
            drawnow;
         end
+%         if t == 5000
+%             p_keisoku_spec_col = p_keisoku_spec.';
+% %             csvwrite('hekoari06004000colwimini.csv',p_keisoku_spec_col);
+%              dlmwrite('hekonashi06004000colwimini.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
+%             break;
+%         end
 %            if mod(t,100) == 0
 %                figure(f3);
 %                imagesc(y_p,x_p,pressure(x,y));
@@ -641,8 +649,9 @@ for t = 1: tx
                 disp("終了")
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
-                csvwrite('hekoari06004000wi.csv',p_keisoku_spec);
-                csvwrite('hekoari06004000colwi.csv',p_keisoku_spec_col);
+%                 csvwrite('hekoari06004000wi.csv',p_keisoku_spec);
+%                 csvwrite('hekoari06004000colwi.csv',p_keisoku_spec_col);
+                dlmwrite('hekoari03004000colnohan.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
