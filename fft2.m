@@ -17,7 +17,7 @@ data_size = 17800;
 % i = 1 : 17888;
 i = 1 : data_size;
 % M = csvread('hekoari06004000col.csv');
-M = csvread('hekoari06004000colwi.csv');
+M = csvread('test.csv');
 diff = M(i,1);
 % disp(diff)
 
@@ -46,7 +46,7 @@ for f = 1 : data_size/2
 %         spec_s{f} = fun;
 %     end
 %     diff(f) = diff(f).*exp(-1*j*x.*freq(f));
-    fun = @(x) diff(f) .* exp(-1*j*x.*freq(f));
+    fun = @(x) diff(2*f) .* exp(-1*j*x.*freq(2*f));
     spec_s{f} = fun;
 end
 disp(size(freq))
@@ -60,7 +60,7 @@ disp(size(diff))
 fen = @(x) 0 ;
 for f = 1 : data_size/2
 %     fen = @(x) fen(x) + df * spec_s{f}(x);
-    fen = @(x) fen(x) + 2*df * spec_s{f}(x);
+    fen = @(x) fen(x) + df * spec_s{f}(x);
 %       fen = @(x) df * cumtrapz(spec_s{f}(x));
     f
     if f == data_size/2
@@ -71,6 +71,9 @@ for f = 1 : data_size/2
 end
 
 x = 0 : 0.001 : 2;
+fon = fft(diff);
+% i = 1 : 10000;
+% plot(i,fon(i));
 plot(x, fen(x*4*pi/c))
 
 % plot(x, fin)
