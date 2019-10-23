@@ -16,7 +16,7 @@ c0 = 340;
 rou0 = 1.293;
 freq = 2000; %Žü”g”
 ramuda = c / freq;
-dx = ramuda/40;
+dx = ramuda/25;
 dt = dx / (5 * c);
 % ƒN[”‚©‚çðŒ‚ð—§‚Ä‚é
 cal_time = 0.18;
@@ -86,7 +86,8 @@ absp0 = - 0.5; % ‹zŽûŒW”
 b_po = 0.3 ; %‰š‚ÝˆÊ’u
 h = 0.005;%‰š‚Ý•
 w = 0.01;%‰š‚Ý‚Ó‚©‚³
-gensui0 = (freq*absp0) / (8.686*c0); % Œ¸ŠŒW”
+
+
 ix = round(xrange / dx); %x‹óŠÔŠ´Šo‚Ì”
 jx = round(yrange / dx); %y‹óŠÔŠ´Šo‚Ì”
 tx = fix(cal_time / dt ); %ŽžŠÔŠ´Šo‚Ì”
@@ -136,6 +137,9 @@ p_keisoku_taihi = zeros(1,tx);
 crn =(c0 * dt)/dx ; %ƒN[ƒ‰ƒ“”
 dd = 199/200 ;%higdons absorption boundary
 pai = 3.1415 ;
+
+% •ÒW“_«
+gensui0 = (freq*absp0) / (8.686*c0); % Œ¸ŠŒW”
 hasu_o0 = 2*pai*freq/c0 ;%ŽÀÛ‚Ì”g”
 hasu0 = sqrt(hasu_o0*hasu_o0 - gensui0^2);%‘¹Ž¸‚ ‚éê‡‚Ì”g”
 c_m0 = 2*pai*freq/hasu0;%‘¹Ž¸‚Ì‚ ‚éê‡‚Ì‰¹‘¬
@@ -146,6 +150,8 @@ cp2 = rou0*c_m0^2*dt/dx;
 %cp2 = crn;
 cv1 = 1;
 cv2 = dt / (rou0 * dx);
+% •ÒW“_ª
+
 a = 2*(crn - 1)/(crn + 1);
 b = ((crn - 1)/(crn + 1))*2;%—vŒŸ“¢—vŒŸ“¢
 c = 2 * (crn - 1) / (crn + 1) * dd;
@@ -155,6 +161,8 @@ a1 = 1 / cos(0);
 a2 = 1 / cos(0);
 d1 = 0.005;
 d2 = 0.005;
+
+% •ÒW“_«
 ca0 = (c_m0 * dt - dx) / ((c_m0 * dt + dx));
 ca1 = (dx * 2) / (c_m0 * dt + dx);
 ca2 = (dx * c_m0 * dt * c_m0 * dt) / (dx * dx * 2 * (c_m0 * dt + dx));
@@ -165,6 +173,8 @@ b = cah1 * cah2;
 c = cah1 * (1 - d2) + cah2 * (1 - d1);
 d = ((1 - d1) + (1 - d2));
 e = ((1 - d1) * (1 - d2));
+% •ÒW“_ª
+
 y_half = round(jx / 2);
 p_kei = zeros(1, tx);
 % y_half_g = round(y_half / dx);
@@ -276,6 +286,30 @@ for t = 1: tx
        disp("ƒN[ƒ‰ƒ“”‚ª•s“KØ‚Å‚·B");
        break;
    end
+   
+    gensui0 = (freq*absp0) / (8.686*c0); % Œ¸ŠŒW”
+    hasu_o0 = 2*pai*freq/c0 ;%ŽÀÛ‚Ì”g”
+    hasu0 = sqrt(hasu_o0*hasu_o0 - gensui0^2);%‘¹Ž¸‚ ‚éê‡‚Ì”g”
+    c_m0 = 2*pai*freq/hasu0;%‘¹Ž¸‚Ì‚ ‚éê‡‚Ì‰¹‘¬
+    alpha0 = 2*hasu_o0*rou0*c_m0/hasu0;%‹zŽû€
+    kap0 = c_m0^2*rou0;
+    cp1 = 1;
+    cp2 = rou0*c_m0^2*dt/dx;
+%     cv1 = 1;
+%     cv2 = dt / (rou0 * dx);
+    cv1 = (2*rou0-alpha0*dt)/(2*rou0+alpha0*dt);
+    cv2 = (2*dt)/((2*rou0+alpha0*dt)*dx);
+    ca0 = (c_m0 * dt - dx) / ((c_m0 * dt + dx));
+    ca1 = (dx * 2) / (c_m0 * dt + dx);
+    ca2 = (dx * c_m0 * dt * c_m0 * dt) / (dx * dx * 2 * (c_m0 * dt + dx));
+    cah1 = (a1 * c_m0 * dt - dx) / (a1 * c_m0 * dt + dx);
+    cah2 = (a2 * c_m0 * dt - dx) / (a2 * c_m0 * dt + dx);
+    a = cah1 + cah2;
+    b = cah1 * cah2;
+    c = cah1 * (1 - d2) + cah2 * (1 - d1);
+    d = ((1 - d1) + (1 - d2));
+    e = ((1 - d1) * (1 - d2));
+   
     for i = 2:ix
         for j = 2:jx
             if range ~= 2
@@ -526,7 +560,7 @@ for t = 1: tx
         end
     end
     if mode_plot == 1
-        if t > 1000
+        if t > 2000
             if real(p1(4,y_half)) < 0.1 && real(p1(4,y_half)) > -0.1
             plot(x_p,p1(x, y_half));
 %              min_v = min(p1(x, y_half))
