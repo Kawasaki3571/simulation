@@ -1,7 +1,7 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 1; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 0;
 sweep = 0;
@@ -18,7 +18,8 @@ freq = 2000; %周波数
 ramuda = c / freq;
 dx = ramuda/25;
 dt = dx / (5 * c);
-% クー数から条件を立てる
+% クー数から条件を立てる]
+
 cal_time = 0.18;
 if range == 0
     xrange = 2.01;
@@ -287,6 +288,9 @@ for t = 1: tx
        break;
    end
    
+	ramuda_2 = c0 / freq;
+    dx_2 = ramuda/25;
+    dt_2 = dx_2 / (5 * c0);
     gensui0 = (freq*absp0) / (8.686*c0); % 減衰係数
     hasu_o0 = 2*pai*freq/c0 ;%実際の波数
     hasu0 = sqrt(hasu_o0*hasu_o0 - gensui0^2);%損失ある場合の波数
@@ -294,21 +298,22 @@ for t = 1: tx
     alpha0 = 2*hasu_o0*rou0*c_m0/hasu0;%吸収項
     kap0 = c_m0^2*rou0;
     cp1 = 1;
-    cp2 = rou0*c_m0^2*dt/dx;
+    cp2 = rou0*c_m0^2*dt_2/dx_2;
 %     cv1 = 1;
 %     cv2 = dt / (rou0 * dx);
-    cv1 = (2*rou0-alpha0*dt)/(2*rou0+alpha0*dt);
-    cv2 = (2*dt)/((2*rou0+alpha0*dt)*dx);
-    ca0 = (c_m0 * dt - dx) / ((c_m0 * dt + dx));
-    ca1 = (dx * 2) / (c_m0 * dt + dx);
-    ca2 = (dx * c_m0 * dt * c_m0 * dt) / (dx * dx * 2 * (c_m0 * dt + dx));
-    cah1 = (a1 * c_m0 * dt - dx) / (a1 * c_m0 * dt + dx);
-    cah2 = (a2 * c_m0 * dt - dx) / (a2 * c_m0 * dt + dx);
+    cv1 = (2*rou0-alpha0*dt_2)/(2*rou0+alpha0*dt_2);
+    cv2 = (2*dt_2)/((2*rou0+alpha0*dt_2)*dx_2);
+    ca0 = (c_m0 * dt_2 - dx_2) / ((c_m0 * dt_2 + dx_2));
+    ca1 = (dx_2 * 2) / (c_m0 * dt_2 + dx_2);
+    ca2 = (dx_2 * c_m0 * dt_2 * c_m0 * dt_2) / (dx_2 * dx_2 * 2 * (c_m0 * dt_2 + dx_2));
+    cah1 = (a1 * c_m0 * dt_2 - dx_2) / (a1 * c_m0 * dt_2 + dx_2);
+    cah2 = (a2 * c_m0 * dt_2 - dx_2) / (a2 * c_m0 * dt_2 + dx_2);
     a = cah1 + cah2;
     b = cah1 * cah2;
     c = cah1 * (1 - d2) + cah2 * (1 - d1);
     d = ((1 - d1) + (1 - d2));
     e = ((1 - d1) * (1 - d2));
+
    
     for i = 2:ix
         for j = 2:jx
