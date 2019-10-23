@@ -1,3 +1,4 @@
+for kurikaeshi = 0 : 15
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
@@ -13,10 +14,11 @@ f1 = figure;
 c = 340; %音速
 c0 = 340;
 % rou0 = 1.293; %密度（kg/m^3
-rou0 = 1.293;
-freq = 2000; %周波数
-ramuda = c / freq;
-dx = ramuda/40;
+rou0 = 1000;
+freq_super = 1500; %周波数
+ramuda = c / freq_super;
+couranvalue = kurikaeshi + 20;
+dx = ramuda/couranvalue;
 dt = dx / (5 * c);
 % クー数から条件を立てる
 cal_time = 0.18;
@@ -207,7 +209,7 @@ if range ~= 2
         error("rangeおかしい");
     end
 end
-w = 2 * pai * freq ;
+w = 2 * pai * freq_super ;
     switch SC
         case 0
             for tc = 1 : tx+100 
@@ -250,7 +252,8 @@ w = 2 * pai * freq ;
                         %freq = 2000 + 7000*(time/cal_time);
                         freq = 2000 + 7000*(time/cal_time);
                     else
-                        freq = 2000;
+%                         freq_super = 4000;
+                        freq = freq_super;
                     end
 %                 freq = 5000;
                 w = 2 * pai * freq ;
@@ -271,6 +274,8 @@ for t = 1: tx
    time = t * dt;
    if sweep == 1
        freq = 2000 + 7000*(time/cal_time);
+   else
+       freq = freq_super;
    end
    if crn >= 1
        disp("クーラン数が不適切です。");
@@ -505,8 +510,8 @@ for t = 1: tx
         p_keisoku_taihi(t/5) = p1(5, y_half);
     end
     
-    disp(t);
-    time
+%     disp(t);
+%     time
     
     y = 1 : jx + 1 ;
     x = 1 : ix + 1;
@@ -527,7 +532,7 @@ for t = 1: tx
     end
     if mode_plot == 1
         if t > 1000
-            if real(p1(4,y_half)) < 0.1 && real(p1(4,y_half)) > -0.1
+            if real(p1(1,y_half)) < 0.1 && real(p1(1,y_half)) > -0.1
             plot(x_p,p1(x, y_half));
 %              min_v = min(p1(x, y_half))
             min_v = 0;
@@ -551,7 +556,8 @@ for t = 1: tx
             max_x
             hacho
             min_v
-            v_c = hacho * freq
+            v_c = hacho * freq_super
+            vec(kurikaeshi+1) = v_c;
             break;
         end
     end
@@ -753,3 +759,6 @@ if mode == 4
     p = exp(j *(hasu * x_p - w * t_time));
     plot(x_p,p)
 end
+    disp("次")
+end
+vec
