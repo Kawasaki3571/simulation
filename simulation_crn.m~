@@ -288,7 +288,6 @@ for t = 1: tx
             else
                 if t <= tx
                     if i >= id && i <= id2
-                        s = 7;
                         if j >= jd_a && j <= jd_a2
                             p1(i,j) = pin(t);
                             %p2(i,j) = pin(t);
