@@ -12,7 +12,8 @@ x = 0 : 0.0001 : 0.1;
 xn = 2 / 0.001 + 1;
 dt = 0.0001;
 t = 0 : dt : cal_time;
-data_size = 17800;
+% data_size = 17800;
+data_size = 23900;
 
 % i = 1 : 17888;
 i = 1 : data_size;
@@ -39,14 +40,14 @@ spec_s = {};
 
 
 % plot(freq,exp(-1*j*2*pi*freq))
-for f = 1 : data_size/2
+for f = 1 : data_size/4
 %     for n = 1 : xn
 %         spec_s(n,f) = spec(f) .* exp(-1*j*x(n).*freq(f));
 %         fun = @(x) spec(f) .* exp(-1*j*x.*freq(f));
 %         spec_s{f} = fun;
 %     end
 %     diff(f) = diff(f).*exp(-1*j*x.*freq(f));
-    fun = @(x) diff(2*f) .* exp(-1*j*x.*freq(2*f));
+    fun = @(x) diff(f) .* exp(-1*j*x.*freq(f));
     spec_s{f} = fun;
 end
 disp(size(freq))
@@ -57,23 +58,26 @@ disp("B")
 disp(size(diff))
 
 
+
+
 fen = @(x) 0 ;
-for f = 1 : data_size/2
+for f = 1 : data_size/4
 %     fen = @(x) fen(x) + df * spec_s{f}(x);
     fen = @(x) fen(x) + df * spec_s{f}(x);
 %       fen = @(x) df * cumtrapz(spec_s{f}(x));
     f
-    if f == data_size/2
+    if f == data_size/4
 %         x = 0 : 0.001 : 2;
 %         plot(x, fen(x*4*pi/c))
         break;
     end
 end
 
-x = 0 : 0.001 : 2;
-fon = fft(diff);
-% i = 1 : 10000;
-% plot(i,fon(i));
+diff2 = diff(1:7000);
+
+x = 0 : 0.001 : 4;
+% fon = fft(diff2);
+% plot(i(1:7000),fon)
 plot(x, fen(x*4*pi/c))
 
 % plot(x, fin)

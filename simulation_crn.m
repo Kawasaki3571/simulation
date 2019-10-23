@@ -1,10 +1,10 @@
 range = 0;
-boundary = 0;
+boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 1; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 0;
-sweep = 0;
+hekomi = 1;
+sweep = 1;
 SC = 4 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
 
 f1 = figure;
@@ -14,11 +14,15 @@ c = 340; %音速
 c0 = 340;
 % rou0 = 1.293; %密度（kg/m^3
 rou0 = 1.293;
-freq = 2000; %周波数
-ramuda = c / freq;
-dx = ramuda/40;
-dt = dx / (5 * c);
-% クー数から条件を立てる
+% rou0 = 1000;
+freq = 4000; %周波数
+freq_abs = 2000;
+ramuda = c0 / freq;
+dx = ramuda/25;
+% dt = dx / (5 * c);
+dt = dx*0.15 / (c0);
+% クー数から条件を立てる]
+
 cal_time = 0.18;
 if range == 0
     xrange = 2.01;
@@ -85,8 +89,9 @@ disp_hensu = 0;
 absp0 = - 0.5; % 吸収係数
 b_po = 0.3 ; %凹み位置
 h = 0.005;%凹み幅
-w = 0.01;%凹みふかさ
-gensui0 = (freq*absp0) / (8.686*c0); % 減衰係数
+w = 0.006;%凹みふかさ
+
+
 ix = round(xrange / dx); %x空間感覚の数
 jx = round(yrange / dx); %y空間感覚の数
 tx = fix(cal_time / dt ); %時間感覚の数
@@ -136,6 +141,9 @@ p_keisoku_taihi = zeros(1,tx);
 crn =(c0 * dt)/dx ; %クーラン数
 dd = 199/200 ;%higdons absorption boundary
 pai = 3.1415 ;
+
+% 編集点↓
+gensui0 = (freq*absp0) / (8.686*c0); % 減衰係数
 hasu_o0 = 2*pai*freq/c0 ;%実際の波数
 hasu0 = sqrt(hasu_o0*hasu_o0 - gensui0^2);%損失ある場合の波数
 c_m0 = 2*pai*freq/hasu0;%損失のある場合の音速
@@ -146,6 +154,8 @@ cp2 = rou0*c_m0^2*dt/dx;
 %cp2 = crn;
 cv1 = 1;
 cv2 = dt / (rou0 * dx);
+% 編集点↑
+
 a = 2*(crn - 1)/(crn + 1);
 b = ((crn - 1)/(crn + 1))*2;%要検討要検討
 c = 2 * (crn - 1) / (crn + 1) * dd;
@@ -155,6 +165,8 @@ a1 = 1 / cos(0);
 a2 = 1 / cos(0);
 d1 = 0.005;
 d2 = 0.005;
+
+% 編集点↓
 ca0 = (c_m0 * dt - dx) / ((c_m0 * dt + dx));
 ca1 = (dx * 2) / (c_m0 * dt + dx);
 ca2 = (dx * c_m0 * dt * c_m0 * dt) / (dx * dx * 2 * (c_m0 * dt + dx));
@@ -165,6 +177,8 @@ b = cah1 * cah2;
 c = cah1 * (1 - d2) + cah2 * (1 - d1);
 d = ((1 - d1) + (1 - d2));
 e = ((1 - d1) * (1 - d2));
+% 編集点↑
+
 y_half = round(jx / 2);
 p_kei = zeros(1, tx);
 % y_half_g = round(y_half / dx);
@@ -250,17 +264,17 @@ w = 2 * pai * freq ;
                         %freq = 2000 + 7000*(time/cal_time);
                         freq = 2000 + 7000*(time/cal_time);
                     else
-                        freq = 2000;
+                        freq = freq_abs;
                     end
 %                 freq = 5000;
                 w = 2 * pai * freq ;
                 j = sqrt(-1);
                 if tc < pai / (w * dt)
 %                     pin(tc) = sin(w * time);
-                    pin(tc) = exp(j * w * time + j * pi/2);
+                    pin(tc) = exp(j * w * time - j * pi/2);
                 else
 %                     pin(tc) = sin(w * time);
-                    pin(tc) = exp(j * w * time + j * pi / 2);
+                    pin(tc) = exp(j * w * time - j * pi / 2);
 %                   pin(t) = 0;
                 end
             end
@@ -276,6 +290,34 @@ for t = 1: tx
        disp("クーラン数が不適切です。");
        break;
    end
+   
+	ramuda_2 = c0 / freq;
+    dx_2 = ramuda/25;
+    dt_2 = dx_2 / (5 * c0);
+    gensui0 = (freq*absp0) / (8.686*c0); % 減衰係数
+    hasu_o0 = 2*pai*freq/c0 ;%実際の波数
+    hasu0 = sqrt(hasu_o0*hasu_o0 - gensui0^2);%損失ある場合の波数
+    c_m0 = 2*pai*freq/hasu0;%損失のある場合の音速
+    alpha0 = 2*hasu_o0*rou0*c_m0/hasu0;%吸収項
+    kap0 = c_m0^2*rou0;
+    cp1 = 1;
+    cp2 = rou0*c_m0^2*dt_2/dx_2;
+%     cv1 = 1;
+%     cv2 = dt / (rou0 * dx);
+    cv1 = (2*rou0-alpha0*dt_2)/(2*rou0+alpha0*dt_2);
+    cv2 = (2*dt_2)/((2*rou0+alpha0*dt_2)*dx_2);
+    ca0 = (c_m0 * dt_2 - dx_2) / ((c_m0 * dt_2 + dx_2));
+    ca1 = (dx_2 * 2) / (c_m0 * dt_2 + dx_2);
+    ca2 = (dx_2 * c_m0 * dt_2 * c_m0 * dt_2) / (dx_2 * dx_2 * 2 * (c_m0 * dt_2 + dx_2));
+    cah1 = (a1 * c_m0 * dt_2 - dx_2) / (a1 * c_m0 * dt_2 + dx_2);
+    cah2 = (a2 * c_m0 * dt_2 - dx_2) / (a2 * c_m0 * dt_2 + dx_2);
+    a = cah1 + cah2;
+    b = cah1 * cah2;
+    c = cah1 * (1 - d2) + cah2 * (1 - d1);
+    d = ((1 - d1) + (1 - d2));
+    e = ((1 - d1) * (1 - d2));
+
+   
     for i = 2:ix
         for j = 2:jx
             if range ~= 2
@@ -526,7 +568,7 @@ for t = 1: tx
         end
     end
     if mode_plot == 1
-        if t > 1000
+        if t > 2000
             if real(p1(4,y_half)) < 0.1 && real(p1(4,y_half)) > -0.1
             plot(x_p,p1(x, y_half));
 %              min_v = min(p1(x, y_half))
@@ -557,7 +599,8 @@ for t = 1: tx
     end
     if mode_plot ==2
         if mod(t,10) == 0
-        plot(x_p,pressure(x, y_half));
+%         plot(x_p,pressure(x, y_half));
+        plot(x_p,p1(x, y_half));
         grid on;
         drawnow
         end
@@ -658,9 +701,15 @@ for t = 1: tx
                 p_keisoku_spec_col = p_keisoku_spec.';
 %                 csvwrite('hekoari06004000wi.csv',p_keisoku_spec);
 %                 csvwrite('hekoari06004000colwi.csv',p_keisoku_spec_col);
-                dlmwrite('hekoari03004000colnohan.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('v2hekoari03004000truehan.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
+    end
+    if mode_plot == 7
+        if time > 0.001
+            plot(x_p,p1(x, y_half));
+            break;
+        end
     end
 end
 end
