@@ -1,10 +1,10 @@
 range = 0;
-boundary = 0;
+boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 0;
-sweep = 0;
+hekomi = 1;
+sweep = 1;
 SC = 4 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
 
 f1 = figure;
@@ -14,10 +14,13 @@ c = 340; %音速
 c0 = 340;
 % rou0 = 1.293; %密度（kg/m^3
 rou0 = 1.293;
-freq = 2000; %周波数
-ramuda = c / freq;
+% rou0 = 1000;
+freq = 4000; %周波数
+freq_abs = 2000;
+ramuda = c0 / freq;
 dx = ramuda/25;
-dt = dx / (5 * c);
+% dt = dx / (5 * c);
+dt = dx*0.15 / (c0);
 % クー数から条件を立てる]
 
 cal_time = 0.18;
@@ -86,7 +89,7 @@ disp_hensu = 0;
 absp0 = - 0.5; % 吸収係数
 b_po = 0.3 ; %凹み位置
 h = 0.005;%凹み幅
-w = 0.01;%凹みふかさ
+w = 0.006;%凹みふかさ
 
 
 ix = round(xrange / dx); %x空間感覚の数
@@ -261,17 +264,17 @@ w = 2 * pai * freq ;
                         %freq = 2000 + 7000*(time/cal_time);
                         freq = 2000 + 7000*(time/cal_time);
                     else
-                        freq = 2000;
+                        freq = freq_abs;
                     end
 %                 freq = 5000;
                 w = 2 * pai * freq ;
                 j = sqrt(-1);
                 if tc < pai / (w * dt)
 %                     pin(tc) = sin(w * time);
-                    pin(tc) = exp(j * w * time + j * pi/2);
+                    pin(tc) = exp(j * w * time - j * pi/2);
                 else
 %                     pin(tc) = sin(w * time);
-                    pin(tc) = exp(j * w * time + j * pi / 2);
+                    pin(tc) = exp(j * w * time - j * pi / 2);
 %                   pin(t) = 0;
                 end
             end
@@ -596,7 +599,8 @@ for t = 1: tx
     end
     if mode_plot ==2
         if mod(t,10) == 0
-        plot(x_p,pressure(x, y_half));
+%         plot(x_p,pressure(x, y_half));
+        plot(x_p,p1(x, y_half));
         grid on;
         drawnow
         end
@@ -697,9 +701,15 @@ for t = 1: tx
                 p_keisoku_spec_col = p_keisoku_spec.';
 %                 csvwrite('hekoari06004000wi.csv',p_keisoku_spec);
 %                 csvwrite('hekoari06004000colwi.csv',p_keisoku_spec_col);
-                dlmwrite('hekoari03004000colnohan.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('v2hekoari03004000truehan.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
+    end
+    if mode_plot == 7
+        if time > 0.001
+            plot(x_p,p1(x, y_half));
+            break;
+        end
     end
 end
 end
