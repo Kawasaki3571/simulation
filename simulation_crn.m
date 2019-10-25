@@ -87,7 +87,7 @@ t2 = 0;
 speed = 0;
 disp_hensu = 0;
 absp0 = - 0.5; % ‹zûŒW”
-b_po = 0.3 ; %‰š‚İˆÊ’u
+b_po = 0.9 ; %‰š‚İˆÊ’u
 h = 0.005;%‰š‚İ•
 w = 0.006;%‰š‚İ‚Ó‚©‚³
 
@@ -701,7 +701,7 @@ for t = 1: tx
                 p_keisoku_spec_col = p_keisoku_spec.';
 %                 csvwrite('hekoari06004000wi.csv',p_keisoku_spec);
 %                 csvwrite('hekoari06004000colwi.csv',p_keisoku_spec_col);
-                dlmwrite('v2hekoari03004000truehan.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('v2hekoari09004000truehan.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
