@@ -11,5 +11,7 @@ data = M(i,1);
 i = 1 : data_size;
 time = i * 0.18 / data_size;
 freq = 2000 + i * 7000/data_size;
-plot(freq(500:data_size/4),data(500:data_size/4))
+% plot(freq(500:data_size/4),data(500:data_size/4))
+plot(freq(100:data_size/5),data(100:data_size/5));
+xlabel("freqency(Hz)")
 % plot(i,data)
