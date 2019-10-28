@@ -1,10 +1,10 @@
 range = 0;
-boundary = 1;
+boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 1; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 1;
-sweep = 1;
+hekomi = 0;
+sweep = 0;
 SC = 4 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
 
 f1 = figure;
@@ -16,11 +16,14 @@ c0 = 340;
 rou0 = 1.293;
 % rou0 = 1000;
 freq = 4000; %周波数
-freq_abs = 2000;
+freq_abs = 4000;
 ramuda = c0 / freq;
-dx = ramuda/25;
+dx_param = 0.013; %0.05-0.025 
+dx = ramuda*dx_param; % λの20-30分の一
 % dt = dx / (5 * c);
-dt = dx*0.15 / (c0);
+% dt = dx*0.15 / (c0);
+crn_param = 0.2;
+dt = dx*crn_param/ (c0);
 % クー数から条件を立てる]
 
 cal_time = 0.18;
@@ -657,51 +660,31 @@ for t = 1: tx
         end
     end
     if mode_plot == 6
-        if mod(t,500) == 0
+        if mod(t,100) == 0
             figure(f1);
             
             t_x = 1 : 1: t/10;
             time = t_x * dt * 10;
-%            freq2 = 2000 +  7000 * (time / cal_time);
            p_keisoku_spec = (abs(p_keisoku_taihi)).^2;
-           plot(time, p_keisoku_spec(t_x));
-
-%          figure(f2)
-%          plot(time, real(p_keisoku_taihi(t_x)));
-%          hold on;
-%          plot(time, imag(p_keisoku_taihi(t_x)))
-%          hold on;
-%          plot(time, abs(p_keisoku_taihi(t_x)))
-%          hold on;
-%            legend("real", "image", "abs");
+           plot(time, p_keisoku_spec(t_x)); 
            grid on;
            drawnow;
         end
-%         if t == 5000
-%             p_keisoku_spec_col = p_keisoku_spec.';
-% %             csvwrite('hekoari06004000colwimini.csv',p_keisoku_spec_col);
-%              dlmwrite('hekonashi06004000colwimini.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
-%             break;
-%         end
-%            if mod(t,100) == 0
-%                figure(f3);
-%                imagesc(y_p,x_p,pressure(x,y));
-%$                colorbar
-%                title(['pressure when frequency =',num2str(freq),'Hz&&', num2str(time), '(s) have passed'])
-%                xlabel('y(mm)')
-%                ylabel('x(mm)')
-%                grid on;
-%                drawnow
-%            end
-            if t == tx - rem(tx,10)
+        if time > 0.01
+            if mod(t,10) == 0
+                p_keisoku_spec(t/10)
+                time
+                break;
+            end
+        end
+%             if t == tx - rem(tx,10)
+            if t == tx + 1000000
                 disp(size(time));
                 disp(size(p_keisoku_spec));
                 disp("終了")
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
-%                 csvwrite('hekoari06004000wi.csv',p_keisoku_spec);
-%                 csvwrite('hekoari06004000colwi.csv',p_keisoku_spec_col);
-                dlmwrite('v2hekoari09004000truehan.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('v2hekoari03004000truehan.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
@@ -709,6 +692,19 @@ for t = 1: tx
         if time > 0.001
             plot(x_p,p1(x, y_half));
             break;
+        end
+    end
+    if mode_plot == 8
+        if abs(p_keisoku_taihi(300)) > 0
+            300 * dx
+            disp(300 * dx / time);
+            break;
+        end
+        if mod(t,5) == 0
+%         plot(x_p,pressure(x, y_half));
+            plot(x_p,p1(x, y_half));
+            grid on;
+            drawnow
         end
     end
 end
