@@ -18,7 +18,7 @@ rou0 = 1.293;
 freq = 4000; %Žü”g”
 freq_abs = 4000;
 ramuda = c0 / freq;
-dx_param = 0.013; %0.05-0.025 
+dx_param = 0.01; %0.05-0.025 
 dx = ramuda*dx_param; % ƒÉ‚Ì20-30•ª‚Ìˆê
 % dt = dx / (5 * c);
 % dt = dx*0.15 / (c0);
@@ -571,7 +571,7 @@ for t = 1: tx
         end
     end
     if mode_plot == 1
-        if t > 2000
+        if t > 1500
             if real(p1(4,y_half)) < 0.1 && real(p1(4,y_half)) > -0.1
             plot(x_p,p1(x, y_half));
 %              min_v = min(p1(x, y_half))
