@@ -1,10 +1,10 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 1; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 0;
-sweep = 0;
+hekomi = 1;
+sweep = 1;
 SC = 4 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
 
 f1 = figure;
@@ -18,7 +18,7 @@ rou0 = 1.293;
 freq = 4000; %周波数
 freq_abs = 4000;
 ramuda = c0 / freq;
-dx_param = 0.01; %0.05-0.025 
+dx_param = 0.015; %0.05-0.025 
 dx = ramuda*dx_param; % λの20-30分の一
 % dt = dx / (5 * c);
 % dt = dx*0.15 / (c0);
@@ -662,7 +662,6 @@ for t = 1: tx
     if mode_plot == 6
         if mod(t,100) == 0
             figure(f1);
-            
             t_x = 1 : 1: t/10;
             time = t_x * dt * 10;
            p_keisoku_spec = (abs(p_keisoku_taihi)).^2;
@@ -670,21 +669,21 @@ for t = 1: tx
            grid on;
            drawnow;
         end
-        if time > 0.01
-            if mod(t,10) == 0
-                p_keisoku_spec(t/10)
-                time
-                break;
-            end
-        end
+%        if time > 0.01
+%            if mod(t,10) == 0
+%                p_keisoku_spec(t/10)
+%                time
+%                break;
+%            end
+%        end
 %             if t == tx - rem(tx,10)
-            if t == tx + 1000000
+            if t == tx - rem(tx,10)
                 disp(size(time));
                 disp(size(p_keisoku_spec));
                 disp("終了")
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
-                dlmwrite('v2hekoari03004000truehan.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('v2hekoari03004000saishin.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
