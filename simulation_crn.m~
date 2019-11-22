@@ -1,10 +1,10 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 1; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 1;
-sweep = 0;
+sweep = 1;
 SC = 4 ;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
 
 f1 = figure;
@@ -18,7 +18,7 @@ rou0 = 1.293;
 freq = 4000; %周波数
 freq_abs = 4000;
 ramuda = c0 / freq;
-dx_param = 0.025; %0.05-0.025 
+dx_param = 0.005; %0.05-0.025 
 dx = ramuda*dx_param; % λの20-30分の一
 % dt = dx / (5 * c);
 % dt = dx*0.15 / (c0);
@@ -588,15 +588,8 @@ for t = 1: tx
                  difference_max(i) = abs(real(p1(i,y_half)) - max_v);
              end
              for i = 1 : ix + 1
-                 if difference_min(i) == min(difference_min)
-                     minor_i = i;
-                 end
-                 if difference_max(i) == min(difference_max)
-                     major_i = i;
-                 end
+                 if difference_
              end
-             min_x = minor_i * dx;
-             max_x = major_i * dx;
 %              for i = 1 : ix + 1
 %                  if real(p1(i,y_half)) == min_v
 %                      min_x = i * dx;
