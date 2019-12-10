@@ -8,7 +8,7 @@ sweep = 0;
 SC = 0 ;%—ãUŠÖ” ‚O‚È‚ç˜A‘±1‚È‚çƒKƒEƒVƒAƒ“2ƒnƒjƒ“ƒO3³Œ·”g””g4ƒXƒC[ƒv
 
 f1 = figure;
-% f2 = figure;
+% f2 = figure;SSS
 
 c = 340; %‰¹‘¬
 c0 = 340;
@@ -17,8 +17,10 @@ rou0 = 1.293;
 % rou0 = 1000;
 %freq = 4000; %Žü”g”
 %freq_abs = 4000;
-freq = 2000;
-freq_abs = 2000;
+freq_param = 0.145/0.17;
+freq_a = 2000;
+freq = 2000*freq_param;
+freq_abs = 2000*freq_param;
 ramuda = c0 / freq;
 dx_param = 0.002; %0.05-0.025 
 dx = ramuda*dx_param; % ƒÉ‚Ì20-30•ª‚Ìˆê
@@ -620,7 +622,7 @@ for t = 1: tx
                 max_x
                 hacho
                 min_v
-                v_c = hacho * freq
+                v_c = hacho * freq_a
                 break;
             end
         end
@@ -719,7 +721,7 @@ for t = 1: tx
         end
     end
     if mode_plot == 8
-        sokutei_point = 150;
+        sokutei_point = 300;
         if abs(p_keisoku_taihi(sokutei_point)) > 0
             sokutei_point * dx
             disp(sokutei_point * dx / time);
