@@ -580,7 +580,7 @@ for t = 1: tx
             drawnow
         end
         %if t > 3500
-        if time > 4.5e-04
+        if time > 
             if real(p1(1,y_half)) < 0.001 && real(p1(4,y_half)) > -0.001
             %plot(x,p1(x_p, y_half));
             plot(x_p(1:0.5/dx),p1(x(1:0.5/dx), y_half));
