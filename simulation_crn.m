@@ -1,11 +1,11 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 0;
-sweep = 4;
-SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
+hekomi = 1;
+sweep = 1;
+SC = 4;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
 
 f1 = figure;
 % f2 = figure;SSS
@@ -19,8 +19,10 @@ rou0 = 1.293;
 %freq_abs = 4000;
 freq_param = 0.129/0.17;
 freq_a = 2000;
-freq = 2000*freq_param;
-freq_abs = 2000*freq_param;
+freq_start = 1000*freq_param;
+freq_add = 4000*freq_param;
+freq = freq_a*freq_param;
+freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
 dx_param = 0.01; %0.05-0.025 
 dx = ramuda*dx_param; % λの20-30分の一
@@ -94,7 +96,7 @@ t2 = 0;
 speed = 0;
 disp_hensu = 0;
 absp0 = - 0.5; % 吸収係数
-b_po = 0.9 ; %凹み位置
+b_po = 0.6 ; %凹み位置
 h = 0.005;%凹み幅
 w = 0.006;%凹みふかさ
 
@@ -235,7 +237,8 @@ w = 2 * pai * freq ;
                 time = tc * dt;
                 tr = w * dt * tc;
                     if sweep == 1
-                        freq = 2000 + 7000*(time/cal_time);
+                        %freq = 2000 + 7000*(time/cal_time);
+                        freq = freq_start + freq_add*(time/cal_time);
                     end
 %                 freq = 5000;
                 w = 2 * pai * freq ;
@@ -710,7 +713,7 @@ for t = 1: tx
                 disp("終了")
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
-                dlmwrite('v2hekonashi09004000tsubame.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('kairyou0600heko.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
