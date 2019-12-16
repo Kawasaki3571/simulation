@@ -1,5 +1,5 @@
 range = 0;
-boundary = 1;
+boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
@@ -8,19 +8,17 @@ sweep = 1;
 SC = 4;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
 
 f1 = figure;
-% f2 = figure;SSS
+% f2 = figure;
 
 c = 340; %音速
 c0 = 340;
 % rou0 = 1.293; %密度（kg/m^3
 rou0 = 1.293;
 % rou0 = 1000;
-%freq = 4000; %周波数
-%freq_abs = 4000;
 freq_param = 0.129/0.17;
 freq_a = 2000;
 freq_start = 1000*freq_param;
-freq_add = 4000*freq_param;
+freq_add = 2000*freq_param;
 freq = freq_a*freq_param;
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
@@ -415,26 +413,26 @@ for t = 1: tx
             i = 1;
                 for j = 2 : jx
                     %p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
-                    p1(i + 1, j) = p3(i + 1, j);
-                    %p1(i,j) = 0;
+                    p1(i + 1, j) = p2(i + 1, j);
+                    p1(i,j) = 0;
                 end
             i = ix + 1;
                 for j = 2 : jx
                     %p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-                    p1(i - 1, j) = p3(i - 1, j);
-                    %p1(i,j) = 0;
+                    p1(i - 1, j) = p2(i - 1, j);
+                    p1(i,j) = 0;
                 end
             j = 1;
                 for i = 2 : ix
                     %p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
-                    p1(i ,j + 1) = p3(i, j + 1);
-                    %p1(i,j) = 0;
+                    p1(i ,j + 1) = p2(i, j + 1);
+                    p1(i,j) = 0;
                 end
             j = jx + 1;
                 for i = 2 : ix
                     %p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
-                    p1(i, j - 1) = p3(i,j - 1);
-                    %p1(i,j) = 0;
+                    p1(i, j - 1) = p2(i,j - 1);
+                    p1(i,j) = 0;
                 end
         case 2
             i = 1;
@@ -468,15 +466,15 @@ for t = 1: tx
         end
         i = b_x - 1;
         for j = 1 : w_x + 1
-            p1(i,j) = p3(i,j);
+            p1(i,j) = p2(i,j);
         end
         j = w_x + 1;
         for i = b_x - 1 : b_x + h_x + 1
-            p1(i,j) = p3(i,j);
+            p1(i,j) = p2(i,j);
         end
         i = b_x + h_x + 1;
         for j = 1 : w_x + 1
-            p1(i,j) = p3(i,j);
+            p1(i,j) = p2(i,j);
         end
     end
     
@@ -633,7 +631,8 @@ for t = 1: tx
     if mode_plot ==2
         if mod(t,10) == 0
 %         plot(x_p,pressure(x, y_half));
-        plot(x_p,p1(x, y_half));
+%         plot(x_p,p1(x, y_half));
+        plot(x_p(1:0.5/dx),p1(x(1:0.5/dx),y_half))
         grid on;
         drawnow
         end
@@ -713,7 +712,7 @@ for t = 1: tx
                 disp("終了")
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
-                dlmwrite('kairyouhanheko0300.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('kairyouheko03001to3.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
