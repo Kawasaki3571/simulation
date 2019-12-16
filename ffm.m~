@@ -15,29 +15,22 @@ data_start = 1000;
 data_end = 50000;
 % plot(freq(500:data_size/4),data(500:data_size/4))
 % plot(freq(data_start:data_end),data(data_start:data_end));
-
-
-% plot(dt:dt:cal_time/10,data(1:cal_time/(10*dt)));
+plot(dt:dt:cal_time/10,data(1:cal_time/(10*dt)));
 xlabel("Time(s)")
 % plot(i,data)
 % 
 
 
 
-% f2 = figure;
-% figure(f2)
+f2 = figure;
+figure(f2)
 
 Fs = 1 / dt;
 t_s  = dt : dt : cal_time;
 f = 0 : 1/cal_time : (Fs - 1)/cal_time;
 N = Fs * cal_time;
 
-fou = fft(data)/N;
-
-fou2 = interp(fou,5);
-disp(length(fou2))
-disp(length(f))
-plot(f(1:length(fou2)),20*log10(abs(fou2)));
+fou = fft(data)
 
 % M2 = csvread('kairyouhanheko0300.csv');
 % data2 = M2;
