@@ -26,19 +26,24 @@ xlabel("Time(s)")
 
 % f2 = figure;
 % figure(f2)
-
+n_fft = 2^12;
 Fs = 1 / dt;
 t_s  = dt : dt : cal_time;
 f = 0 : 1/cal_time : (Fs - 1)/cal_time;
+df = 1/cal_time;
 N = Fs * cal_time;
 
 fou = fft(data)/N;
+% fou = fft(cos(2*pi*1000*t_s))/N;
 
-fou2 = interp(fou,5);
-disp(length(fou2))
-disp(length(f))
-plot(f(1:length(fou2)),20*log10(abs(fou2)));
-
+% fou2 = interp(fou,5);
+% plot(f(1:length(fou2)),20*log10(abs(fou2)));
+start_f = round(1/df) + 1;
+end_f = round(40000/df);
+% end_f = 4095;
+disp(start_f);
+disp(end_f);
+plot(f(start_f:end_f),20*log10(abs(fou(start_f:end_f))));
 % M2 = csvread('kairyouhanheko0300.csv');
 % data2 = M2;
 % data_size2 = length(data2);
