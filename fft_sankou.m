@@ -23,6 +23,7 @@ dx = ramuda*dx_param; % λの20-30分の一
 % dt = dx*0.15 / (c0);
 crn_param = 0.2;
 dt = dx*crn_param/ (c0);
+dt = 5*dt;
 % クー数から条件を立てる]
 
 %% 設定
@@ -41,17 +42,19 @@ set(0, 'DefaultFigureColor', 'w');
 
 %% 各種パラメーター
 
-e = 0.1; % 入力電圧
+e = 1; % 入力電圧
 opol = 100; % トレンド近似の字数を決定
 
 m = 25;% 窓間隔
 d = 1; % 分割間隔
 
-f1 = 800; % スイープ開始周波数（Hz）
-f2 = 7800; % 終了周波数
+% f1 = 800; % スイープ開始周波数（Hz）
+% f2 = 7800; % 終了周波数
+f1 = 1000;
+f2 = 3000;
 
-st = 1300; % フーリエ変換の開始周波数（Hz）
-ed = 7300; % 終了周波数
+st = 1000; % フーリエ変換の開始周波数（Hz）
+ed = 3000; % 終了周波数
 
 csvrangemax = cal_time/(5*dt) - mod(cal_time/(5*dt), 100);
 
@@ -61,7 +64,7 @@ noload_data = csvread('kairyouhekonashi.csv'); % 2行目より下を読み込む
 load_data = load_data(1:csvrangemax);
 noload_data = noload_data(1:csvrangemax);
 
-st_wave = 104;  % スイープ波形の始まる時間　可変
+st_wave = 1;  % スイープ波形の始まる時間　可変
 c = 340; % 大気中での音速 (m/s)
 %% スイープ信号の表示
 
@@ -103,9 +106,9 @@ ed_1 = st_wave+m:d:st_wave+1650+m;
 for i = 1:1:length(st_1); % オーバーラップ法にて周波数特性を作成
     
 %     st_1(i)
-    i
-    st_2 = round(st_1(i)*10^-4/dt) % スイープ波形から切り出し開始
-    ed_2 = round(ed_1(i)*10^-4/dt) % 切り出し終わり
+    i;
+    st_2 = round(st_1(i)*10^-4/dt); % スイープ波形から切り出し開始
+    ed_2 = round(ed_1(i)*10^-4/dt); % 切り出し終わり
     
     v_2 = v_1(st_2:ed_2); 
     v_3 = v_o(st_2:ed_2);
@@ -190,12 +193,12 @@ ylabel('Relative response (arb)');
 [p, s, mu] = polyfit(f3, peak_l, opol); % リプルのトレンドを作成
 f_y = polyval(p, f3, [], mu);
 
-peak_l = peak_l - f_y; % トレンドを除去
+peak_l_removed = peak_l - f_y; % トレンドを除去
 
 
 
 figure('Name', '直流成分除去後のリプル', 'NumberTitle', 'off')
-plot(f3*10^-3, peak_l, 'b', 'linewidth', 2);
+plot(f3*10^-3, peak_l_removed, 'b', 'linewidth', 2);
 xlabel('Frequency (kHz)');
 xlim([f1*10^-3 f2*10^-3]);
 ylabel('Relative response (arb)');
@@ -211,6 +214,10 @@ dx = (c/2)/df3; % 位置領域での周期
 
 st_3 = round((st - f1)/df3);
 ed_3 = round((ed - f1)/df3);
+
+if st_3 == 0
+    st_3 = 1;
+end
 
 
 ripple_f = peak_l(st_3:ed_3); % 波形の切り出し
