@@ -17,8 +17,8 @@ rou0 = 1.293;
 % rou0 = 1000;?
 freq_param = 0.129/0.17;
 freq_a = 2000;
-freq_start = 1500*freq_param;
-freq_add = 1000*freq_param;
+freq_start = 1000*freq_param;
+freq_add = 2000*freq_param;
 freq = freq_a*freq_param;
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
@@ -94,7 +94,7 @@ t2 = 0;
 speed = 0;
 disp_hensu = 0;
 absp0 = - 0.5; % ‹zûŒW”
-b_po = 0.3 ; %‰š‚İˆÊ’u
+b_po = 0.6 ; %‰š‚İˆÊ’u
 h = 0.005;%‰š‚İ•
 w = 0.01;%‰š‚İ‚Ó‚©‚³
 
@@ -270,7 +270,7 @@ w = 2 * pai * freq ;
                 tr = w * dt * tc;
                     if sweep == 1
                         %freq = 2000 + 7000*(time/cal_time);
-                        freq = 2000 + 7000*(time/cal_time);
+                        freq = freq_start + freq_add*(time/cal_time);
                     else
                         freq = freq_abs;
                     end
@@ -713,7 +713,7 @@ for t = 1: tx
                 disp("I—¹")
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
-                dlmwrite('kairyouheko03001cm15to25.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('kairyouheko600sw.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
