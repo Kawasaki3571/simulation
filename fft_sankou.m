@@ -10,20 +10,22 @@ c0 = 340;
 cal_time = 0.18;
 rou0 = 1.293;
 % rou0 = 1000;?
-freq_param = 0.129/0.17;
-freq_a = 2000;
-freq_start = 1000*freq_param;
-freq_add = 2000*freq_param;
+freq_param = 0.8;
+freq_a = 5000;
+freq_start = 2000*freq_param;
+freq_add = 7000*freq_param;
 freq = freq_a*freq_param;
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
-dx_param = 0.01; %0.05-0.025 
+dx_param = 0.05; %0.05-0.025 
 dx = ramuda*dx_param; % λの20-30分の一
 % dt = dx / (5 * c);
 % dt = dx*0.15 / (c0);
+w = 2 * pi * freq;
 crn_param = 0.2;
 dt = dx*crn_param/ (c0);
 dt = 5*dt;
+
 % クー数から条件を立てる]
 
 %% 設定
@@ -53,17 +55,17 @@ d = 1; % 分割間隔
 % f2 = 7800; % 終了周波数
 % f1 = 1000;
 % f2 = 3000;
-f1 = 1000;
-f2 = 3000;
+f1 = 2000*freq_param;
+f2 = 9000*freq_param;
 
-st = 1000; % フーリエ変換の開始周波数（Hz）
-ed = 3000; % 終了周波数
+st = 3000*freq_param; % フーリエ変換の開始周波数（Hz）
+ed = 7000*freq_param; % 終了周波数
 
 csvrangemax = cal_time/(5*dt) - mod(cal_time/(5*dt), 100);
 
 % load_data = csvread('kairyouheko03001cm.csv'); % 2行目より下を読み込む
-load_data = csvread("kairyouheko03001cmsw.csv");
-noload_data = csvread('kairyouhekonashisw.csv'); % 2行目より下を読み込む
+load_data = csvread("powhanheko300sweep2to7.csv");
+noload_data = csvread('powhanhekonashisweep2to7.csv'); % 2行目より下を読み込む
 
 load_data = load_data(1:csvrangemax);
 noload_data = noload_data(1:csvrangemax);
@@ -75,6 +77,9 @@ c = 340; % 大気中での音速 (m/s)
 cal_time_max_int = cal_time/(5*dt) - mod(cal_time/(5*dt), 100);
 cal_time_max = cal_time_max_int * 5 * dt;
 t = 5*dt : 5*dt : cal_time_max;
+%time = t * 5*dt;
+%freq = freq_start + freq_add*(time/cal_time);
+
 
 % t = load_data(:,1); % 時間軸
 

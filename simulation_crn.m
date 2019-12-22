@@ -1,5 +1,5 @@
 range = 0;
-boundary = 0;
+boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
@@ -15,14 +15,14 @@ c0 = 340;
 % rou0 = 1.293; %密度（kg/m^3
 rou0 = 1.293;
 % rou0 = 1000;?
-freq_param = 0.129/0.17;
-freq_a = 2000;
-freq_start = 1000*freq_param;
-freq_add = 2000*freq_param;
+freq_param = 0.8;
+freq_a = 5000;
+freq_start = 2000*freq_param;
+freq_add = 7000*freq_param;
 freq = freq_a*freq_param;
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
-dx_param = 0.01; %0.05-0.025 
+dx_param = 0.05; %0.05-0.025 
 dx = ramuda*dx_param; % λの20-30分の一
 % dt = dx / (5 * c);
 % dt = dx*0.15 / (c0);
@@ -94,7 +94,7 @@ t2 = 0;
 speed = 0;
 disp_hensu = 0;
 absp0 = - 0.5; % 吸収係数
-b_po = 0.6 ; %凹み位置
+b_po = 0.5 ; %凹み位置
 h = 0.005;%凹み幅
 w = 0.01;%凹みふかさ
 
@@ -713,7 +713,9 @@ for t = 1: tx
                 disp("終了")
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
-                dlmwrite('kairyouheko600sw.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
+                p_keisoku_taihi = p_keisoku_taihi.';
+                %dlmwrite('kairyouheko500sweep2to7.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('powhanheko300sweep2to7.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
