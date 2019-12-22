@@ -17,8 +17,8 @@ rou0 = 1.293;
 % rou0 = 1000;?
 freq_param = 0.129/0.17;
 freq_a = 2000;
-freq_start = 1000*freq_param;
-freq_add = 2000*freq_param;
+freq_start = 1500*freq_param;
+freq_add = 1000*freq_param;
 freq = freq_a*freq_param;
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
@@ -577,7 +577,7 @@ for t = 1: tx
         end
     end
     if mode_plot == 1
-        disp(p1(4,y_half))
+%         disp(p1(4,y_half));
         if mod(t,50) == 0
             plot(x_p(1:0.5/dx),p1(x(1:0.5/dx),y_half))
             grid on;
@@ -713,7 +713,7 @@ for t = 1: tx
                 disp("èIóπ")
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
-                dlmwrite('kairyouheko03001cm.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('kairyouheko03001cm15to25.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end

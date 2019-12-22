@@ -45,20 +45,24 @@ set(0, 'DefaultFigureColor', 'w');
 e = 1; % 入力電圧
 opol = 100; % トレンド近似の字数を決定
 
-m = 25;% 窓間隔
+% m = 25;% 窓間隔
+m = 25;
 d = 1; % 分割間隔
 
 % f1 = 800; % スイープ開始周波数（Hz）
 % f2 = 7800; % 終了周波数
+% f1 = 1000;
+% f2 = 3000;
 f1 = 1000;
 f2 = 3000;
 
-st = 1000; % フーリエ変換の開始周波数（Hz）
-ed = 3000; % 終了周波数
+st = 1400; % フーリエ変換の開始周波数（Hz）
+ed = 2600; % 終了周波数
 
 csvrangemax = cal_time/(5*dt) - mod(cal_time/(5*dt), 100);
 
-load_data = csvread('kairyouheko03001cm.csv'); % 2行目より下を読み込む
+% load_data = csvread('kairyouheko03001cm.csv'); % 2行目より下を読み込む
+load_data = csvread("kairyouheko03001cm.csv");
 noload_data = csvread('kairyouhekonashi.csv'); % 2行目より下を読み込む
 
 load_data = load_data(1:csvrangemax);
@@ -99,8 +103,8 @@ Fs = 1/dt; % 周波数領域での周期
 
 % st_1 = st_wave:d:st_wave+1800; % スイープ波形の分割
 % ed_1 = st_wave+m:d:st_wave+1800+m;
-st_1 = st_wave:d:st_wave+1650; % スイープ波形の分割
-ed_1 = st_wave+m:d:st_wave+1650+m;
+st_1 = st_wave:d:st_wave+1700; % スイープ波形の分割
+ed_1 = st_wave+m:d:st_wave+1700+m;
 
 
 for i = 1:1:length(st_1); % オーバーラップ法にて周波数特性を作成
