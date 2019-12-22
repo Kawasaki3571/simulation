@@ -94,7 +94,7 @@ t2 = 0;
 speed = 0;
 disp_hensu = 0;
 absp0 = - 0.5; % ‹zûŒW”
-b_po = 0.3 ; %‰š‚İˆÊ’u
+b_po = 0.6 ; %‰š‚İˆÊ’u
 h = 0.005;%‰š‚İ•
 w = 0.01;%‰š‚İ‚Ó‚©‚³
 
@@ -713,7 +713,7 @@ for t = 1: tx
                 disp("I—¹")
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
-                dlmwrite('kairyouheko03001cm15to25.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('kairyouheko600sw.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end

@@ -56,14 +56,14 @@ d = 1; % 分割間隔
 f1 = 1000;
 f2 = 3000;
 
-st = 1400; % フーリエ変換の開始周波数（Hz）
-ed = 2600; % 終了周波数
+st = 1000; % フーリエ変換の開始周波数（Hz）
+ed = 3000; % 終了周波数
 
 csvrangemax = cal_time/(5*dt) - mod(cal_time/(5*dt), 100);
 
 % load_data = csvread('kairyouheko03001cm.csv'); % 2行目より下を読み込む
-load_data = csvread("kairyouheko03001cm.csv");
-noload_data = csvread('kairyouhekonashi.csv'); % 2行目より下を読み込む
+load_data = csvread("kairyouheko03001cmsw.csv");
+noload_data = csvread('kairyouhekonashisw.csv'); % 2行目より下を読み込む
 
 load_data = load_data(1:csvrangemax);
 noload_data = noload_data(1:csvrangemax);
