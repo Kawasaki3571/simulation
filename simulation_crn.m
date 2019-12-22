@@ -17,8 +17,8 @@ rou0 = 1.293;
 % rou0 = 1000;?
 freq_param = 0.129/0.17;
 freq_a = 2000;
-freq_start = 1500*freq_param;
-freq_add = 1000*freq_param;
+freq_start = 1000*freq_param;
+freq_add = 2000*freq_param;
 freq = freq_a*freq_param;
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
@@ -270,7 +270,7 @@ w = 2 * pai * freq ;
                 tr = w * dt * tc;
                     if sweep == 1
                         %freq = 2000 + 7000*(time/cal_time);
-                        freq = 2000 + 7000*(time/cal_time);
+                        freq = freq_start + freq_add*(time/cal_time);
                     else
                         freq = freq_abs;
                     end
