@@ -94,9 +94,9 @@ t2 = 0;
 speed = 0;
 disp_hensu = 0;
 absp0 = - 0.5; % 吸収係数
-b_po = 0.3 ; %凹み位置
+b_po = 0.6 ; %凹み位置
 h = 0.005;%凹み幅
-w = 0.01;%凹みふかさ
+w = 0.006;%凹みふかさ
 
 
 ix = round(xrange / dx); %x空間感覚の数
@@ -554,10 +554,9 @@ for t = 1: tx
 %         計測点
         p_keisoku_taihi(t/5) = p1(5, y_half);
     end
-    if mod(t,500) == 0
-        disp(t);
-        time
-    end
+    if mod()
+    disp(t);
+    time
     
     y = 1 : jx + 1 ;
     x = 1 : ix + 1;
@@ -690,7 +689,7 @@ for t = 1: tx
         end
     end
     if mode_plot == 6
-        if mod(t,500) == 0
+        if mod(t,100) == 0
             figure(f1);
             t_x = 1 : 1: t/10;
             time = t_x * dt * 10;
@@ -713,7 +712,7 @@ for t = 1: tx
                 disp("終了")
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
-                dlmwrite('kairyouheko03001cm.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('kairyouhanhekonashiwhere.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
