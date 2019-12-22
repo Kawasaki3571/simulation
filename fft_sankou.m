@@ -10,10 +10,10 @@ c0 = 340;
 cal_time = 0.18;
 rou0 = 1.293;
 % rou0 = 1000;?
-freq_param = 0.129/0.17;
-freq_a = 2000;
-freq_start = 1000*freq_param;
-freq_add = 2000*freq_param;
+freq_param = 0.8;
+freq_a = 5000;
+freq_start = 2000*freq_param;
+freq_add = 7000*freq_param;
 freq = freq_a*freq_param;
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
@@ -53,17 +53,17 @@ d = 1; % 分割間隔
 % f2 = 7800; % 終了周波数
 % f1 = 1000;
 % f2 = 3000;
-f1 = 1000;
-f2 = 3000;
+f1 = 2000*freq_param;
+f2 = 9000*freq_param;
 
-st = 1000; % フーリエ変換の開始周波数（Hz）
-ed = 3000; % 終了周波数
+st = 2000*freq_param; % フーリエ変換の開始周波数（Hz）
+ed = 9000*freq_param; % 終了周波数
 
 csvrangemax = cal_time/(5*dt) - mod(cal_time/(5*dt), 100);
 
 % load_data = csvread('kairyouheko03001cm.csv'); % 2行目より下を読み込む
-load_data = csvread("kairyouheko03001cmsw.csv");
-noload_data = csvread('kairyouhekonashisw.csv'); % 2行目より下を読み込む
+load_data = csvread("kairyouheko500sweep2to7.csv");
+noload_data = csvread('kairyouhekosweep2to7.csv'); % 2行目より下を読み込む
 
 load_data = load_data(1:csvrangemax);
 noload_data = noload_data(1:csvrangemax);
