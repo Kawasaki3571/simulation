@@ -64,8 +64,8 @@ ed = 7000*freq_param; % 終了周波数
 csvrangemax = cal_time/(5*dt) - mod(cal_time/(5*dt), 100);
 
 % load_data = csvread('kairyouheko03001cm.csv'); % 2行目より下を読み込む
-load_data = csvread("powhanheko300sweep2to7.csv");
-noload_data = csvread('powhanhekonashisweep2to7.csv'); % 2行目より下を読み込む
+load_data = csvread("powheko700sweep2to7.csv");
+noload_data = csvread('powhekonashisweep2to7.csv'); % 2行目より下を読み込む
 
 load_data = load_data(1:csvrangemax);
 noload_data = noload_data(1:csvrangemax);
