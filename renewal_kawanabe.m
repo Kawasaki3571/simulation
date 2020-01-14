@@ -20,7 +20,7 @@ dx_param = 0.01; %0.05-0.025
 dx = ramuda*dx_param; % λの20-30分の一
 % dt = dx / (5 * c);
 % dt = dx*0.15 / (c0);
-crn_param = 0.2;
+crn_param = 0.4;
 dt = dx*crn_param/ (c0);
 % クー数から条件を立てる]
 
@@ -45,15 +45,15 @@ m = 25;% 窓間隔
 d = 1; % 分割間隔
 
 f1 = 1000; % スイープ開始周波数（Hz）
-f2 = 3000; % 終了周波数
+f2 = 4000; % 終了周波数
 
 st = 1200; % フーリエ変換の開始周波数（Hz）
-ed = 2800; % 終了周波数
+ed = 3800; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 csvrangemax = cal_time/(5*dt) - mod(cal_time/(5*dt), 100);
 
-load_data = csvread('kairyouheko0300.csv'); % 2行目より下を読み込む
-noload_data = csvread('kairyouhekonashi.csv'); % 2行目より下を読み込む
+load_data = csvread('1d1500.csv'); % 2行目より下を読み込む
+noload_data = csvread('1dnoload.csv'); % 2行目より下を読み込む
 load_data = load_data(1:csvrangemax);
 noload_data = noload_data(1:csvrangemax);
 

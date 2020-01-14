@@ -1,12 +1,15 @@
-mode_plot = 0;
-hekomi_bool = 0;
+mode_plot = 3;
+hekomi_bool = 1;
+sweep = 1;
 
 c = 340;
 rou = 1.2;
 l = 52;
 x_in = 50;
 hekomi = 51.5;
-freq = 1000;
+freq = 2000;
+freq_start = 1000;
+freq_add = 3000;
 ramuda = c / freq ;
 dx = ramuda / 100;
 crn = 0.4;
@@ -30,7 +33,6 @@ cycle = 1/freq;
 time = dt : dt : cal_time;
 t = 1 : time_max_g;
 pi = 3.1416;
-omega = 2*pi*freq;
 p_keisoku_taihi = zeros(1, time_max_g);
 p_keisoku_in = zeros(1, time_max_g);
 
@@ -43,6 +45,12 @@ pin = zeros(size(time));
 j = sqrt(-1);
 
 for i = 1 : time_max
+    if sweep == 1
+        omega = 2*pi*(freq_start + (freq_add)*time(i)/cal_time);
+    else
+        omega = 2 * pi * freq;
+    end
+    
     pin(i) = sin(omega * time(i));
 end
 
@@ -66,22 +74,20 @@ for t = 1 : time_max_g
     end
     
     p1(end_point) = 0;
+    p2(end_point) = 0;
+    u2(end_point) = 0;
+    u1(end_point) = 0;
     
     if hekomi_bool == 1
-        
         p1(hekomi_point) = 0;
-        p2(end_point) = 0;
         p2(hekomi_point) = 0;
+        u1(hekomi_point) = 0;
+        u2(hekomi_point) = 0;
     end
     
     for i = 2 : ix
         u2(i) = u1(i);
     end
-    
-    u1(end_point) = 0;
-    u1(hekomi_point) = 0;
-    u2(end_point) = 0;
-    u2(hekomi_point) = 0;
     
     p_keisoku_taihi(t) = p1(id + 1);
     p_keisoku_in(t) = p_keisoku_taihi(t) - pin(t);
@@ -99,10 +105,14 @@ for t = 1 : time_max_g
     end
 
     if mode_plot == 1
-        plot(time(1:t), p_keisoku_in(1:t))
+        if mod(t, 50) == 0
+            plot(time(1:t), p_keisoku_in(1:t))
+            grid on;
+            drawnow;
+        end
     end
     if t == time_max_g
-        dlmwrite('1d1500hekonoload.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+        dlmwrite('1d1500.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
 end

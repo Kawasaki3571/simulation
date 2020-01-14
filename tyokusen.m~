@@ -1,4 +1,5 @@
 mode_plot = 0;
+hekomi_bool = 0;
 
 c = 340;
 rou = 1.2;
@@ -6,9 +7,12 @@ l = 52;
 x_in = 50;
 hekomi = 51.5;
 freq = 1000;
+freq_start = 1000;
+freq_add =
 ramuda = c / freq ;
 dx = ramuda / 100;
 crn = 0.4;
+
 dt = dx * crn / c;
 ix = round(l / dx);
 id = round(x_in / dx);
@@ -44,7 +48,7 @@ for i = 1 : time_max
     pin(i) = sin(omega * time(i));
 end
 
-for t = 1 : round(cal_time / dt)
+for t = 1 : time_max_g
     
     for i = 2 : ix
         p1(i) = p2(i) - (rou*c^2*dt/dx)*(u2(i) - u2(i - 1));
@@ -64,18 +68,20 @@ for t = 1 : round(cal_time / dt)
     end
     
     p1(end_point) = 0;
-    p1(hekomi_point) = 0;
     p2(end_point) = 0;
-    p2(hekomi_point) = 0;
+    u2(end_point) = 0;
+    u1(end_point) = 0;
+    
+    if hekomi_bool == 1
+        p1(hekomi_point) = 0;
+        p2(hekomi_point) = 0;
+        u1(hekomi_point) = 0;
+        u2(hekomi_point) = 0;
+    end
     
     for i = 2 : ix
         u2(i) = u1(i);
     end
-    
-    u1(end_point) = 0;
-    u1(hekomi_point) = 0;
-    u2(end_point) = 0;
-    u2(hekomi_point) = 0;
     
     p_keisoku_taihi(t) = p1(id + 1);
     p_keisoku_in(t) = p_keisoku_taihi(t) - pin(t);
@@ -95,7 +101,8 @@ for t = 1 : round(cal_time / dt)
     if mode_plot == 1
         plot(time(1:t), p_keisoku_in(1:t))
     end
-    if time == time_max_g
-        dlmwrite('powheko700sweep2to7.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+    if t == time_max_g
+        dlmwrite('1dnoload.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+        disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
 end
