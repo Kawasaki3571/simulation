@@ -64,7 +64,7 @@ ed = 7000*freq_param; % I—¹ü”g”
 csvrangemax = cal_time/(5*dt) - mod(cal_time/(5*dt), 100);
 
 % load_data = csvread('kairyouheko03001cm.csv'); % 2s–Ú‚æ‚è‰º‚ğ“Ç‚İ‚Ş
-load_data = csvread("powheko700sweep2to7.csv");
+load_data = csvread("powheko1500sweep2to7.csv");
 noload_data = csvread('powhekonashisweep2to7.csv'); % 2s–Ú‚æ‚è‰º‚ğ“Ç‚İ‚Ş
 
 load_data = load_data(1:csvrangemax);
