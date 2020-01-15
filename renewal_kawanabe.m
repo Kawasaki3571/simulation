@@ -66,7 +66,7 @@ cal_time_max_int = cal_time/(5*dt) - mod(cal_time/(5*dt), 100);
 cal_time_max = cal_time_max_int * 5 * dt;
 t_sec = 5*dt : 5*dt : cal_time_max;
 
-t = 5*dt : 5*dt : cal_time; % ŠÔ²
+t = dt : dt : cal_time; % ŠÔ²
 v_1 = load_data./e; % “ü—Í“dˆ³‚ÅŠ„‚Á‚Ä’è”‰»
 v_2 = load_data./e; % “ü—Í“dˆ³‚ÅŠ„‚Á‚Ä’è”‰»
 v_o = noload_data./e;

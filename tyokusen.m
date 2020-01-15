@@ -112,6 +112,7 @@ for t = 1 : time_max_g
         end
     end
     if t == time_max_g
+        p_keisoku_taihi = p_keisoku_taihi';
         dlmwrite('1d1000.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end

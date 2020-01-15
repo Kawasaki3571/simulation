@@ -4,8 +4,8 @@
 
 %% 設定
 
-clear all;
-close all;
+% clear all;
+% close all;
 
 set(0, 'DefaultUicontrolFontSize', 15);
 set(0, 'defaultAxesFontName', 'メイリオ');
@@ -24,11 +24,11 @@ opol = 100; % トレンド近似の字数を決定
 m = 25;% 窓間隔
 d = 1; % 分割間隔
 
-f1 = 800; % スイープ開始周波数（Hz）
-f2 = 7800; % 終了周波数
+f1 = 1000; % スイープ開始周波数（Hz）
+f2 = 4000; % 終了周波数
 
 st = 1300; % フーリエ変換の開始周波数（Hz）
-ed = 7300; % 終了周波数
+ed = 3700; % 終了周波数
 
 load_data = csvread('1d1000.csv'); % 2行目より下を読み込む
 noload_data = csvread('1dnoload.csv'); % 2行目より下を読み込む
@@ -40,13 +40,15 @@ c = 340; % 大気中での音速 (m/s)
 
 
 
-t = load_data(:,1); % 時間軸
-v_1 = load_data(:,4)./e; % 入力電圧で割って定数化
-v_2 = load_data(:,4)./e; % 入力電圧で割って定数化
+t = dt : dt : cal_time; % 時間軸
+v_1 = load_data./e; % 入力電圧で割って定数化
+v_2 = load_data./e; % 入力電圧で割って定数化
 v_o = noload_data(:,4)./e;
 
 
 figure('Name', 'スイープ応答信号', 'NumberTitle', 'off')
+disp(size(v_1));
+disp(size(t));
 plot(t*10^3, v_1, 'b');
 xlabel('Time (ms)');
 ylabel('Relative response (arb)');
@@ -63,8 +65,8 @@ ed_1 = st_wave+m:d:st_wave+1800+m;
 
 for i = 1:1:length(st_1); % オーバーラップ法にて周波数特性を作成
     
-    st_2 = round(st_1(i)*10^-4/dt); % スイープ波形から切り出し開始
-    ed_2 = round(ed_1(i)*10^-4/dt); % 切り出し終わり
+    st_2 = round(st_1(i)*10^-4/dt) % スイープ波形から切り出し開始
+    ed_2 = round(ed_1(i)*10^-4/dt) % 切り出し終わり
 
     v_2 = v_1(st_2:ed_2); 
     v_3 = v_o(st_2:ed_2);
