@@ -50,7 +50,8 @@ f2 = 4000; % 終了周波数
 st = 1200; % フーリエ変換の開始周波数（Hz）
 ed = 3800; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
-csvrangemax = cal_time/(5*dt) - mod(cal_time/(5*dt), 100);
+% csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
+csvrangemax = 90000;
 
 load_data = csvread('1d1000.csv'); % 2行目より下を読み込む
 noload_data = csvread('1dnoload.csv'); % 2行目より下を読み込む
@@ -62,11 +63,11 @@ st_wave = 1;
 c = 340; % 大気中での音速 (m/s)
 %% スイープ信号の表示
 
-cal_time_max_int = cal_time/(5*dt) - mod(cal_time/(5*dt), 100);
-cal_time_max = cal_time_max_int * 5 * dt;
-t_sec = 5 * dt : 5 * dt : cal_time_max;
+cal_time_max_int = cal_time/(dt) - mod(cal_time/(dt), 100);
+cal_time_max = cal_time_max_int * dt;
+t_sec = dt : dt : cal_time_max;
 
-t = 5 * dt : 5 * dt : cal_time; % 時間軸
+t = dt : dt : cal_time; % 時間軸
 v_1 = load_data./e; % 入力電圧で割って定数化
 v_2 = load_data./e; % 入力電圧で割って定数化
 v_o = noload_data./e;
