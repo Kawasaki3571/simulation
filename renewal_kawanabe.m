@@ -13,7 +13,8 @@ freq_param = 0.129/0.17;
 freq_a = 3000;
 freq_start = 1000*freq_param;
 freq_add = 2000*freq_param;
-freq = freq_a*freq_param;
+%freq = freq_a*freq_param;
+freq = 2000;
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
 dx_param = 0.01; %0.05-0.025 
@@ -65,13 +66,12 @@ c = 340; % 大気中での音速 (m/s)
 
 cal_time_max_int = cal_time/(dt) - mod(cal_time/(dt), 100);
 cal_time_max = cal_time_max_int * dt;
-t_sec = dt : dt : cal_time_max;
+t_sec = dt : dt : cal_time;
 
 t = dt : dt : cal_time; % 時間軸
 v_1 = load_data./e; % 入力電圧で割って定数化
 v_2 = load_data./e; % 入力電圧で割って定数化
 v_o = noload_data./e;
-
 
 figure('Name', 'スイープ応答信号', 'NumberTitle', 'off')
 % plot(t*10^3, v_1, 'b');
@@ -82,16 +82,12 @@ ylabel('Relative response (arb)');
 
 %% 時間軸から周波数スペクトルを得る（負荷有りと負荷無し）
 
-
 n_fft = 2^12; % 4096点FFT
 dt = t(2) - t(1); % サンプリング周期
 Fs = 1/dt; % 周波数領域での周期
 
-
-
 st_1 = st_wave:d:st_wave+1700; % スイープ波形の分割
 ed_1 = st_wave+m:d:st_wave+1700+m;
-
 
 for i = 1:1:length(st_1); % オーバーラップ法にて周波数特性を作成
     
@@ -101,6 +97,7 @@ for i = 1:1:length(st_1); % オーバーラップ法にて周波数特性を作成
     st_2
     ed_2
     i
+
     v_2 = v_1(st_2:ed_2); 
     v_3 = v_o(st_2:ed_2);
 
@@ -112,7 +109,6 @@ for i = 1:1:length(st_1); % オーバーラップ法にて周波数特性を作成
 
 end 
 
-
 f3 = f1:(f2 - f1)/(length(st_1)-1):f2; % 周波数軸の作成
 length(f3)
 length(peak_l)
@@ -123,14 +119,11 @@ xlabel('Frequency (kHz)');
 xlim([f1*10^-3 f2*10^-3]);
 ylabel('Relative response (arb)');
 
-
 figure('Name', '負荷無しの周波数特性', 'NumberTitle', 'off')
 plot(f3*10^-3, peak_o, 'b');
 xlabel('Frequency (kHz)');
 xlim([f1*10^-3 f2*10^-3]);
 ylabel('Relative response (arb)');
-
-
 %% 移動平均を用いて平滑化処理（負荷有りと負荷無し）
 
     
@@ -149,7 +142,6 @@ for i = 1:1:length(st_1);
     peak_ave(i) = mean(peak_i); % 切り取った波形の平均を記録していく
     peak_l(i) = peak_ave(i); % 平均値を新しい行列に入れていく
     
-    
     peak_i = peak_D(i:i+number);
     peak_ave(i) = mean(peak_i);
     peak_o(i) = peak_ave(i);
@@ -157,7 +149,6 @@ for i = 1:1:length(st_1);
 end
 
 end
-
 
 figure('Name', '平滑化処理後の周波数特性', 'NumberTitle', 'off')
 plot(f3*10^-3, peak_o, 'r', 'linewidth', 1.5);
@@ -171,7 +162,6 @@ ylabel('Relative response (arb)');
 
 
 %% リプルを抽出しトレンドの除去
-
 
 peak_l = peak_l - peak_o; % 負荷有りと負荷無しの差分を抽出
 
@@ -241,9 +231,9 @@ end
 
 noise = ones(n, 1).*0.8;
 
-% figure('Name', '位置応答', 'NumberTitle', 'off')
+figure('Name', '位置応答', 'NumberTitle', 'off')
 
-% plot(x*10^3, abs(V_show)*10^-4, 'r', 'linewidth', 2);
+plot(x*10^3, abs(V_show)*10^-4, 'r', 'linewidth', 2);
 
 
 
@@ -258,7 +248,6 @@ xlim([0 2500]);
 
 peak_x = (nx - 1)*dx/n; % ピーク位置の場所を算出
 peak_x_for_display = round(peak_x*10^3);
-
 
 if peak_val > 3; % 閾値を用いてピークが負荷によるものかを判定
     display('負荷あり');
