@@ -2,32 +2,6 @@
 % オシロスコープから抽出したデータを二回フーリエ変換して位置応答に変換する
 %%%%オーバーラップあり
 
-clear all ;
-
-c = 340; %音速
-c0 = 340;
-% rou0 = 1.293; %密度（kg/m^3
-cal_time = 0.18;
-rou0 = 1.293;
-% rou0 = 1000;?
-freq_param = 0.8;
-freq_a = 5000;
-freq_start = 2000*freq_param;
-freq_add = 7000*freq_param;
-freq = freq_a*freq_param;
-freq_abs = freq_a*freq_param;
-ramuda = c0 / freq;
-dx_param = 0.05; %0.05-0.025 
-dx = ramuda*dx_param; % λの20-30分の一
-% dt = dx / (5 * c);
-% dt = dx*0.15 / (c0);
-w = 2 * pi * freq;
-crn_param = 0.2;
-dt = dx*crn_param/ (c0);
-dt = 5*dt;
-
-% クー数から条件を立てる]
-
 %% 設定
 
 % clear all;
@@ -44,54 +18,37 @@ set(0, 'DefaultFigureColor', 'w');
 
 %% 各種パラメーター
 
-e = 1; % 入力電圧
+e = 0.1; % 入力電圧
 opol = 100; % トレンド近似の字数を決定
 
-% m = 25;% 窓間隔
-m = 25;
+m = 25;% 窓間隔
 d = 1; % 分割間隔
 
-% f1 = 800; % スイープ開始周波数（Hz）
-% f2 = 7800; % 終了周波数
-% f1 = 1000;
-% f2 = 3000;
-f1 = 2000*freq_param;
-f2 = 9000*freq_param;
+f1 = 1000; % スイープ開始周波数（Hz）
+f2 = 4000; % 終了周波数
 
-st = 3000*freq_param; % フーリエ変換の開始周波数（Hz）
-ed = 7000*freq_param; % 終了周波数
+st = 1300; % フーリエ変換の開始周波数（Hz）
+ed = 3700; % 終了周波数
 
-csvrangemax = cal_time/(5*dt) - mod(cal_time/(5*dt), 100);
+load_data = csvread('1d1000.csv'); % 2行目より下を読み込む
+noload_data = csvread('1dnoload.csv'); % 2行目より下を読み込む
 
-% load_data = csvread('kairyouheko03001cm.csv'); % 2行目より下を読み込む
-load_data = csvread("powheko1500sweep2to7.csv");
-noload_data = csvread('powhekonashisweep2to7.csv'); % 2行目より下を読み込む
 
-load_data = load_data(1:csvrangemax);
-noload_data = noload_data(1:csvrangemax);
-
-st_wave = 1;  % スイープ波形の始まる時間　可変
+st_wave = 104;  % スイープ波形の始まる時間　可変
 c = 340; % 大気中での音速 (m/s)
 %% スイープ信号の表示
 
-cal_time_max_int = cal_time/(5*dt) - mod(cal_time/(5*dt), 100);
-cal_time_max = cal_time_max_int * 5 * dt;
-t = 5*dt : 5*dt : cal_time_max;
-%time = t * 5*dt;
-%freq = freq_start + freq_add*(time/cal_time);
 
 
-% t = load_data(:,1); % 時間軸
-
-% v_1 = load_data(:,4)./e; % 入力電圧で割って定数化
-v_1 = load_data./e;
-% v_2 = load_data(:,4)./e; % 入力電圧で割って定数化
-v_2 = load_data./e;
-% v_o = noload_data(:,4)./e;
-v_o = noload_data./e;
+t = dt : dt : cal_time; % 時間軸
+v_1 = load_data./e; % 入力電圧で割って定数化
+v_2 = load_data./e; % 入力電圧で割って定数化
+v_o = noload_data(:,4)./e;
 
 
 figure('Name', 'スイープ応答信号', 'NumberTitle', 'off')
+disp(size(v_1));
+disp(size(t));
 plot(t*10^3, v_1, 'b');
 xlabel('Time (ms)');
 ylabel('Relative response (arb)');
@@ -99,26 +56,18 @@ ylabel('Relative response (arb)');
 
 %% 時間軸から周波数スペクトルを得る（負荷有りと負荷無し）
 
-
 n_fft = 2^12; % 4096点FFT
 dt = t(2) - t(1); % サンプリング周期
 Fs = 1/dt; % 周波数領域での周期
 
-
-
-% st_1 = st_wave:d:st_wave+1800; % スイープ波形の分割
-% ed_1 = st_wave+m:d:st_wave+1800+m;
-st_1 = st_wave:d:st_wave+1700; % スイープ波形の分割
-ed_1 = st_wave+m:d:st_wave+1700+m;
-
+st_1 = st_wave:d:st_wave+1800; % スイープ波形の分割
+ed_1 = st_wave+m:d:st_wave+1800+m;
 
 for i = 1:1:length(st_1); % オーバーラップ法にて周波数特性を作成
     
-%     st_1(i)
-    i;
-    st_2 = round(st_1(i)*10^-4/dt); % スイープ波形から切り出し開始
-    ed_2 = round(ed_1(i)*10^-4/dt); % 切り出し終わり
-    
+    st_2 = round(st_1(i)*10^-4/dt) % スイープ波形から切り出し開始
+    ed_2 = round(ed_1(i)*10^-4/dt) % 切り出し終わり
+
     v_2 = v_1(st_2:ed_2); 
     v_3 = v_o(st_2:ed_2);
 
@@ -202,12 +151,12 @@ ylabel('Relative response (arb)');
 [p, s, mu] = polyfit(f3, peak_l, opol); % リプルのトレンドを作成
 f_y = polyval(p, f3, [], mu);
 
-peak_l_removed = peak_l - f_y; % トレンドを除去
+peak_l = peak_l - f_y; % トレンドを除去
 
 
 
 figure('Name', '直流成分除去後のリプル', 'NumberTitle', 'off')
-plot(f3*10^-3, peak_l_removed, 'b', 'linewidth', 2);
+plot(f3*10^-3, peak_l, 'b', 'linewidth', 2);
 xlabel('Frequency (kHz)');
 xlim([f1*10^-3 f2*10^-3]);
 ylabel('Relative response (arb)');
@@ -223,10 +172,6 @@ dx = (c/2)/df3; % 位置領域での周期
 
 st_3 = round((st - f1)/df3);
 ed_3 = round((ed - f1)/df3);
-
-if st_3 == 0
-    st_3 = 1;
-end
 
 
 ripple_f = peak_l(st_3:ed_3); % 波形の切り出し
