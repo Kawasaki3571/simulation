@@ -1,12 +1,12 @@
-mode_plot = 1;
+mode_plot = 0;
 hekomi_bool = 0;
 sweep = 1;
 
 c = 340;
 rou = 1.2;
-l = 12;
-x_in = 10;
-hekomi = 11;
+l = 2;
+x_in = 0;
+hekomi = 1;
 freq = 2000;
 freq_start = 1000;
 freq_add = 3000;
@@ -16,16 +16,24 @@ crn = 0.4;
 
 dt = dx * crn / c;
 ix = round(l / dx);
-id = round(x_in / dx);
-sokutei_end_x  = 12;
+id = round(x_in / dx) + 1;
+sokutei_end_x  = l;
 end_i = sokutei_end_x / dx;
 end_point = round(end_i);
 hekomi_point = round(hekomi/dx);
 p1 = zeros(1, ix + 1);
 p2 = zeros(1, ix + 1);
+p3 = zeros(1, ix + 1);
 u1 = zeros(1, ix + 1);
 u2 = zeros(1, ix + 1);
 cal_time = 0.18;
+
+%dd_b = 199/200;
+%a_b = 2 * (crn-1)/(crn+1);
+%b_b = ((crn - 1) / (crn + 1)) ^ 2;
+%c_b = (crn - 1) / (crn + 1) * dd_b;
+%d_b = dd_b * 2;
+%e_b = dd_b ^ 2;
 
 time_max_g = round(cal_time/dt);
 time_max = cal_time / dt;
@@ -60,13 +68,18 @@ for t = 1 : time_max_g
         p1(i) = p2(i) - (rou*c^2*dt/dx)*(u2(i) - u2(i - 1));
     end
     
-    p1(1) = 0;
+    %p1(1) = 0;
+    p1(ix + 1) = 0;
     p2(ix + 1) = 0;
-    
+
+    %i = 1;
+    %p1(i) = a_b .* (p1(i + 1)-p2(i)) - b_b .* (p1(i + 2) - 2 .* p2(i + 1) + p3(i)) - c_b .* (p2(i + 2) - p3(i + 1)) + d_b .* p2(i + 1) - e_b .* p3(i + 2);
+
     p1(id) = pin(t);
     
-    for i = 2 : ix
+    for i = 1 : ix
         p2(i) = p1(i);
+        p3(i) = p2(i);
     end
     
     for i = 2 : ix
@@ -99,7 +112,7 @@ for t = 1 : time_max_g
     
     if mode_plot == 0
         if mod(t, 50) == 0
-            plot(x(id : end_i), real(p1(id : end_i)));
+            plot(x(id : round(0.5/dx)), real(p1(id : round(0.5/dx))));
             grid on;
             drawnow
         end
