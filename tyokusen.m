@@ -6,7 +6,7 @@ c = 340;
 rou = 1.2;
 l = 52;
 x_in = 50;
-hekomi = 51.5;
+hekomi = 51;
 freq = 2000;
 freq_start = 1000;
 freq_add = 3000;
@@ -112,7 +112,7 @@ for t = 1 : time_max_g
         end
     end
     if t == time_max_g
-        dlmwrite('1d1500.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+        dlmwrite('1d1000.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
 end
