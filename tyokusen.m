@@ -1,12 +1,13 @@
-mode_plot = 3;
+mode_plot = 0;
 hekomi_bool = 1;
 sweep = 1;
 
 c = 340;
 rou = 1.2;
-l = 52;
-x_in = 50;
-hekomi = 51;
+baf = 0.01;
+l = 2 + baf;
+x_in = 0 + baf;
+hekomi = 1;
 freq = 2000;
 freq_start = 1000;
 freq_add = 3000;
@@ -17,7 +18,7 @@ crn = 0.4;
 dt = dx * crn / c;
 ix = round(l / dx);
 id = round(x_in / dx);
-sokutei_end_x  = 52;
+sokutei_end_x  = l;
 end_i = sokutei_end_x / dx;
 end_point = round(end_i);
 hekomi_point = round(hekomi/dx);
@@ -34,6 +35,7 @@ time = dt : dt : cal_time;
 t = 1 : time_max_g;
 pi = 3.1416;
 p_keisoku_taihi = zeros(1, time_max_g);
+p_keisoku_spec = zeros(1, time_max_g);
 p_keisoku_in = zeros(1, time_max_g);
 
 % f1 = figure;
@@ -43,19 +45,19 @@ x = i_x * dx;
 
 pin = zeros(size(time));
 j = sqrt(-1);
+if sweep == 1
+    frequency = freq_start + (freq_add)*time(i)/cal_time;
+else
+    frequency = freq;
+end
 
 for i = 1 : time_max
-    if sweep == 1
-        omega = 2*pi*(freq_start + (freq_add)*time(i)/cal_time);
-    else
-        omega = 2 * pi * freq;
-    end
-    
-    pin(i) = sin(omega * time(i));
+%     pin(i) = sin(omega * time(i));
+    pin(i) = exp(j*(2*pi*frequency*time(i) - pi/2));
 end
 
 for t = 1 : time_max_g
-    
+
     for i = 2 : ix
         p1(i) = p2(i) - (rou*c^2*dt/dx)*(u2(i) - u2(i - 1));
     end
@@ -91,6 +93,7 @@ for t = 1 : time_max_g
     
     p_keisoku_taihi(t) = p1(id + 1);
     p_keisoku_in(t) = p_keisoku_taihi(t) - pin(t);
+    p_keisoku_spec(t) = abs(p_keisoku_taihi(t)).^2;
     
     if mod(t, 50) == 0 
         time(t)
@@ -106,14 +109,18 @@ for t = 1 : time_max_g
 
     if mode_plot == 1
         if mod(t, 50) == 0
-            plot(time(1:t), p_keisoku_in(1:t))
+            plot(time(1:t), p_keisoku_spec(1:t))
             grid on;
             drawnow;
         end
     end
     if t == time_max_g
         p_keisoku_taihi = p_keisoku_taihi';
-        dlmwrite('1d1000.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+        for i = 1 : t
+            pin_gyaku(t) = 1 / pin(t);
+        end
+        p_keisoku_shin(t) = p_keisoku_taihi .* pin_gyaku(t);
+        dlmwrite('1d1000shin.csv', p_keisoku_shin, 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
 end

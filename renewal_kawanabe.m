@@ -10,10 +10,10 @@ cal_time = 0.18;
 rou0 = 1.293;
 % rou0 = 1000;?
 freq_param = 0.129/0.17;
-freq_a = 3000;
+freq_a = 2000;
 freq_start = 1000*freq_param;
-freq_add = 2000*freq_param;
-freq = freq_a*freq_param;
+freq_add = 3000*freq_param;
+freq = freq_a;
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
 dx_param = 0.01; %0.05-0.025 
@@ -65,7 +65,7 @@ c = 340; % 大気中での音速 (m/s)
 
 cal_time_max_int = cal_time/(dt) - mod(cal_time/(dt), 100);
 cal_time_max = cal_time_max_int * dt;
-t_sec = dt : dt : cal_time_max;
+t_sec = dt : dt : cal_time;
 
 t = dt : dt : cal_time; % 時間軸
 v_1 = load_data./e; % 入力電圧で割って定数化
@@ -75,6 +75,8 @@ v_o = noload_data./e;
 
 figure('Name', 'スイープ応答信号', 'NumberTitle', 'off')
 % plot(t*10^3, v_1, 'b');
+disp(size(t_sec))
+disp(size(v_1))
 plot(t_sec*10^3, v_1, 'b');
 xlabel('Time (ms)');
 ylabel('Relative response (arb)');
@@ -241,9 +243,9 @@ end
 
 noise = ones(n, 1).*0.8;
 
-% figure('Name', '位置応答', 'NumberTitle', 'off')
+figure('Name', '位置応答', 'NumberTitle', 'off')
 
-% plot(x*10^3, abs(V_show)*10^-4, 'r', 'linewidth', 2);
+plot(x*10^3, abs(V_show)*10^-4, 'r', 'linewidth', 2);
 
 
 
