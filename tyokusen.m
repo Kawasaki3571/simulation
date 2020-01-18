@@ -1,5 +1,5 @@
-mode_plot = 2;
-hekomi_bool = 1;
+mode_plot = 0;
+hekomi_bool = 0;
 sweep = 1;
 
 c = 340;
@@ -7,7 +7,7 @@ rou = 1.2;
 baf = 0.00;
 l = 2 + baf;
 x_in = 0 + baf;
-hekomi = 1.5;
+hekomi = 0.8;
 freq = 2000;
 freq_start = 1000;
 freq_add = 3000;
@@ -30,6 +30,7 @@ u2 = zeros(1, ix + 1);
 cal_time = 0.18;
 
 dd_b = 199/200;
+ddd = 499/500;
 a_b = 2 * (crn-1)/(crn+1);
 b_b = ((crn - 1) / (crn + 1)) ^ 2;
 c_b = ((crn - 1) / (crn + 1)) * dd_b*2;
@@ -77,7 +78,7 @@ end
 for t = 1 : time_max_g
 
     for i = 2 : ix
-        p1(i) = p2(i) - (rou*c^2*dt/dx)*(u2(i) - u2(i - 1));
+        p1(i) = ddd*(p2(i) - (rou*c^2*dt/dx)*(u2(i) - u2(i - 1)));
     end
 
 
@@ -149,7 +150,7 @@ for t = 1 : time_max_g
         %p_keisoku_taihi = p_keisoku_taihi';
         p_keisoku_shin = p_keisoku_shin';
         %p_keisoku_spec = p_keisoku_spec';
-        dlmwrite('1d1500shin.csv', p_keisoku_shin, 'precision', '%.10f', 'delimiter', ',')
+        dlmwrite('1d0800shin.csv', abs(p_keisoku_taihi), 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
     

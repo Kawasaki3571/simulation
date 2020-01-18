@@ -8,6 +8,6 @@ c = 340;
 freq = freq_start + freq_add*t/0.18;
 hasu = 2 * pi * freq / c;
 j = sqrt(-1);
-xL = 1000;
+xL = 0.8;
 p = 1 + exp(j .* 2 .* hasu .* xL);
-plot(t , p)
+plot(t , abs(p))

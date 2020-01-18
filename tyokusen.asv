@@ -7,7 +7,7 @@ rou = 1.2;
 baf = 0.00;
 l = 2 + baf;
 x_in = 0 + baf;
-hekomi = 1;
+hekomi = 0.8;
 freq = 2000;
 freq_start = 1000;
 freq_add = 3000;
@@ -17,7 +17,7 @@ crn = 0.4;
 
 dt = dx * crn / c;
 ix = round(l / dx);
-id = round(x_in / dx) + 1000;
+id = round(x_in / dx) + 1;
 sokutei_end_x  = l;
 end_i = sokutei_end_x / dx;
 end_point = round(end_i);
@@ -30,6 +30,7 @@ u2 = zeros(1, ix + 1);
 cal_time = 0.18;
 
 dd_b = 199/200;
+ddd = 499/500;
 a_b = 2 * (crn-1)/(crn+1);
 b_b = ((crn - 1) / (crn + 1)) ^ 2;
 c_b = ((crn - 1) / (crn + 1)) * dd_b*2;
@@ -61,7 +62,7 @@ else
     frequency = freq;
 end
 
-for i = 1 : time_max / 1000
+for i = 1 : time_max / 1
     if sweep == 1
         omega = 2*pi*(freq_start + (freq_add)*time(i)/cal_time);
     else
@@ -77,14 +78,15 @@ end
 for t = 1 : time_max_g
 
     for i = 2 : ix
-        p1(i) = p2(i) - (rou*c^2*dt/dx)*(u2(i) - u2(i - 1));
+        p1(i) = ddd*(p2(i) - (rou*c^2*dt/dx)*(u2(i) - u2(i - 1)));
     end
+
 
     %i = 1;
     i = 1;
     p1(i) = a_b .* (p1(i + 1)-p2(i)) - b_b .* (p1(i + 2) - 2 .* p2(i + 1) + p3(i)) - c_b .* (p2(i + 2) - p3(i + 1)) + d_b .* p2(i + 1) - e_b .* p3(i + 2);
     i = end_point;
-    p1(i) = a_b .* (p1(i - 1)-p2(i)) - b_b .* (p1(i - 2) - 2 .* p2(i - 1) + p3(i)) - c_b .* (p2(i - 2) - p3(i - 1)) + d_b .* p2(i - 1) - e_b .* p3(i - 2);
+    %p1(i) = a_b .* (p1(i - 1)-p2(i)) - b_b .* (p1(i - 2) - 2 .* p2(i - 1) + p3(i)) - c_b .* (p2(i - 2) - p3(i - 1)) + d_b .* p2(i - 1) - e_b .* p3(i - 2);
     
     p1(id) = pin(t);
     
@@ -99,9 +101,8 @@ for t = 1 : time_max_g
     
     %p1(end_point) = 0;
     %p2(end_point) = 0;
-    %u2(end_point) = 0;
-    %u1(end_point) = 0;
-    
+    u2(end_point) = 0;
+    u1(end_point) = 0;
     if hekomi_bool == 1
         u1(hekomi_point) = 0;
         u2(hekomi_point) = 0;
@@ -149,7 +150,7 @@ for t = 1 : time_max_g
         %p_keisoku_taihi = p_keisoku_taihi';
         p_keisoku_shin = p_keisoku_shin';
         %p_keisoku_spec = p_keisoku_spec';
-        dlmwrite('1d0300shin.csv', p_keisoku_shin, 'precision', '%.10f', 'delimiter', ',')
+        dlmwrite('1d0800shin.csv', p_keisoku_shin, 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
     
