@@ -1,4 +1,4 @@
-mode_plot = 0;
+mode_plot = 2;
 hekomi_bool = 1;
 sweep = 1;
 
@@ -7,7 +7,7 @@ rou = 1.2;
 baf = 0.00;
 l = 2 + baf;
 x_in = 0 + baf;
-hekomi = 1;
+hekomi = 1.5;
 freq = 2000;
 freq_start = 1000;
 freq_add = 3000;
@@ -85,7 +85,7 @@ for t = 1 : time_max_g
     i = 1;
     p1(i) = a_b .* (p1(i + 1)-p2(i)) - b_b .* (p1(i + 2) - 2 .* p2(i + 1) + p3(i)) - c_b .* (p2(i + 2) - p3(i + 1)) + d_b .* p2(i + 1) - e_b .* p3(i + 2);
     i = end_point;
-    p1(i) = a_b .* (p1(i - 1)-p2(i)) - b_b .* (p1(i - 2) - 2 .* p2(i - 1) + p3(i)) - c_b .* (p2(i - 2) - p3(i - 1)) + d_b .* p2(i - 1) - e_b .* p3(i - 2);
+    %p1(i) = a_b .* (p1(i - 1)-p2(i)) - b_b .* (p1(i - 2) - 2 .* p2(i - 1) + p3(i)) - c_b .* (p2(i - 2) - p3(i - 1)) + d_b .* p2(i - 1) - e_b .* p3(i - 2);
     
     p1(id) = pin(t);
     
@@ -100,8 +100,8 @@ for t = 1 : time_max_g
     
     %p1(end_point) = 0;
     %p2(end_point) = 0;
-    %u2(end_point) = 0;
-    %u1(end_point) = 0;
+    u2(end_point) = 0;
+    u1(end_point) = 0;
     if hekomi_bool == 1
         u1(hekomi_point) = 0;
         u2(hekomi_point) = 0;
@@ -149,7 +149,7 @@ for t = 1 : time_max_g
         %p_keisoku_taihi = p_keisoku_taihi';
         p_keisoku_shin = p_keisoku_shin';
         %p_keisoku_spec = p_keisoku_spec';
-        dlmwrite('1dnoloadshin.csv', p_keisoku_shin, 'precision', '%.10f', 'delimiter', ',')
+        dlmwrite('1d1500shin.csv', p_keisoku_shin, 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
     

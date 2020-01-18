@@ -194,7 +194,7 @@ ylabel('Relative response (arb)');
 
 n = 2^14;
 df3 = (f2 - f1)/(length(st_1) - 1); % 周波数領域のサンプリング間隔
-dx = (c/2)/df3; % 位置領域での周期
+dx = (c/2)/df3 ; % 位置領域での周期
 
 st_3 = round((st - f1)/df3);
 ed_3 = round((ed - f1)/df3);
