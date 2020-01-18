@@ -53,8 +53,8 @@ ed = 3800; % 終了周波数
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 csvrangemax = 90000;
 
-load_data = csvread('1d1000.csv'); % 2行目より下を読み込む
-noload_data = csvread('1dnoload.csv'); % 2行目より下を読み込む
+load_data = csvread('1d0800shin.csv'); % 2行目より下を読み込む
+noload_data = csvread('1dnoloadshin.csv'); % 2行目より下を読み込む
 load_data = load_data(1:csvrangemax);
 noload_data = noload_data(1:csvrangemax);
 
@@ -194,7 +194,7 @@ ylabel('Relative response (arb)');
 
 n = 2^14;
 df3 = (f2 - f1)/(length(st_1) - 1); % 周波数領域のサンプリング間隔
-dx = (c/2)/df3; % 位置領域での周期
+dx = (c/2)/df3 ; % 位置領域での周期
 
 st_3 = round((st - f1)/df3);
 ed_3 = round((ed - f1)/df3);
@@ -206,7 +206,7 @@ ripple_f = peak_l(st_3:ed_3); % 波形の切り出し
 
 
 V_x = fft(ripple_f, n); % フーリエ変換して位置応答を作成
-
+%V_x = fft(peak_l, n); % フーリエ変換して位置応答を作成
 
 x = 0:dx/n:dx - dx/n; % 位置軸を作成
 x = x';
