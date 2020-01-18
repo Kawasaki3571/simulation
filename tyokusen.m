@@ -1,11 +1,12 @@
 mode_plot = 0;
-hekomi_bool = 0;
+hekomi_bool = 1;
 sweep = 1;
 
 c = 340;
 rou = 1.2;
-l = 2;
-x_in = 0;
+baf = 0.01;
+l = 2 + baf;
+x_in = 0 + baf;
 hekomi = 1;
 freq = 2000;
 freq_start = 1000;
@@ -42,6 +43,7 @@ time = dt : dt : cal_time;
 t = 1 : time_max_g;
 pi = 3.1416;
 p_keisoku_taihi = zeros(1, time_max_g);
+p_keisoku_spec = zeros(1, time_max_g);
 p_keisoku_in = zeros(1, time_max_g);
 
 % f1 = figure;
@@ -51,6 +53,11 @@ x = i_x * dx;
 
 pin = zeros(size(time));
 j = sqrt(-1);
+if sweep == 1
+    frequency = freq_start + (freq_add)*time(i)/cal_time;
+else
+    frequency = freq;
+end
 
 for i = 1 : time_max
     if sweep == 1
@@ -63,7 +70,7 @@ for i = 1 : time_max
 end
 
 for t = 1 : time_max_g
-    
+
     for i = 2 : ix
         p1(i) = p2(i) - (rou*c^2*dt/dx)*(u2(i) - u2(i - 1));
     end
@@ -104,7 +111,7 @@ for t = 1 : time_max_g
     
     p_keisoku_taihi(t) = p1(id + 1);
     p_keisoku_in(t) = p_keisoku_taihi(t) - pin(t);
-    p_keisoku_spec = abs(p_keisoku_taihi).^2;
+    p_keisoku_spec(t) = abs(p_keisoku_taihi(t)).^2;
     
     if mod(t, 50) == 0 
         time(t)
@@ -127,8 +134,12 @@ for t = 1 : time_max_g
     end
     
     if t == time_max_g
-        p_keisoku_spec = p_keisoku_spec';
-        dlmwrite('1dnoload.csv', p_keisoku_spec, 'precision', '%.10f', 'delimiter', ',')
+        p_keisoku_taihi = p_keisoku_taihi';
+        for i = 1 : t
+            pin_gyaku(t) = 1 / pin(t);
+        end
+        p_keisoku_shin(t) = p_keisoku_taihi .* pin_gyaku(t);
+        dlmwrite('1d1000shin.csv', p_keisoku_shin, 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
     

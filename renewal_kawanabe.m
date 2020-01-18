@@ -10,11 +10,10 @@ cal_time = 0.18;
 rou0 = 1.293;
 % rou0 = 1000;?
 freq_param = 0.129/0.17;
-freq_a = 3000;
+freq_a = 2000;
 freq_start = 1000*freq_param;
-freq_add = 2000*freq_param;
-%freq = freq_a*freq_param;
-freq = 2000;
+freq_add = 3000*freq_param;
+freq = freq_a;
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
 dx_param = 0.01; %0.05-0.025 
@@ -75,6 +74,8 @@ v_o = noload_data./e;
 
 figure('Name', 'スイープ応答信号', 'NumberTitle', 'off')
 % plot(t*10^3, v_1, 'b');
+disp(size(t_sec))
+disp(size(v_1))
 plot(t_sec*10^3, v_1, 'b');
 xlabel('Time (ms)');
 ylabel('Relative response (arb)');
