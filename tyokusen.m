@@ -61,7 +61,7 @@ else
     frequency = freq;
 end
 
-for i = 1 : time_max / 1000
+for i = 1 : time_max / 1
     if sweep == 1
         omega = 2*pi*(freq_start + (freq_add)*time(i)/cal_time);
     else
@@ -79,6 +79,7 @@ for t = 1 : time_max_g
     for i = 2 : ix
         p1(i) = p2(i) - (rou*c^2*dt/dx)*(u2(i) - u2(i - 1));
     end
+
 
     %i = 1;
     i = 1;
@@ -101,7 +102,6 @@ for t = 1 : time_max_g
     %p2(end_point) = 0;
     %u2(end_point) = 0;
     %u1(end_point) = 0;
-    
     if hekomi_bool == 1
         u1(hekomi_point) = 0;
         u2(hekomi_point) = 0;
@@ -149,7 +149,7 @@ for t = 1 : time_max_g
         %p_keisoku_taihi = p_keisoku_taihi';
         p_keisoku_shin = p_keisoku_shin';
         %p_keisoku_spec = p_keisoku_spec';
-        dlmwrite('1d0300shin.csv', p_keisoku_shin, 'precision', '%.10f', 'delimiter', ',')
+        dlmwrite('1dnoloadshin.csv', p_keisoku_shin, 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
     
