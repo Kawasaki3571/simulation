@@ -17,16 +17,24 @@ crn = 0.4;
 
 dt = dx * crn / c;
 ix = round(l / dx);
-id = round(x_in / dx);
+id = round(x_in / dx) + 1;
 sokutei_end_x  = l;
 end_i = sokutei_end_x / dx;
 end_point = round(end_i);
 hekomi_point = round(hekomi/dx);
-p1 = zeros(1,ix + 1);
-p2 = zeros(1,ix + 1);
+p1 = zeros(1, ix + 1);
+p2 = zeros(1, ix + 1);
+p3 = zeros(1, ix + 1);
 u1 = zeros(1, ix + 1);
-u2 = zeros(1,ix + 1);
+u2 = zeros(1, ix + 1);
 cal_time = 0.18;
+
+%dd_b = 199/200;
+%a_b = 2 * (crn-1)/(crn+1);
+%b_b = ((crn - 1) / (crn + 1)) ^ 2;
+%c_b = (crn - 1) / (crn + 1) * dd_b;
+%d_b = dd_b * 2;
+%e_b = dd_b ^ 2;
 
 time_max_g = round(cal_time/dt);
 time_max = cal_time / dt;
@@ -52,8 +60,13 @@ else
 end
 
 for i = 1 : time_max
-%     pin(i) = sin(omega * time(i));
-    pin(i) = exp(j*(2*pi*frequency*time(i) - pi/2));
+    if sweep == 1
+        omega = 2*pi*(freq_start + (freq_add)*time(i)/cal_time);
+    else
+        omega = 2 * pi * freq;
+    end
+    
+    pin(i) = exp(j * omega * time(i) - (j * pi/2));
 end
 
 for t = 1 : time_max_g
@@ -62,13 +75,18 @@ for t = 1 : time_max_g
         p1(i) = p2(i) - (rou*c^2*dt/dx)*(u2(i) - u2(i - 1));
     end
     
-    p1(1) = 0;
+    %p1(1) = 0;
+    p1(ix + 1) = 0;
     p2(ix + 1) = 0;
-    
+
+    %i = 1;
+    %p1(i) = a_b .* (p1(i + 1)-p2(i)) - b_b .* (p1(i + 2) - 2 .* p2(i + 1) + p3(i)) - c_b .* (p2(i + 2) - p3(i + 1)) + d_b .* p2(i + 1) - e_b .* p3(i + 2);
+
     p1(id) = pin(t);
     
-    for i = 2 : ix
+    for i = 1 : ix
         p2(i) = p1(i);
+        p3(i) = p2(i);
     end
     
     for i = 2 : ix
@@ -101,7 +119,7 @@ for t = 1 : time_max_g
     
     if mode_plot == 0
         if mod(t, 50) == 0
-            plot(x(id : end_i), real(p1(id : end_i)));
+            plot(x(id : round(0.5/dx)), real(p1(id : round(0.5/dx))));
             grid on;
             drawnow
         end
@@ -114,6 +132,7 @@ for t = 1 : time_max_g
             drawnow;
         end
     end
+    
     if t == time_max_g
         p_keisoku_taihi = p_keisoku_taihi';
         for i = 1 : t
@@ -123,4 +142,5 @@ for t = 1 : time_max_g
         dlmwrite('1d1000shin.csv', p_keisoku_shin, 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
+    
 end
