@@ -1,16 +1,17 @@
-mode_plot = 0;
-hekomi_bool = 0;
+mode_plot = 1;
+hekomi_bool = 1;
 sweep = 1;
+input_mode = 1;
 
 c = 340;
 rou = 1.2;
 baf = 0.00;
 l = 2 + baf;
 x_in = 0 + baf;
-hekomi = 0.8;
+hekomi = 1;
 freq = 2000;
-freq_start = 1000;
-freq_add = 3000;
+freq_start = 100;
+freq_add = 300;
 ramuda = c / freq ;
 dx = ramuda / 100;
 crn = 0.4;
@@ -30,7 +31,8 @@ u2 = zeros(1, ix + 1);
 cal_time = 0.18;
 
 dd_b = 199/200;
-ddd = 499/500;
+% ddd = 499/500;
+ddd = 5001/5000;
 a_b = 2 * (crn-1)/(crn+1);
 b_b = ((crn - 1) / (crn + 1)) ^ 2;
 c_b = ((crn - 1) / (crn + 1)) * dd_b*2;
@@ -44,6 +46,7 @@ time = dt : dt : cal_time;
 t = 1 : time_max_g;
 pi = 3.1416;
 p_keisoku_taihi = zeros(1, time_max_g);
+p_keisoku_taihi2 = zeros(1, time_max_g);
 p_keisoku_spec = zeros(1, time_max_g);
 p_keisoku_in = zeros(1, time_max_g);
 p_keisoku_shin = zeros(1, time_max_g);
@@ -61,16 +64,24 @@ if sweep == 1
 else
     frequency = freq;
 end
-
-for i = 1 : time_max / 1
-    if sweep == 1
-        omega = 2*pi*(freq_start + (freq_add)*time(i)/cal_time);
-    else
-        omega = 2 * pi * freq;
+pin_range = time_max / 1;
+if input_mode == 0
+    for i = 1 : pin_range
+        if sweep == 1
+            omega = 2*pi*(freq_start + (freq_add)*time(i)/cal_time);
+        else
+            omega = 2 * pi * freq;
+        end
     end
-    
     pin(i) = exp(j * omega * time(i) - (j * pi/2));
 end
+
+if input_mode == 1
+    for i = 1 : 10
+        pin(i) = 1;
+    end
+end
+
 for i = 1 : time_max
     pin_gyaku(i) = 1 ./ pin(i);
 end
@@ -86,9 +97,11 @@ for t = 1 : time_max_g
     i = 1;
     p1(i) = a_b .* (p1(i + 1)-p2(i)) - b_b .* (p1(i + 2) - 2 .* p2(i + 1) + p3(i)) - c_b .* (p2(i + 2) - p3(i + 1)) + d_b .* p2(i + 1) - e_b .* p3(i + 2);
     i = end_point;
-    %p1(i) = a_b .* (p1(i - 1)-p2(i)) - b_b .* (p1(i - 2) - 2 .* p2(i - 1) + p3(i)) - c_b .* (p2(i - 2) - p3(i - 1)) + d_b .* p2(i - 1) - e_b .* p3(i - 2);
+    p1(i) = a_b .* (p1(i - 1)-p2(i)) - b_b .* (p1(i - 2) - 2 .* p2(i - 1) + p3(i)) - c_b .* (p2(i - 2) - p3(i - 1)) + d_b .* p2(i - 1) - e_b .* p3(i - 2);
     
-    p1(id) = pin(t);
+    if t < pin_range
+        p1(id) = pin(t);
+    end
     
     for i = 1 : ix
         p3(i) = p2(i);
@@ -113,6 +126,7 @@ for t = 1 : time_max_g
     end
     
     p_keisoku_taihi(t) = p1(id + 1);
+    p_keisoku_taihi2(t) = p1(end_point - 3);
     p_keisoku_in(t) = p_keisoku_taihi(t) - pin(t);
     p_keisoku_spec(t) = abs(p_keisoku_taihi(t)).^2;
     
@@ -132,7 +146,8 @@ for t = 1 : time_max_g
 
     if mode_plot == 1
         if mod(t, 50) == 0
-            plot(time(1:t), p_keisoku_spec(1:t))
+%             plot(time(1:t), p_keisoku_spec(1:t))
+            plot(time(1:t), p_keisoku_taihi(1:t))
             grid on;
             drawnow;
         end
@@ -141,6 +156,13 @@ for t = 1 : time_max_g
     if mode_plot == 2
         if mod(t, 50) == 0
             plot(time(1:t), p_keisoku_shin(1:t))
+            grid on;
+            drawnow;
+        end
+    end
+    if mode_plot == 3 && hekomi_bool == 0
+        if mod(t, 50) == 0
+            plot(time(1:t), p_keisoku_taihi2(1:t))
             grid on;
             drawnow;
         end
