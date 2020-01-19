@@ -53,8 +53,8 @@ ed = 3800; % 終了周波数
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 csvrangemax = 90000;
 
-load_data = csvread('1d0800shin.csv'); % 2行目より下を読み込む
-noload_data = csvread('1dnoloadshin.csv'); % 2行目より下を読み込む
+load_data = csvread('1d0300.csv'); % 2行目より下を読み込む
+noload_data = csvread('1dnoloadtaihi.csv'); % 2行目より下を読み込む
 load_data = load_data(1:csvrangemax);
 noload_data = noload_data(1:csvrangemax);
 
@@ -173,7 +173,7 @@ xlim([f1*10^-3 f2*10^-3]);
 ylabel('Relative response (arb)');
 %ylim([-3000 3000]);
 
-
+peak_taihi = peak_l ;
 [p, s, mu] = polyfit(f3, peak_l, opol); % リプルのトレンドを作成
 f_y = polyval(p, f3, [], mu);
 
@@ -200,8 +200,8 @@ st_3 = round((st - f1)/df3);
 ed_3 = round((ed - f1)/df3);
 
 
-ripple_f = peak_l(st_3:ed_3); % 波形の切り出し
-% ripple_f = ripple_f.*hamming(length(ed_3 - st_3));
+ripple_f = peak_taihi(st_3:ed_3); % 波形の切り出し
+ripple_f = ripple_f.*hamming(length(ed_3 - st_3));
 
 
 
