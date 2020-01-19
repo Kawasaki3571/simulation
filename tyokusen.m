@@ -1,7 +1,7 @@
-mode_plot = 1;
+mode_plot = 0;
 hekomi_bool = 1;
-sweep = 1;
-input_mode = 1;
+sweep = 0;
+input_mode = 2;
 
 c = 340;
 rou = 1.2;
@@ -32,7 +32,7 @@ cal_time = 0.18;
 
 dd_b = 199/200;
 % ddd = 499/500;
-ddd = 5001/5000;
+ddd = 5002/5000;
 a_b = 2 * (crn-1)/(crn+1);
 b_b = ((crn - 1) / (crn + 1)) ^ 2;
 c_b = ((crn - 1) / (crn + 1)) * dd_b*2;
@@ -59,11 +59,13 @@ x = i_x * dx;
 pin = zeros(size(time));
 pin_gyaku = zeros(size(time));
 j = sqrt(-1);
+
 if sweep == 1
     %frequency = freq_start + (freq_add)*time(i)/cal_time;
 else
     frequency = freq;
 end
+
 pin_range = time_max / 1;
 if input_mode == 0
     for i = 1 : pin_range
@@ -79,6 +81,18 @@ end
 if input_mode == 1
     for i = 1 : 10
         pin(i) = 1;
+    end
+end
+
+if input_mode == 2
+    if sweep == 0
+        cycle_point = round(cycle/ dt);
+        omega = 2 * pi * freq;
+        for i = 1 : cycle_point
+            pin(i) = exp(j * omega * time(i) - (j * pi/2));
+        end
+    else
+        pin = 0;
     end
 end
 
