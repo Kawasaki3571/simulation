@@ -10,9 +10,9 @@ freq = freq_start + freq_add*t/0.18;
 omega = freq * 2 * pi;
 hasu = 2 * pi * freq / c;
 j = sqrt(-1);
-xL = 0.0;
-p = p0.*(1 + exp(j .* 2 .* hasu .* xL)) .* exp(-1 * j .* omega .* t);
+xL = 0.5;
+p = p0.*(1 + exp(j .* 2 .* hasu .* xL)) .* exp(-1 * j .* omega .* t + pi/2);
 %p = p0.*(1 + exp(j .* 2 .* hasu .* xL)) ;
 p = p';
 plot(t , p)
-dlmwrite('rironnoload.csv', p, 'precision', '%.10f', 'delimiter', ',')
+%dlmwrite('rironnoload.csv', p, 'precision', '%.10f', 'delimiter', ',')

@@ -1,14 +1,15 @@
-mode_plot = 6;
+mode_plot = 1;
 hekomi_bool = 1;
 sweep = 1;
 input_mode = 0;
 
 c = 340;
 rou = 1.2;
-baf = 30.00;
+baf = 2.00;
 l = 2 + baf;
-x_in = 0 + baf;
-hekomi = 1 + baf;
+x_in = 0;
+hekomi = 0.3 + baf;
+keisokuten = x_in + baf;
 freq = 2000;
 freq_start = 1000;
 freq_add = 3000;
@@ -23,6 +24,7 @@ sokutei_end_x  = l;
 end_i = sokutei_end_x / dx;
 end_point = round(end_i);
 hekomi_point = round(hekomi/dx);
+keisokuten = round(keisokuten/ dx);
 p1 = zeros(1, ix + 1);
 p2 = zeros(1, ix + 1);
 p3 = zeros(1, ix + 1);
@@ -33,7 +35,7 @@ cal_time = 0.18;
 dd_b = 199/200;
 ddd = 999/1000;
 %ddd = 5001/5000;
-ddd = 1;
+%ddd = 1;
 a_b = 2 * (crn-1)/(crn+1);
 b_b = ((crn - 1) / (crn + 1)) ^ 2;
 c_b = ((crn - 1) / (crn + 1)) * dd_b*2;
@@ -75,7 +77,7 @@ if input_mode == 0
         else
             omega = 2 * pi * freq;
         end
-        pin(i) = exp(j * omega * time(i) - (j * pi/2));
+        pin(i) = 3 * exp(-1 * j * omega * time(i) - (j * pi/2));
     end
 end
 
@@ -140,7 +142,7 @@ for t = 1 : time_max_g
         u2(i) = u1(i);
     end
     
-    p_keisoku_taihi(t) = p1(id + 1);
+    p_keisoku_taihi(t) = p1(keisokuten + 1);
     p_keisoku_taihi2(t) = p1(round(hekomi_point / 2));
     p_keisoku_in(t) = p_keisoku_taihi(t) - pin(t);
     p_keisoku_spec(t) = abs(p_keisoku_taihi(t)).^2;
@@ -153,7 +155,7 @@ for t = 1 : time_max_g
     
     if mode_plot == 0
         if mod(t, 50) == 0
-            plot(x(id : round(l/dx)), real(p1(id : round(l/dx))));
+            plot(x(keisokuten : round(l/dx)), real(p1(keisokuten : round(l/dx))));
             grid on;
             drawnow
         end
@@ -162,7 +164,7 @@ for t = 1 : time_max_g
     if mode_plot == 1
         if mod(t, 50) == 0
 %             plot(time(1:t), p_keisoku_spec(1:t))
-            plot(time(1:t), p_keisoku_taihi(1:t))
+            plot(time(1:t) - 2/340, p_keisoku_taihi(1:t))
             grid on;
             drawnow;
         end
@@ -187,7 +189,7 @@ for t = 1 : time_max_g
         p_keisoku_taihi = p_keisoku_taihi';
         p_keisoku_shin = p_keisoku_shin';
         %p_keisoku_spec = p_keisoku_spec';
-        dlmwrite('1d1000taihi.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+        dlmwrite('1d0300.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
     
