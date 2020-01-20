@@ -1,4 +1,4 @@
-mode_plot = 4;
+mode_plot = 10;
 hekomi_bool = 0;
 sweep = 1;
 input_mode = 0;
