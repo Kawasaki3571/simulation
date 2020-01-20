@@ -8,7 +8,7 @@ rou = 1.2;
 baf = 0.001;
 l = 2 + baf;
 x_in = 0;
-hekomi = 1.0 + baf;
+hekomi = 0.5 + baf;
 keisokuten = x_in + baf;
 keisokuten2 = x_in + 2 * (hekomi-baf);
 freq = 2000;
@@ -79,7 +79,7 @@ if input_mode == 0
         else
             omega = 2 * pi * freq;
         end
-        pin(i) = exp(-1 * j * omega * time(i) - pi / 2);
+        pin(i) = exp(-1 * j * omega * time(i));
     end
 end
 
@@ -145,8 +145,8 @@ for t = 1 : time_max_g
     end
     
     p_keisoku_taihi(t) = p1(keisokuten + 1);
+    p_keisoku_in(t) = p1(keisokuten2 + 1);
     p_keisoku_taihi2(t) = p1(keisokuten2 + 1) + p_keisoku_taihi(t);
-    p_keisoku_in(t) = p_keisoku_taihi(t) - pin(t);
     p_keisoku_spec(t) = abs(p_keisoku_taihi(t)).^2;
     
     p_keisoku_shin(t) = p_keisoku_taihi(t) .* pin_gyaku(t);
@@ -188,10 +188,14 @@ for t = 1 : time_max_g
     end
     
     if mode_plot == 4
-        if time(t) > 0.05
+        if time(t) > 0.02
 %             plot(x(1 : l/dx), round(p1(1 : (l / dx))));
-            plot(x(keisokuten : round(l/dx)), real(p1(keisokuten : round(l/dx))));
-            xlim([0 2]);
+            hold on
+%             plot(time(1:t), p_keisoku_in(1:t))
+%             plot(time(1:t), p_keisoku_taihi(1:t))
+            plot(time(1:t), p_keisoku_taihi2(1:t))
+            xlim([0 0.02]);
+            hold off
             break;
         end
     end
@@ -201,9 +205,9 @@ for t = 1 : time_max_g
         p_keisoku_taihi2 = p_keisoku_taihi2';
         p_keisoku_shin = p_keisoku_shin';
         %p_keisoku_spec = p_keisoku_spec';
-        dlmwrite('1d1000kasou.csv', p_keisoku_taihi2, 'precision', '%.10f', 'delimiter', ',')
-        dlmwrite('1dnoloadkasou.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
-        disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
+%         dlmwrite('1d0500kasou.csv', p_keisoku_taihi2, 'precision', '%.10f', 'delimiter', ',')
+%         dlmwrite('1dnoloadkasou.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+%         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
     
 end
