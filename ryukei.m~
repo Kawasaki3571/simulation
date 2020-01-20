@@ -14,7 +14,6 @@ hasu = 2 * pai * freq / c;
 j = sqrt(-1);
 xL = 0.5;
 x = 0 : 0.001 : 2;
-
 p = p0.*(1 + exp(j .* 2 .* hasu .* xL)) .* exp(-1 * j .* omega .* t - pai/2);
 
 
@@ -56,5 +55,5 @@ figure(f2);
 
 % plot(t(1 : 0.18/dt), po(1 : 0.18/dt));   
 plot(t(1 : 0.18/dt), p(1 : 0.18/dt)); 
-dlmwrite('riron0500.csv', p, 'precision', '%.10f', 'delimiter', ',')
-dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')
+% dlmwrite('riron0500.csv', po, 'precision', '%.10f', 'delimiter', ',')
+% dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')

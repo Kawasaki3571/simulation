@@ -1,11 +1,11 @@
-mode_plot = 1;
+mode_plot = 4;
 hekomi_bool = 0;
 sweep = 1;
 input_mode = 0;
 
 c = 340;
 rou = 1.2;
-baf = 0.01;
+baf = 0.001;
 l = 2 + baf;
 x_in = 0;
 hekomi = 1.0 + baf;
@@ -37,7 +37,7 @@ cal_time = 0.18;
 dd_b = 199/200;
 ddd = 999/1000;
 %ddd = 5001/5000;
-%ddd = 1;
+ddd = 1;
 a_b = 2 * (crn-1)/(crn+1);
 b_b = ((crn - 1) / (crn + 1)) ^ 2;
 c_b = ((crn - 1) / (crn + 1)) * dd_b*2;
@@ -79,7 +79,7 @@ if input_mode == 0
         else
             omega = 2 * pi * freq;
         end
-        pin(i) = 3 * exp(-1 * j * omega * time(i) - (j * pi/2));
+        pin(i) = exp(-1 * j * omega * time(i) - pi / 2);
     end
 end
 
@@ -184,6 +184,15 @@ for t = 1 : time_max_g
             plot(time(1:t), p_keisoku_taihi2(1:t))
             grid on;
             drawnow;
+        end
+    end
+    
+    if mode_plot == 4
+        if time(t) > 0.05
+%             plot(x(1 : l/dx), round(p1(1 : (l / dx))));
+            plot(x(keisokuten : round(l/dx)), real(p1(keisokuten : round(l/dx))));
+            xlim([0 2]);
+            break;
         end
     end
     
