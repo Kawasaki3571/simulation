@@ -1,4 +1,4 @@
-mode_plot = 10;
+mode_plot = 4;
 hekomi_bool = 0;
 sweep = 1;
 input_mode = 0;
@@ -190,8 +190,12 @@ for t = 1 : time_max_g
     if mode_plot == 4
         if time(t) > 0.02
 %             plot(x(1 : l/dx), round(p1(1 : (l / dx))));
-            plot(time(1:t), p_keisoku_in(1:t))
+            hold on
+%             plot(time(1:t), p_keisoku_in(1:t))
+%             plot(time(1:t), p_keisoku_taihi(1:t))
+            plot(time(1:t), p_keisoku_taihi2(1:t))
             xlim([0 0.02]);
+            hold off
             break;
         end
     end
@@ -201,9 +205,9 @@ for t = 1 : time_max_g
         p_keisoku_taihi2 = p_keisoku_taihi2';
         p_keisoku_shin = p_keisoku_shin';
         %p_keisoku_spec = p_keisoku_spec';
-        dlmwrite('1d0500kasou.csv', p_keisoku_taihi2, 'precision', '%.10f', 'delimiter', ',')
-        dlmwrite('1dnoloadkasou.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
-        disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
+%         dlmwrite('1d0500kasou.csv', p_keisoku_taihi2, 'precision', '%.10f', 'delimiter', ',')
+%         dlmwrite('1dnoloadkasou.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+%         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
     
 end

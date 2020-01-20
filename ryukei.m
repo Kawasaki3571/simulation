@@ -57,8 +57,9 @@ figure(f2);
 
 % plot(t(1 : 0.18/dt), po(1 : 0.18/dt)); 
 hold on
-plot(t(1 : 0.02/dt), pr(1 : 0.02/dt));
-plot(t(1 : 0.02/dt), p_keisoku_in(1 : 0.02/dt)); 
+% plot(t(1 : 0.02/dt), pr(1 : 0.02/dt));
+% plot(t(1 : 0.02/dt), pi(1 : 0.02/dt)); 
+plot(t(1 : 0.02/dt), po(1 : 0.02/dt)); 
 hold off
-dlmwrite('riron0500.csv', po, 'precision', '%.10f', 'delimiter', ',')
-dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')
+% dlmwrite('riron0500.csv', po, 'precision', '%.10f', 'delimiter', ',')
+% dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')
