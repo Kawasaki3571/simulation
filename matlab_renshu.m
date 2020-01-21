@@ -1,4 +1,4 @@
-mode_plot = 4;
+mode_plot = 100;
 hekomi_bool = 0;
 sweep = 1;
 input_mode = 0;
@@ -203,10 +203,12 @@ for t = 1 : time_max_g
     if t == time_max_g
         p_keisoku_taihi = p_keisoku_taihi';
         p_keisoku_taihi2 = p_keisoku_taihi2';
+        p_keisoku_in = p_keisoku_in';
         p_keisoku_shin = p_keisoku_shin';
         %p_keisoku_spec = p_keisoku_spec';
-%         dlmwrite('1d0500kasou.csv', p_keisoku_taihi2, 'precision', '%.10f', 'delimiter', ',')
-%         dlmwrite('1dnoloadkasou.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+        dlmwrite('1d0500kasou.csv', p_keisoku_taihi2, 'precision', '%.10f', 'delimiter', ',')
+        dlmwrite('1d0500nama.csv', p_keisoku_in, 'precision', '%.10f', 'delimiter', ',')
+        dlmwrite('1dnoloadkasou.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
 %         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
     
