@@ -2,7 +2,7 @@ p0 = 1;
 r = 1;
 cal_time = 0.18;
 dt = cal_time / 90000;
-t = 0 : dt : cal_time;
+t = 0 : dt : cal_time - dt;
 freq_start = 1000;
 freq_add = 3000;
 c = 340;
@@ -55,11 +55,14 @@ p = p';
 f2 = figure;
 figure(f2);
 
-% plot(t(1 : 0.18/dt), po(1 : 0.18/dt)); 
+kasou_out = csvread('1d0500nama.csv');
+kasou_in = csvread('1dnoloadkasou.csv');
+gousei = kasou_in + pr;
+% gousei = kasou_out + pi;
+
 hold on
-% plot(t(1 : 0.02/dt), pr(1 : 0.02/dt));
-% plot(t(1 : 0.02/dt), pi(1 : 0.02/dt)); 
-plot(t(1 : 0.02/dt), po(1 : 0.02/dt)); 
+plot(t, gousei)
+% plot(t(1 : 0.02/dt), po(1 : 0.02/dt)); 
 hold off
-% dlmwrite('riron0500.csv', po, 'precision', '%.10f', 'delimiter', ',')
-% dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')
+dlmwrite('riron0500.csv', gousei, 'precision', '%.10f', 'delimiter', ',')
+dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')
