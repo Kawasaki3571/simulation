@@ -71,13 +71,13 @@ nosweep = csvread('1dnosweep.csv');
 
 gousei = kasou_out + pi;
 % gousei = kasou_out + pi;
-kaishi = 0.015;
-shuryo = kaishi + 0.005;
+kaishi = 0.07;
+shuryo = kaishi + 0.015;
 
 hold on
-plot(t(kaishi /dt + 1 : shuryo/dt), kasou_out1(kaishi /dt + 1 : shuryo/dt));
+plot(t(kaishi /dt + 1 : shuryo/dt), kasou_in(kaishi /dt + 1 : shuryo/dt));
 %plot(t(kaishi /dt + 1 : shuryo/dt), nosweep(kaishi /dt + 1 : shuryo/dt));
-plot(t(kaishi /dt + 1 : shuryo/dt), pr(kaishi /dt + 1 : shuryo/dt));
+plot(t(kaishi /dt + 1 : shuryo/dt), pi(kaishi /dt + 1 : shuryo/dt));
 hold off
 %dlmwrite('riron0500.csv', gousei, 'precision', '%.10f', 'delimiter', ',')
 %dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')
