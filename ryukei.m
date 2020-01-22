@@ -7,8 +7,16 @@ freq_start = 1000;
 freq_add = 3000;
 c = 340;
 pai = 3.1415;
+sweep = 1;
+gosahyoka = 1;
 
-freq = freq_start + freq_add*t/0.18;
+if sweep == 1
+    freq = freq_start + freq_add*t/0.18;
+else
+    freq_start = 4000;
+    freq_add = 0;
+    freq = freq_start + freq_add*t/0.18;
+end
 omega = freq * 2 * pai;
 hasu = 2 * pai * freq / c;
 j = sqrt(-1);
@@ -55,14 +63,34 @@ p = p';
 f2 = figure;
 figure(f2);
 
-kasou_out = csvread('1d0500nama.csv');
+kasou_out10_4 = csvread('1d0500kasou4.csv');
+kasou_out10_20 = csvread('1d0500kasou20.csv');
+kasou_out1 = csvread('1d0500nama.csv');
+
 kasou_in = csvread('1dnoloadkasou.csv');
-gousei = kasou_in + pr;
+nosweep = csvread('1dnosweep.csv');
+
+gousei = kasou_out + pi;
 % gousei = kasou_out + pi;
+kaishi = 0.0;
+shuryo = kaishi + 0.02;
 
 hold on
-plot(t, gousei)
-% plot(t(1 : 0.02/dt), po(1 : 0.02/dt)); 
+%plot(t(kaishi /dt + 1 : shuryo/dt), kasou_out1(kaishi /dt + 1 : shuryo/dt));
+plot(t(kaishi /dt + 1 : shuryo/dt), kasou_out10_20(kaishi /dt + 1 : shuryo/dt));
+%plot(t(kaishi /dt + 1 : shuryo/dt), kasou_out10_4(kaishi /dt + 1 : shuryo/dt));
+plot(t(kaishi /dt + 1 : shuryo/dt), pr(kaishi /dt + 1 : shuryo/dt));
+legend('20','óùò_íl')
 hold off
-dlmwrite('riron0500.csv', gousei, 'precision', '%.10f', 'delimiter', ',')
-dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')
+%dlmwrite('riron0500.csv', gousei, 'precision', '%.10f', 'delimiter', ',')
+%dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')
+
+if gosahyoka == 1
+    t_gosa = round((2*xL/340)/dt) : 10 : round(((2*xL/340)+0.05)/dt);
+    gosa_sum = 0;
+    for i = t_gosa
+        gosa_sum = gosa_sum + abs(kasou_out10(i) - pr(i));
+    end
+    gosa_sum
+end
+
