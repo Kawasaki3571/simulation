@@ -1,6 +1,6 @@
-mode_plot = 10;
+mode_plot = 50;
 hekomi_bool = 0;
-sweep = 0;
+sweep = 1;
 input_mode = 0;
 
 c = 340;
@@ -18,8 +18,8 @@ freq_start = 1000;
 freq_add = 3000;
 ramuda = c / freq ;
 baisuu = 1;
-dx = ramuda / (100 * baisuu);
-crn = 0.4;
+dx = ramuda / 100;
+crn = 0.4/baisuu;
 
 %freq = 4000;
 
@@ -53,6 +53,7 @@ time_max_g = round(cal_time/dt);
 time_max = cal_time / dt;
 cycle = 1/freq;
 time = dt : dt : cal_time;
+time10 = dt * baisuu : dt*baisuu : cal_time;
 t = 1 : time_max_g;
 pi = 3.1416;
 p_keisoku_taihi = zeros(1, time_max_g);
@@ -208,6 +209,14 @@ for t = 1 : time_max_g
             break;
         end
     end
+    if mode_plot == 5
+        if mod(t, 50) == 0
+%             plot(time(1:t), p_keisoku_spec(1:t))
+            plot(time10(1:t/baisuu), p_keisoku_in10(1:t/baisuu))
+            grid on;
+            drawnow;
+        end
+    end
     
     if t == time_max_g
         p_keisoku_taihi = p_keisoku_taihi';
@@ -215,11 +224,11 @@ for t = 1 : time_max_g
         p_keisoku_in = p_keisoku_in';
         p_keisoku_shin = p_keisoku_shin';
         p_keisoku_in10 = p_keisoku_in10';
-%       dlmwrite('1d0500kasou3.csv', p_keisoku_in10, 'precision', '%.10f', 'delimiter', ',')
+      dlmwrite('1d0500kasou.csv', p_keisoku_in10, 'precision', '%.10f', 'delimiter', ',')
 %        dlmwrite('1d0500kasou.csv', p_keisoku_taihi2, 'precision', '%.10f', 'delimiter', ',')
 %        dlmwrite('1d0500nama.csv', p_keisoku_in, 'precision', '%.10f', 'delimiter', ',')
 %        dlmwrite('1dnoloadkasou.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
-        dlmwrite('1dnosweep.csv', p_keisoku_in, 'precision', '%.10f', 'delimiter', ',')
+%        dlmwrite('1dnosweep.csv', p_keisoku_in, 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
     
