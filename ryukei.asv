@@ -34,10 +34,15 @@ pi = zeros(1, 90000);
 po = zeros(1, 90000);
 
 x = 2*xL;
+counter = 0;
 for i = 1 : 90000
     if i * dt >= 2 * xL/340
 %         pr(i) = p0.*(exp(j .* hasu(i) .* x)) .* exp(-1 * j .* omega(i) .* t(i) - pai/2  - (2 * xL/340));
-        pr(i) = p0.*(exp(j .* hasu(i) * 2.* xL)) .* exp(-1* j .* omega(i) .* t(i)- j*(2 * xL/340));
+        if counter == 0
+            i_hasu = i-1;
+        end
+        counter = 1;
+        pr(i) = p0.*(exp(j .* hasu(i - i_hasu) * 2.* xL)) .* exp(-1* j .* omega(i) .* t(i)- j*(2 * xL/340));
     else
         pr(i) = 0;
     end
@@ -71,22 +76,22 @@ nosweep = csvread('1dnosweep.csv');
 
 gousei = kasou_out + pi;
 % gousei = kasou_out + pi;
-kaishi = 0.03;
+kaishi = 0.0;
 shuryo = kaishi + 0.02;
 
 kasou_outnyu = zeros(1, round((cal_time-2*xL/340)/dt));
-kasou_outnyu = kasou_out2(round((2*xL/340)/dt : cal_time/dt);
+kasou_outnyu = kasou_out2(round((2*xL/340)/dt) : round(cal_time/dt));
+pr_outnyu = pr(round((2*xL/340)/dt) : round(cal_time/dt));
 
 hold on
 %plot(t(kaishi /dt + 1 : shuryo/dt), kasou_out2(kaishi /dt + 1 : shuryo/dt));
 %plot(t(kaishi /dt + 1 : shuryo/dt), pr(kaishi /dt + 1 : shuryo/dt));
 
-plot(1:1000, kaosu_outnyu(1:1000))
-plot(1:1000, pi(1:1000))
+plot(t(kaishi /dt + 1 : shuryo/dt), pr(kaishi /dt + 1 : shuryo/dt));
+plot(t(kaishi /dt + 1 : shuryo/dt), kasou_outnyu(kaishi /dt + 1 : shuryo/dt));
 
 %legend('1éü', '2éü', 'óùò_íl')
 hold off
-plot(t, kasou_out2 + pi)
 %dlmwrite('riron0500.csv', gousei, 'precision', '%.10f', 'delimiter', ',')
 %dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')
 

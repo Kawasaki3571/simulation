@@ -17,6 +17,7 @@ else
     freq_add = 0;
     freq = freq_start + freq_add*t/0.18;
 end
+
 omega = freq * 2 * pai;
 hasu = 2 * pai * freq / c;
 j = sqrt(-1);
@@ -30,6 +31,7 @@ p = p0.*(1 + exp(j .* 2 .* hasu .* xL)) .* exp(-1 * j .* omega .* t - pai/2);
 
 % pt = p0.*(exp(j .* hasu .* x)) .* exp(-1 * j .* omega .* t - pai/2  - (0.6/340));
 pr = zeros(1, 90000);
+pr2 = zeros(1, 90000);
 pi = zeros(1, 90000);
 po = zeros(1, 90000);
 
@@ -42,7 +44,9 @@ for i = 1 : 90000
             i_hasu = i-1;
         end
         counter = 1;
-        pr(i) = p0.*(exp(j .* hasu(i - i_hasu) * 2.* xL)) .* exp(-1* j .* omega(i) .* t(i)- j*(2 * xL/340));
+        pr(i) = p0.*(exp(j .* hasu(i) * 2.* xL)) .* exp(-1* j .* omega(i) .* t(i)- j*(2 * xL/340));
+        %pr2(i) = p0.*(exp(j .* hasu(i - i_hasu) * 2.* xL)) .* exp(-1* j .* omega(i - i_hasu) .* t(i)- j*(2 * xL/340));
+        pr2(i) = p0.*(exp(j .* hasu(i - i_hasu) * 2.* xL)) .* exp(-1* j .* omega(i) .* t(i)- j*(2 * xL/340));
     else
         pr(i) = 0;
     end
@@ -58,8 +62,10 @@ for i = 1 : 90000
 end
 
 pr  = pr';
+pr2 = pr2';
 pi = pi';
 po = pi + pr;
+po2 = pi + pr2;
 
 %px = p0.*(exp(j .* hasu .* x)) ;
 %p = p0.*(1 + exp(j .* 2 .* hasu .* xL)) ;
@@ -86,14 +92,14 @@ pr_outnyu = pr(round((2*xL/340)/dt) : round(cal_time/dt));
 hold on
 %plot(t(kaishi /dt + 1 : shuryo/dt), kasou_out2(kaishi /dt + 1 : shuryo/dt));
 %plot(t(kaishi /dt + 1 : shuryo/dt), pr(kaishi /dt + 1 : shuryo/dt));
-
 plot(t(kaishi /dt + 1 : shuryo/dt), pr_outnyu(kaishi /dt + 1 : shuryo/dt));
-plot(t(kaishi /dt + 1 : shuryo/dt), pi(kaishi /dt + 1 : shuryo/dt));
+plot(t(kaishi /dt + 1 : shuryo/dt), kasou_outnyu(kaishi /dt + 1 : shuryo/dt));
 
 %legend('1éü', '2éü', 'óùò_íl')
 hold off
-%dlmwrite('riron0500.csv', gousei, 'precision', '%.10f', 'delimiter', ',')
-%dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')
+plot(t, po2)
+dlmwrite('riron05002.csv', po2, 'precision', '%.10f', 'delimiter', ',')
+dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')
 
 if gosahyoka == 1
     t_gosa = round((2*xL/340)/dt) : 10 : round(((2*xL/340)+0.05)/dt);
