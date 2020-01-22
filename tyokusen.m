@@ -177,6 +177,7 @@ for t = 1 : time_max_g
             drawnow;
         end
     end
+    
     if mode_plot == 3 && hekomi_bool == 0
         if mod(t, 50) == 0
             plot(time(1:t), p_keisoku_taihi2(1:t))
@@ -192,5 +193,4 @@ for t = 1 : time_max_g
         dlmwrite('1d0300.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
-    
 end

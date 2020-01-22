@@ -1,7 +1,8 @@
-mode_plot = 50;
+mode_plot = 5;
 hekomi_bool = 0;
 sweep = 1;
 input_mode = 0;
+niji = 1;
 
 c = 340;
 rou = 1.2;
@@ -113,11 +114,20 @@ for i = 1 : time_max
 end
 
 for t = 1 : time_max_g
-
-    for i = 2 : ix
+    if niji == 1
+        for i = 3 : ix - 2
+%            p1(i) = ddd*(p2(i) - (rou*c^2*dt/dx)*(u2(i) - u2(i - 1)));
+            p1(i) = ddd*(p2(i) - (rou*c^2*dt/dx)*((-1/24)*u2(i+1) + (9/8)*u2(i) - (9/8)*u2(i - 1) + (1/24)*u2(i - 2)));
+        end
+        i = 2;
         p1(i) = ddd*(p2(i) - (rou*c^2*dt/dx)*(u2(i) - u2(i - 1)));
+        i = ix - 1;
+        p1(i) = ddd*(p2(i) - (rou*c^2*dt/dx)*(u2(i) - u2(i - 1)));
+    else
+        for i = 2 : ix
+            p1(i) = ddd*(p2(i) - (rou*c^2*dt/dx)*(u2(i) - u2(i - 1)));
+        end
     end
-
 
     %i = 1;
     i = 1;
@@ -127,16 +137,29 @@ for t = 1 : time_max_g
     
     if t < pin_range
         p1(id) = pin(t);
+        p1(id + 1) = pin(t);
     end
     
     for i = 1 : ix
         p3(i) = p2(i);
         p2(i) = p1(i);
     end
-    
-    for i = 1 : ix
-        u1(i) = u2(i) - (dt/(rou*dx))*(p2(i + 1) - p2(i));
+    if niji == 1
+        for i = 2 : ix - 2
+%           u1(i) = u2(i) - (dt/(rou*dx))*(p2(i + 1) - p2(i));
+            u1(i) = u2(i) - (dt/(rou*dx))*((-1/24)*p2(i+2) + (9/8)*p2(i + 1) - (9/8)*p2(i) + (1/24)*p2(i - 1));
+        end
+    else
+        for i = 1 : ix
+            u1(i) = u2(i) - (dt/(rou*dx))*(p2(i + 1) - p2(i));
+        end
     end
+    i = 1;
+    u1(i) = u2(i) - (dt/(rou*dx))*(p2(i + 1) - p2(i));
+    i = ix - 1;
+    u1(i) = u2(i) - (dt/(rou*dx))*(p2(i + 1) - p2(i));
+    i = ix;
+    u1(i) = u2(i) - (dt/(rou*dx))*(p2(i + 1) - p2(i));
     
     %p1(end_point) = 0;
     %p2(end_point) = 0;
@@ -224,11 +247,11 @@ for t = 1 : time_max_g
         p_keisoku_in = p_keisoku_in';
         p_keisoku_shin = p_keisoku_shin';
         p_keisoku_in10 = p_keisoku_in10';
-      dlmwrite('1d0500kasou.csv', p_keisoku_in10, 'precision', '%.10f', 'delimiter', ',')
+%       dlmwrite('1d0500kasou.csv', p_keisoku_in10, 'precision', '%.10f', 'delimiter', ',')
 %        dlmwrite('1d0500kasou.csv', p_keisoku_taihi2, 'precision', '%.10f', 'delimiter', ',')
-%        dlmwrite('1d0500nama.csv', p_keisoku_in, 'precision', '%.10f', 'delimiter', ',')
-%        dlmwrite('1dnoloadkasou.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
-%        dlmwrite('1dnosweep.csv', p_keisoku_in, 'precision', '%.10f', 'delimiter', ',')
+       dlmwrite('1d0500nama2.csv', p_keisoku_in, 'precision', '%.10f', 'delimiter', ',')
+       dlmwrite('1dnoloadkasou.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+%       dlmwrite('1dnosweep.csv', p_keisoku_in, 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")
     end
     
