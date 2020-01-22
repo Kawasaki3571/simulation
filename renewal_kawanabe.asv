@@ -10,8 +10,8 @@ rou0 = 1.293;
 % rou0 = 1000;?
 freq_param = 0.129/0.17;
 freq_a = 2000;
-freq_start = 1000;
-freq_add = 3000;
+freq_start = 1000*freq_param;
+freq_add = 3000*freq_param;
 freq = freq_a;
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
@@ -45,18 +45,18 @@ d = 1; % 分割間隔
 
 xL = 0.5;
 achieve_time = 2*xL/c0;
-freq_e = freq_start + freq_add*((cal_time - achieve_time)/cal_time);
+freq_s = freq_start + freq_add*(achieve_time/cal_time);
 
-f1 = 1000; % スイープ開始周波数（Hz）
-f2 = freq_e; % 終了周波数
+f1 = 1; % スイープ開始周波数（Hz）
+f2 = 4000; % 終了周波数
 
-st = 1100; % フーリエ変換の開始周波数（Hz）
-ed = freq_e - 100; % 終了周波数
+st = 1200; % フーリエ変換の開始周波数（Hz）
+ed = 3800; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 csvrangemax = 90000;
 
-load_data = csvread('riron05002.csv'); % 2行目より下を読み込む
+load_data = csvread('riron0500.csv'); % 2行目より下を読み込む
 noload_data = csvread('rironnoload.csv'); % 2行目より下を読み込む
 load_data = load_data(1:csvrangemax);
 noload_data = noload_data(1:csvrangemax);
