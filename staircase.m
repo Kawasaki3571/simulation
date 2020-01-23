@@ -1,6 +1,6 @@
 range = 1;
-boundary = 2;
-mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
+boundary = 1;
+mode = 1; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 0;
@@ -26,7 +26,10 @@ freq = freq_a;
 
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
-dx_param = 0.05; %0.05-0.025 
+dx_param = 0.05; %0.05-0.025
+
+dx_param = 0.02;
+
 dx = ramuda*dx_param; % λの20-30分の一
 % dt = dx / (5 * c);
 % dt = dx*0.15 / (c0);
@@ -417,25 +420,21 @@ for t = 1: tx
             i = 1;
                 for j = 2 : jx
                     %p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
-                    p1(i + 1, j) = p2(i + 1, j);
                     p1(i,j) = 0;
                 end
             i = ix + 1;
                 for j = 2 : jx
                     %p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-                    p1(i - 1, j) = p2(i - 1, j);
                     p1(i,j) = 0;
                 end
             j = 1;
                 for i = 2 : ix
                     %p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
-                    p1(i ,j + 1) = p2(i, j + 1);
                     p1(i,j) = 0;
                 end
             j = jx + 1;
                 for i = 2 : ix
                     %p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
-                    p1(i, j - 1) = p2(i,j - 1);
                     p1(i,j) = 0;
                 end
         case 2
@@ -557,6 +556,7 @@ for t = 1: tx
             j1 = round(y1_s/dx) + 1;
             u1(i1, j1) = 0;
             v1(i1, j1) = 0;
+%           aaaaaaaaa
         end
         for x1_s = 0.1 : dx : 0.2
             y1_s = 0.3 - x1_s;
@@ -571,6 +571,7 @@ for t = 1: tx
             j1 = round(y1_s/dx) + 1;
             u1(i1, j1) = 0;
             v1(i1, j1) = 0;
+%           aaaaaaaaa
         end
     end
     for i = 1 : ix + 1
@@ -599,7 +600,8 @@ for t = 1: tx
     y_p = y * dx;
     if mode_plot == 0
         if mod(t,10) == 0
-        imagesc(y_p,x_p,pressure(x,y));
+%         imagesc(y_p,x_p,pressure(x,y));
+        imagesc(y_p,x_p,abs(u1(x,y)));
             colorbar
             %colormap gray ;
 %             title(['pressure when ',num2str(time),'seconds have passed'])
@@ -869,25 +871,25 @@ if mode == 5
         y1 = 0.1 - x1;
         i1 = round(x1/dx) + 1;
         j1 = round(y1/dx) + 1;
-        p1(i1, j1) = 10;
+        p1(i1, j1) = 1;
     end
     for x1 = 0.1 : dx : 0.2
         y1 = x1 - 0.1;
         i1 = round(x1/dx) + 1;
         j1 = round(y1/dx) + 1;
-        p1(i1, j1) = 10;
+        p1(i1, j1) = 0.5;
     end
     for x1 = 0.1 : dx : 0.2
         y1 = 0.3 - x1;
         i1 = round(x1/dx) + 1;
         j1 = round(y1/dx) + 1;
-        p1(i1, j1) = 10;
+        p1(i1, j1) = -0.5;
     end
     for x1 = 0 : dx : 0.1
         y1 = x1 + 0.1;
         i1 = round(x1/dx) + 1;
         j1 = round(y1/dx) + 1;
-        p1(i1, j1) = 10;
+        p1(i1, j1) = -1;
     end
     y = 1 : jx + 1 ;
     x = 1 : ix + 1;
