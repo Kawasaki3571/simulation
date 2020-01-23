@@ -50,12 +50,12 @@ if range == 0
     xd2 = 4 * dx;
 end
 if range == 1
-    xrange = 0.2;
-    yrange = 0.2;
-    xd = 0.1;
-    xd2 = 0.1;
-    yd = 0.1;
-    yd2 = 0.1;
+    xrange = 0.2828;
+    yrange = 0.2828;
+    xd = xrange / 2;
+    xd2 = xrange / 2;
+    yd = yrange / 2;
+    yd2 = yrange / 2;
 end
 if range == 2
     b_haba = 0.002;
@@ -541,16 +541,15 @@ for t = 1: tx
                     v1(i,j) = 0;
                 end
     end
-    if 
-        == 1
-        for x1_s = 0 : dx : 0.1
+    if stair == 1
+        for x1_s = 0 : dx : xrange / 2
             y1_s = 0.1 - x1_s;
             i1 = round(x1_s/dx) + 1;
             j1 = round(y1_s/dx) + 1;
             u1(i1, j1) = 0;
             v1(i1, j1) = 0;
         end
-        for x1_s = 0.1 : dx : 0.2
+        for x1_s = xrange : dx : xrange / 2
             y1_s = x1_s - 0.1;
             i1 = round(x1_s/dx) + 1;
             j1 = round(y1_s/dx) + 1;
