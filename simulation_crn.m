@@ -458,22 +458,22 @@ for t = 1: tx
     if hekomi == 1
         for i = b_x : b_x + h_x
             for j = 1 : w_x
-                p1(i,j) = 0;
+%                 p1(i,j) = 0;
                 u1(i,j) = 0;
                 v1(i,j) = 0;
             end
         end
         i = b_x - 1;
         for j = 1 : w_x + 1
-            p1(i,j) = p2(i,j);
+%             p1(i,j) = p2(i,j);
         end
         j = w_x + 1;
         for i = b_x - 1 : b_x + h_x + 1
-            p1(i,j) = p2(i,j);
+%             p1(i,j) = p2(i,j);
         end
         i = b_x + h_x + 1;
         for j = 1 : w_x + 1
-            p1(i,j) = p2(i,j);
+%             p1(i,j) = p2(i,j);
         end
     end
     
