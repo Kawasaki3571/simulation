@@ -429,7 +429,7 @@ for t = 1: tx
                     u1(i,j) = 0;
                     v1(i,j) = 0;
                 end
-            j = jx + 1;
+            j = jx + 1 ;
                 for i = 2 : ix
                     %p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
                     u1(i,j) = 0;
@@ -437,7 +437,7 @@ for t = 1: tx
                 end
         case 2
             i = 1;
-                for j = 2 : jx +  1
+                for j = 2 : jx 
                     p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
 %                   p1(i + 1, j) = p1_taihi(i + 1, j);
                 end
@@ -452,7 +452,7 @@ for t = 1: tx
 %                   p1(i ,j + 1) = p1_taihi(i, j + 1);
                 end
             j = jx + 1;
-                for i = 2 : ix + 1
+                for i = 2 : ix 
                     p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
 %                   p1(i, j - 1) = p1_taihi(i,j - 1);
                 end
@@ -485,61 +485,17 @@ for t = 1: tx
             p2(i,j) = p1(i,j);
         end
     end
-    for i = 1 : ix
+    for i = 2 : ix
         for j = 2 : jx
             u1(i,j) = cv1 .* u2(i,j) - cv2 .* (p2(i + 1, j) - p2(i,j));
         end
     end
     for i = 2 : ix
-        for j = 1 : jx
+        for j = 2 : jx
             v1(i,j) = cv1 * v2(i,j) - cv2 * (p2(i, j + 1) - p2(i,j));
         end
     end
     
-    switch(boundary)
-        case 0
-            i = 1;
-                for j = 2 : jx
-%                     u1(i,j) = 0;
-%                     v1(i,j) = 0;
-                end
-            i = ix + 1;
-                for j = 2 : jx
-                    u1(i,j) = 0;
-                    v1(i,j) = 0;
-                end
-            j = 1;
-                for i = 2 : ix
-%                     u1(i,j) = 0;
-%                     v1(i,j) = 0;
-                end
-            j = jx + 1;
-                for i = 2 : ix
-%                     u1(i,j) = 0;
-%                     v1(i,j) = 0;
-                end
-        case 1
-            i = 1;
-                for j = 2 : jx
-                    u1(i,j) = 0;
-                    v1(i,j) = 0;
-                end
-            i = ix + 1;
-                for j = 2 : jx
-                    u1(i,j) = 0;
-                    v1(i,j) = 0;
-                end
-            j = 1;
-                for i = 2 : ix
-                    u1(i,j) = 0;
-                    v1(i,j) = 0;
-                end
-            j = jx + 1;
-                for i = 2 : ix
-                    u1(i,j) = 0;
-                    v1(i,j) = 0;
-                end
-    end
     if stair == 1
         grad = yrange / xrange;
         for x1_s = 0 : dx : xrange / 2
@@ -658,7 +614,7 @@ for t = 1: tx
 %        p_keisoku_taihi(t/5) = p1(5, y_half);
         p_keisoku_taihi(t/5) = p1(sokuteiten_x_g, sokuteiten_y_g);
     end
-    if mod(t,500) == 0
+    if mod(t,50) == 0
         disp(t);
         time
     end
