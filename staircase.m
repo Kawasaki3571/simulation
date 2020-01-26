@@ -5,8 +5,8 @@ mode_plot = 0; %ƒvƒƒbƒgƒ‚[ƒh‘I‘ğ 0...ƒJƒ‰[ƒ}ƒbƒvis 1...xƒvƒƒbƒg 2...xƒvƒƒ
 % 6...3‚ğ×‚©‚¢ŠÔ‚Å’Ç‚¤
 hekomi = 0;
 sweep = 0;
-SC = 4;%—ãUŠÖ” ‚O‚È‚ç˜A‘±1‚È‚çƒKƒEƒVƒAƒ“2ƒnƒjƒ“ƒO3³Œ·”g””g4ƒXƒC[ƒv
-stair = 1;
+SC = 5;%—ãUŠÖ” ‚O‚È‚ç˜A‘±1‚È‚çƒKƒEƒVƒAƒ“2ƒnƒjƒ“ƒO3³Œ·”g””g4ƒXƒC[ƒv5ƒCƒ“ƒpƒ‹ƒX
+stair = 0;
 
 f1 = figure;
 % f2 = figure;
@@ -52,10 +52,16 @@ end
 if range == 1
     xrange = 0.2828;
     yrange = 0.2828;
-    xd = xrange / 2;
-    xd2 = xrange / 2;
-    yd = yrange / 2;
-    yd2 = yrange / 2;
+    xrange = 0.2;
+    yrange = 0.2;
+    xd = xrange / 2 ;
+    xd2 = xrange / 2 ;
+    yd = yrange / 2 ;
+    yd2 = yrange / 2 ;
+    sokuteiten_x = 0.1 * (3*sqrt(2)/4);
+    sokuteiten_y = 0.1 * (3*sqrt(2)/4);
+    sokuteiten_x = 0.15;
+    sokuteiten_y = 0.1;
 end
 if range == 2
     b_haba = 0.002;
@@ -116,6 +122,8 @@ w_x = round(w / dx);
 td = 15; % ü”g”‚Ì‘ã“üiHj
 id = round(xd / dx);%x‚ÌˆÊ’uiHj
 id2 = round(xd2 / dx ) ;
+sokuteiten_x_g = round(sokuteiten_x / dx);
+sokuteiten_y_g = round(sokuteiten_y / dx);
 if range ~= 2
     jd = round(yd / dx) ; %y‹óŠÔŠ´Šo‚Ì‘ã“üiHj
     jd_2 = round(yd2/dx);
@@ -290,6 +298,16 @@ w = 2 * pai * freq ;
 %                   pin(t) = 0;
                 end
             end
+        case 5
+            pulse_second = 0.0001;
+            for tc = 1 : tx + 100
+                time = tc * dt;
+                if time < pulse_second
+                    pin(tc) = 1;
+                else
+                    pin(tc) = 0;
+                end
+            end
     end
 
 if mode == 0
@@ -369,26 +387,6 @@ for t = 1: tx
             end
         end
     end
-    i = 1;
-    for j = 2 : jx
-        p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
-%         p1(i + 1, j) = p1_taihi(i + 1, j);
-    end
-    i = ix + 1;
-    for j = 2 : jx
-        p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-%          p1(i - 1, j) = p1_taihi(i - 1, j);
-    end
-    j = 1;
-    for i = 2 : ix
-        p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
-%         p1(i ,j + 1) = p1_taihi(i, j + 1);
-    end
-    j = jx + 1;
-    for i = 2 : ix
-        p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
-%         p1(i, j - 1) = p1_taihi(i,j - 1);
-    end
     
     switch(boundary)
         case 0
@@ -416,22 +414,26 @@ for t = 1: tx
             i = 1;
                 for j = 2 : jx
                     %p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
-                    p1(i,j) = 0;
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
                 end
             i = ix + 1;
                 for j = 2 : jx
                     %p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-                    p1(i,j) = 0;
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
                 end
             j = 1;
                 for i = 2 : ix
                     %p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
-                    p1(i,j) = 0;
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
                 end
             j = jx + 1;
                 for i = 2 : ix
                     %p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
-                    p1(i,j) = 0;
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
                 end
         case 2
             i = 1;
@@ -653,7 +655,8 @@ for t = 1: tx
     end
     if mod(t,5)==0
 %         Œv‘ª“_
-        p_keisoku_taihi(t/5) = p1(5, y_half);
+%        p_keisoku_taihi(t/5) = p1(5, y_half);
+        p_keisoku_taihi(t/5) = p1(sokuteiten_x_g, sokuteiten_y_g);
     end
     if mod(t,500) == 0
         disp(t);
@@ -667,16 +670,16 @@ for t = 1: tx
     if mode_plot == 0
         if mod(t,10) == 0
 %         imagesc(y_p,x_p,pressure(x,y));
-        image_plot = pressure';
-        imagesc(y_p,x_p, image_plot(y ,x));
+            image_plot = pressure';
+            imagesc(y_p,x_p, image_plot(y ,x));
             colorbar
             %colormap gray ;
 %             title(['pressure when ',num2str(time),'seconds have passed'])
             title(['pressure when frequency =',num2str(freq),'Hz&&', num2str(time), '(s) have passed'])
             xlabel('x(mm)')
             ylabel('y(mm)')
-        grid on;
-        drawnow
+            grid on;
+            drawnow
         end
     end
     if mode_plot == 1
@@ -714,14 +717,6 @@ for t = 1: tx
              end
              min_x = minor_i * dx;
              max_x = major_i * dx;
-%              for i = 1 : ix + 1
-%                  if real(p1(i,y_half)) == min_v
-%                      min_x = i * dx;
-%                  elseif real(p1(i,y_half)) == max_v
-%                      max_x = i * dx;
-%                  end
-%              end
-            
                 hacho = abs(max_x - min_x) * 2;
                 min_x
                 max_x
@@ -742,29 +737,15 @@ for t = 1: tx
         end
     end
     if mode_plot == 3
-        if t == 5000
-%         if mod(t,50) == 0
-            t_x = 1 : t;
-            time = t_x * dt;
-%            plot(time,p_keisoku_taihi(t_x));
-%             bekutoru(time) = p_keisoku_taihi(t_x);
-%             X = bekutoru(time);
-            plot(time,p_keisoku_taihi(t_x));
-            Fs = 1000;            % Sampling frequency                    
-            T = 1/Fs;             % Sampling period       
-            L = 1500;             % Length of signal
-            ft = (0:L-1)*T;        % Time vector
-            Y = fft(X);
-%             plot(1:5000,Y);
-            %P2 = abs(Y/L);
-            %P1 = P2(1:L/2+1);
-            %P1(2:end-1) = 2*P1(2:end-1);
-            %f = Fs*(0:(L/2))/L;
-            %plot(f,P1);
-            %title('Single-Sided Amplitude Spectrum of X(t)')
-            %xlabel('f (Hz)')
-            %ylabel('|P1(f)|')
-            break;
+        if mod(t, 50) == 0
+            t_x = 1 : t / 5;
+            time = t_x *5 * dt;
+            plot(time, p_keisoku_taihi(t_x));
+            drawnow
+        end
+        if time > 0.01
+                dlmwrite('kyokaisei.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                break;
         end
     end
     if mode_plot == 4
