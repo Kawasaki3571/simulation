@@ -8,10 +8,10 @@ c0 = 340;
 cal_time = 0.18;
 rou0 = 1.293;
 % rou0 = 1000;?
-freq_param = 0.129/0.17;
+freq_param = 1;
 freq_a = 1000;
 freq_start = 1000;
-freq_add = 3000;
+freq_add = 2000;
 freq = freq_a;
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
@@ -46,19 +46,20 @@ d = 1; % 分割間隔
 xL = 0.5;
 achieve_time = 2*xL/c0;
 freq_e = freq_start + freq_add*((cal_time - achieve_time)/cal_time);
+start_time_g = round(achieve_time / (5*dt));
 
 f1 = 1000; % スイープ開始周波数（Hz）
-f2 = freq_e; % 終了周波数
+f2 = 3000; % 終了周波数
 
 st = 1100; % フーリエ変換の開始周波数（Hz）
-ed = freq_e - 100; % 終了周波数
+ed = 3000 - 1000; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
 load_data = csvread('pow700s1to3.csv'); % 2行目より下を読み込む
 noload_data = csvread('powhekonoload1to3.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
-load_data = load_data(1:csvrangemax);
+load_data = load_data(start_time_g :csvrangemax);
 noload_data = noload_data(1:csvrangemax);
 
 dlmwrite('sabun700s1to3.csv', load_data - noload_data, 'precision', '%.10f', 'delimiter', ',')
@@ -182,7 +183,8 @@ peak_taihi = peak_l ;
 [p, s, mu] = polyfit(f3, peak_l, opol); % リプルのトレンドを作成
 f_y = polyval(p, f3, [], mu);
 
-peak_l = peak_l - f_y; % トレンドを除去
+
+%peak_l = peak_l - f_y; % トレンドを除去
 
 
 
@@ -206,7 +208,7 @@ ed_3 = round((ed - f1)/df3);
 
 
 ripple_f = peak_taihi(st_3:ed_3); % 波形の切り出し
-ripple_f = ripple_f.*hamming(length(ed_3 - st_3));
+%ripple_f = ripple_f.*hamming(length(ed_3 - st_3));
 
 
 

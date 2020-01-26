@@ -3,7 +3,7 @@ boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 1;
+hekomi = 0;
 sweep = 1;
 SC = 4;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 0;
@@ -108,7 +108,7 @@ speed = 0;
 disp_hensu = 0;
 absp0 = - 0.5; % 吸収係数
 b_po = 0.5 ; %凹み位置
-h = 0.005;%凹み幅
+h = 0.02;%凹み幅
 w = 0.01;%凹みふかさ
 
 
@@ -387,14 +387,6 @@ for t = 1: tx
             end
         end
     end
-    i = 1;
-    for j = 1 : jx + 1
-        p1(i,j) = 0;
-    end
-    j = 1;
-    for i = 1 : ix + 1
-        p1(i,j) = 0;
-    end    
     switch(boundary)
         case 0
             i = 1;
@@ -465,6 +457,23 @@ for t = 1: tx
 %                   p1(i, j - 1) = p1_taihi(i,j - 1);
                 end
     end
+    
+    for i = 1 : ix + 1
+        for j = 1 : jx + 1
+            p3(i,j) = p2(i,j);
+            p2(i,j) = p1(i,j);
+        end
+    end
+    for i = 2 : ix
+        for j = 2 : jx
+            u1(i,j) = cv1 .* u2(i,j) - cv2 .* (p2(i + 1, j) - p2(i,j));
+        end
+    end
+    for i = 2 : ix
+        for j = 2 : jx
+            v1(i,j) = cv1 * v2(i,j) - cv2 * (p2(i, j + 1) - p2(i,j));
+        end
+    end
     if hekomi == 1
         for i = b_x : b_x + h_x
             for j = 1 : w_x
@@ -487,22 +496,6 @@ for t = 1: tx
         end
     end
     
-    for i = 1 : ix + 1
-        for j = 1 : jx + 1
-            p3(i,j) = p2(i,j);
-            p2(i,j) = p1(i,j);
-        end
-    end
-    for i = 2 : ix
-        for j = 2 : jx
-            u1(i,j) = cv1 .* u2(i,j) - cv2 .* (p2(i + 1, j) - p2(i,j));
-        end
-    end
-    for i = 2 : ix
-        for j = 2 : jx
-            v1(i,j) = cv1 * v2(i,j) - cv2 * (p2(i, j + 1) - p2(i,j));
-        end
-    end
     
     if stair == 1
         grad = yrange / xrange;
@@ -763,7 +756,7 @@ for t = 1: tx
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
                 %dlmwrite('kairyouheko500sweep2to7.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
-                dlmwrite('pow700s1to3.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('powhekonoload1to3.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
@@ -910,7 +903,7 @@ if mode == 5
     imagesc(y_p,x_p,p1(x,y));
     colorbar
     %colormap gray ;
-%   title(['pressure when ',num2str(time),'seconds have passed'])
+    %   title(['pressure when ',num2str(time),'seconds have passed'])
     title(['pressure when frequency =',num2str(freq),'Hz&&', num2str(time), '(s) have passed'])
     xlabel('y(mm)')
     ylabel('x(mm)')
