@@ -6,7 +6,7 @@ mode_plot = 0; %ƒvƒƒbƒgƒ‚[ƒh‘I‘ğ 0...ƒJƒ‰[ƒ}ƒbƒvis 1...xƒvƒƒbƒg 2...xƒvƒƒ
 hekomi = 0;
 sweep = 0;
 SC = 4;%—ãUŠÖ” ‚O‚È‚ç˜A‘±1‚È‚çƒKƒEƒVƒAƒ“2ƒnƒjƒ“ƒO3³Œ·”g””g4ƒXƒC[ƒv
-stair = 2;
+stair = 1;
 
 f1 = figure;
 % f2 = figure;
@@ -50,8 +50,8 @@ if range == 0
     xd2 = 4 * dx;
 end
 if range == 1
-    xrange = 0.2;
-    yrange = 0.2;
+    xrange = 0.2828;
+    yrange = 0.2828;
     xd = xrange / 2;
     xd2 = xrange / 2;
     yd = yrange / 2;
@@ -546,9 +546,16 @@ for t = 1: tx
             j1 = round(y1_s/dx) + 1;
             u1(i1, j1) = 0;
             v1(i1, j1) = 0;
-            for jstair = 1 : j1 + 1
-                u1(i1, jstair) = 0;
-                v1(i1, jstair) = 0;
+            if j1 < 3
+                for jstair = 1 : j1 + 1
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
+                end
+            else
+                for jstair = j1 - 2 : j1 + 1
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
+                end
             end
         end
         for x1_s = xrange / 2 : dx : xrange
@@ -557,9 +564,16 @@ for t = 1: tx
             j1 = round(y1_s/dx) + 1;
             u1(i1, j1) = 0;
             v1(i1, j1) = 0; 
-            for jstair = 1 : j1 + 1
-                u1(i1, jstair) = 0;
-                v1(i1, jstair) = 0;
+            if j1 < 3
+                for jstair = 1 : j1 + 1
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
+                end
+            else
+                for jstair = j1 - 2 : j1 + 1
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
+                end
             end
         end
         for x1_s = xrange/2 : dx : xrange
@@ -568,9 +582,16 @@ for t = 1: tx
             j1 = round(y1_s/dx) + 1;
             u1(i1, j1) = 0;
             v1(i1, j1) = 0;
-            for jstair = j1 : jx + 1 
-                u1(i1, jstair) = 0;
-                v1(i1, jstair) = 0;
+            if j1 > jx - 2
+                for jstair = j1 : jx + 1 
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
+                end
+            else
+                for jstair = j1 : j1 + 3
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
+                end
             end
         end
         for x1_s = 0 : dx : xrange / 2
@@ -579,9 +600,16 @@ for t = 1: tx
             j1 = round(y1_s/dx) + 1;
             u1(i1, j1) = 0;
             v1(i1, j1) = 0;
-            for jstair = j1 : jx + 1
-                u1(i1, jstair) = 0;
-                v1(i1, jstair) = 0;
+            if j1 > jx - 2
+                for jstair = j1 : jx + 1 
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
+                end
+            else
+                for jstair = j1 : j1 + 3
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
+                end
             end
         end
     end

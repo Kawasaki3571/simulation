@@ -50,8 +50,8 @@ if range == 0
     xd2 = 4 * dx;
 end
 if range == 1
-    xrange = 0.2;
-    yrange = 0.2;
+    xrange = 0.2828;
+    yrange = 0.2828;
     xd = xrange / 2;
     xd2 = xrange / 2;
     yd = yrange / 2;
@@ -546,9 +546,16 @@ for t = 1: tx
             j1 = round(y1_s/dx) + 1;
             u1(i1, j1) = 0;
             v1(i1, j1) = 0;
-            for jstair = 1 : j1 + 1
-                u1(i1, jstair) = 0;
-                v1(i1, jstair) = 0;
+            if j1 < 3
+                for jstair = 1 : j1 + 1
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
+                end
+            else
+                for jstair = j1 - 2 : j1 + 1
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
+                end
             end
         end
         for x1_s = xrange / 2 : dx : xrange
@@ -557,9 +564,16 @@ for t = 1: tx
             j1 = round(y1_s/dx) + 1;
             u1(i1, j1) = 0;
             v1(i1, j1) = 0; 
-            for jstair = 1 : j1 + 1
-                u1(i1, jstair) = 0;
-                v1(i1, jstair) = 0;
+            if j1 < 3
+                for jstair = 1 : j1 + 1
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
+                end
+            else
+                for jstair = j1 - 2 : j1 + 1
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
+                end
             end
         end
         for x1_s = xrange/2 : dx : xrange
@@ -568,6 +582,17 @@ for t = 1: tx
             j1 = round(y1_s/dx) + 1;
             u1(i1, j1) = 0;
             v1(i1, j1) = 0;
+            if j1 < 3
+                for jstair = 1 : j1 + 1
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
+                end
+            else
+                for jstair = j1 - 2 : j1 + 1
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
+                end
+            end
             for jstair = j1 : jx + 1 
                 u1(i1, jstair) = 0;
                 v1(i1, jstair) = 0;
@@ -586,11 +611,30 @@ for t = 1: tx
         end
     end
     if stair == 2
-        center = 0
+        center_x = 0.1;
+        center_y = 0.1;
+        kei = 0.1;
         for x1_s = 0 : dx : xrange
-            y1_s = 
+            y1_s = center_y + sqrt(kei^2 - (x1_s - center_x)^2);
+            i1 = round(x1_s/dx) + 1;
+            j1 = round(y1_s/dx) + 1;
+            u1(i1, j1) = 0;
+            v1(i1, j1) = 0;
+            for jstair = j1 : jx + 1
+                u1(i1, jstair) = 0;
+                v1(i1, jstair) = 0;
+            end
         end
         for x1_s = 0 : dx : xrange
+            y1_s = center_y - sqrt(kei^2 - (x1_s - center_x)^2);
+            i1 = round(x1_s/dx) + 1;
+            j1 = round(y1_s/dx) + 1;
+            u1(i1, j1) = 0;
+            v1(i1, j1) = 0;
+            for jstair = 1 : j1
+                u1(i1, jstair) = 0;
+                v1(i1, jstair) = 0;
+            end
         end
     end
     for i = 1 : ix + 1
