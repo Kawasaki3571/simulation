@@ -1,11 +1,31 @@
-%%
+%%y
 % オシロスコープから抽出したデータを二回フーリエ変換して位置応答に変換する
 %%%%オーバーラップあり
+for i = 1 : 2
+
+c = 340; %音速
+c0 = 340;
+% rou0 = 1.293; %密度（kg/m^3
+cal_time = 0.18;
+rou0 = 1.293;
+% rou0 = 1000;?
+freq_param = 1;
+freq_a = 1000;
+freq_start = 1000;
+freq_add = 2000;
+freq = freq_a;
+freq_abs = freq_a*freq_param;
+ramuda = c0 / freq;
+dx_param = 0.01; %0.05-0.025 
+dx = ramuda*dx_param; % λの20-30分の一
+% dt = dx / (5 * c);
+% dt = dx*0.15 / (c0);
+crn_param = 0.2;
+dt = dx*crn_param/ (c0);
+% クー数から条件を立てる]
 
 %% 設定
 
-% clear all;
-% close all;
 
 set(0, 'DefaultUicontrolFontSize', 15);
 set(0, 'defaultAxesFontName', 'メイリオ');
@@ -24,32 +44,56 @@ opol = 100; % トレンド近似の字数を決定
 m = 25;% 窓間隔
 d = 1; % 分割間隔
 
+xL = 0.5;
+achieve_time = 2*xL/c0;
+freq_e = freq_start + freq_add*((cal_time - achieve_time)/cal_time);
+start_time_g = round(achieve_time / (5*dt));
+
 f1 = 1000; % スイープ開始周波数（Hz）
-f2 = 4000; % 終了周波数
+f2 = 3000; % 終了周波数
 
-st = 1300; % フーリエ変換の開始周波数（Hz）
-ed = 3700; % 終了周波数
+st = 1100; % フーリエ変換の開始周波数（Hz）
+ed = 3000 - 100; % 終了周波数
+% csvrangemax = cal_time/(5*dt);
+% csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
-load_data = csvread('1d1000.csv'); % 2行目より下を読み込む
-noload_data = csvread('1dnoload.csv'); % 2行目より下を読み込む
+load_data = csvread('pow7001to3_2cm.csv'); % 2行目より下を読み込む
+noload_data = csvread('powhekonoload1to3.csv'); % 2行目より下を読み込む
+csvrangemax = round(cal_time/(5*dt));
+load_data = load_data(1 :csvrangemax);
+noload_data = noload_data(1:csvrangemax );
 
+data_sabun = load_data - noload_data;
 
-st_wave = 104;  % スイープ波形の始まる時間　可変
+dlmwrite('sabun700s1to3.csv', data_sabun, 'precision', '%.10f', 'delimiter', ',')
+
+t_sec = 5*dt : 5*dt : cal_time;
+
+sabun_zure = zeros(csvrangemax, 1);
+sabun_zure(1 : csvrangemax - start_time_g + 1) = data_sabun(start_time_g : csvrangemax);
+%load_data = noload_data + sabun_zure;
+
+plot(t_sec, sabun_zure)
+
+% st_wave = 104;  % スイープ波形の始まる時間　可変
+st_wave = 1;
 c = 340; % 大気中での音速 (m/s)
 %% スイープ信号の表示
 
+cal_time_max_int = cal_time/(dt) - mod(cal_time/(dt), 100);
+cal_time_max = cal_time_max_int * dt;
+t_sec = 5*dt : 5*dt : cal_time;
 
-
-t = dt : dt : cal_time; % 時間軸
+t = 5 * dt : 5 * dt : cal_time; % 時間軸
 v_1 = load_data./e; % 入力電圧で割って定数化
 v_2 = load_data./e; % 入力電圧で割って定数化
-v_o = noload_data(:,4)./e;
-
+v_o = noload_data./e;
 
 figure('Name', 'スイープ応答信号', 'NumberTitle', 'off')
-disp(size(v_1));
-disp(size(t));
 plot(t*10^3, v_1, 'b');
+disp(size(t_sec))
+disp(size(v_1))
+plot(t_sec*10^3, v_1, 'b');
 xlabel('Time (ms)');
 ylabel('Relative response (arb)');
 
@@ -60,13 +104,17 @@ n_fft = 2^12; % 4096点FFT
 dt = t(2) - t(1); % サンプリング周期
 Fs = 1/dt; % 周波数領域での周期
 
-st_1 = st_wave:d:st_wave+1800; % スイープ波形の分割
-ed_1 = st_wave+m:d:st_wave+1800+m;
+st_1 = st_wave:d:st_wave+1700; % スイープ波形の分割
+ed_1 = st_wave+m:d:st_wave+1700+m;
 
 for i = 1:1:length(st_1); % オーバーラップ法にて周波数特性を作成
     
-    st_2 = round(st_1(i)*10^-4/dt) % スイープ波形から切り出し開始
-    ed_2 = round(ed_1(i)*10^-4/dt) % 切り出し終わり
+    st_2 = round(st_1(i)*10^-4/dt); % スイープ波形から切り出し開始
+    ed_2 = round(ed_1(i)*10^-4/dt); % 切り出し終わり
+
+    st_2
+    ed_2
+    i
 
     v_2 = v_1(st_2:ed_2); 
     v_3 = v_o(st_2:ed_2);
@@ -79,8 +127,9 @@ for i = 1:1:length(st_1); % オーバーラップ法にて周波数特性を作成
 
 end 
 
-
 f3 = f1:(f2 - f1)/(length(st_1)-1):f2; % 周波数軸の作成
+length(f3)
+length(peak_l)
 
 figure('Name', '負荷有りの周波数特性', 'NumberTitle', 'off')
 plot(f3*10^-3,peak_l,'b');
@@ -88,14 +137,11 @@ xlabel('Frequency (kHz)');
 xlim([f1*10^-3 f2*10^-3]);
 ylabel('Relative response (arb)');
 
-
 figure('Name', '負荷無しの周波数特性', 'NumberTitle', 'off')
 plot(f3*10^-3, peak_o, 'b');
 xlabel('Frequency (kHz)');
 xlim([f1*10^-3 f2*10^-3]);
 ylabel('Relative response (arb)');
-
-
 %% 移動平均を用いて平滑化処理（負荷有りと負荷無し）
 
     
@@ -114,7 +160,6 @@ for i = 1:1:length(st_1);
     peak_ave(i) = mean(peak_i); % 切り取った波形の平均を記録していく
     peak_l(i) = peak_ave(i); % 平均値を新しい行列に入れていく
     
-    
     peak_i = peak_D(i:i+number);
     peak_ave(i) = mean(peak_i);
     peak_o(i) = peak_ave(i);
@@ -122,7 +167,6 @@ for i = 1:1:length(st_1);
 end
 
 end
-
 
 figure('Name', '平滑化処理後の周波数特性', 'NumberTitle', 'off')
 plot(f3*10^-3, peak_o, 'r', 'linewidth', 1.5);
@@ -137,7 +181,6 @@ ylabel('Relative response (arb)');
 
 %% リプルを抽出しトレンドの除去
 
-
 peak_l = peak_l - peak_o; % 負荷有りと負荷無しの差分を抽出
 
 figure('Name', '直流成分除去前のリプル', 'NumberTitle', 'off')
@@ -147,11 +190,12 @@ xlim([f1*10^-3 f2*10^-3]);
 ylabel('Relative response (arb)');
 %ylim([-3000 3000]);
 
-
+peak_taihi = peak_l ;
 [p, s, mu] = polyfit(f3, peak_l, opol); % リプルのトレンドを作成
 f_y = polyval(p, f3, [], mu);
 
-peak_l = peak_l - f_y; % トレンドを除去
+
+%peak_l = peak_l - f_y; % トレンドを除去
 
 
 
@@ -168,19 +212,19 @@ ylabel('Relative response (arb)');
 
 n = 2^14;
 df3 = (f2 - f1)/(length(st_1) - 1); % 周波数領域のサンプリング間隔
-dx = (c/2)/df3; % 位置領域での周期
+dx = (c/2)/df3 ; % 位置領域での周期
 
 st_3 = round((st - f1)/df3);
 ed_3 = round((ed - f1)/df3);
 
 
-ripple_f = peak_l(st_3:ed_3); % 波形の切り出し
-% ripple_f = ripple_f.*hamming(length(ed_3 - st_3));
+ripple_f = peak_taihi(st_3:ed_3); % 波形の切り出し
+%ripple_f = ripple_f.*hamming(length(ed_3 - st_3));
 
 
 
 V_x = fft(ripple_f, n); % フーリエ変換して位置応答を作成
-
+%V_x = fft(peak_l, n); % フーリエ変換して位置応答を作成
 
 x = 0:dx/n:dx - dx/n; % 位置軸を作成
 x = x';
@@ -199,8 +243,7 @@ for i = 1:1:length(V_x);
     
     V_x_i = ave_response(i:i+number);
     V_show(i) = mean(V_x_i);
-    
-    
+
 end
 
 end
@@ -208,12 +251,14 @@ end
 noise = ones(n, 1).*0.8;
 
 figure('Name', '位置応答', 'NumberTitle', 'off')
+
 plot(x*10^3, abs(V_show)*10^-4, 'r', 'linewidth', 2);
+
+
+
 xlabel('Position (mm)');
 ylabel('Relative response (arb)');
 xlim([0 2500]);
-
-
 
 %% 応答ピークが負荷の影響かを判定
 
@@ -223,7 +268,6 @@ xlim([0 2500]);
 peak_x = (nx - 1)*dx/n; % ピーク位置の場所を算出
 peak_x_for_display = round(peak_x*10^3);
 
-
 if peak_val > 3; % 閾値を用いてピークが負荷によるものかを判定
     display('負荷あり');
     display(peak_val);
@@ -232,6 +276,6 @@ if peak_val > 3; % 閾値を用いてピークが負荷によるものかを判定
 else display('負荷無し');
     display(peak_val);
     display(round(peak_x*10^3));
-    
-    
+end
+break;
 end
