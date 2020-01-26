@@ -1,6 +1,7 @@
 %%y
 % オシロスコープから抽出したデータを二回フーリエ変換して位置応答に変換する
 %%%%オーバーラップあり
+for i = 1 : 2
 
 c = 340; %音速
 c0 = 340;
@@ -52,17 +53,27 @@ f1 = 1000; % スイープ開始周波数（Hz）
 f2 = 3000; % 終了周波数
 
 st = 1100; % フーリエ変換の開始周波数（Hz）
-ed = 3000 - 1000; % 終了周波数
+ed = 3000 - 100; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
-load_data = csvread('pow700s1to3.csv'); % 2行目より下を読み込む
+load_data = csvread('pow7001to3_2cm.csv'); % 2行目より下を読み込む
 noload_data = csvread('powhekonoload1to3.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
-load_data = load_data(start_time_g :csvrangemax);
-noload_data = noload_data(1:csvrangemax);
+load_data = load_data(1 :csvrangemax);
+noload_data = noload_data(1:csvrangemax );
 
-dlmwrite('sabun700s1to3.csv', load_data - noload_data, 'precision', '%.10f', 'delimiter', ',')
+data_sabun = load_data - noload_data;
+
+dlmwrite('sabun700s1to3.csv', data_sabun, 'precision', '%.10f', 'delimiter', ',')
+
+t_sec = 5*dt : 5*dt : cal_time;
+
+sabun_zure = zeros(csvrangemax, 1);
+sabun_zure(1 : csvrangemax - start_time_g + 1) = data_sabun(start_time_g : csvrangemax);
+%load_data = noload_data + sabun_zure;
+
+plot(t_sec, sabun_zure)
 
 % st_wave = 104;  % スイープ波形の始まる時間　可変
 st_wave = 1;
@@ -79,7 +90,7 @@ v_2 = load_data./e; % 入力電圧で割って定数化
 v_o = noload_data./e;
 
 figure('Name', 'スイープ応答信号', 'NumberTitle', 'off')
-% plot(t*10^3, v_1, 'b');
+plot(t*10^3, v_1, 'b');
 disp(size(t_sec))
 disp(size(v_1))
 plot(t_sec*10^3, v_1, 'b');
@@ -265,4 +276,6 @@ if peak_val > 3; % 閾値を用いてピークが負荷によるものかを判定
 else display('負荷無し');
     display(peak_val);
     display(round(peak_x*10^3));
+end
+break;
 end

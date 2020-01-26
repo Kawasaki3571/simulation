@@ -3,7 +3,7 @@ boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 0;
+hekomi = 1;
 sweep = 1;
 SC = 4;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 0;
@@ -109,7 +109,7 @@ disp_hensu = 0;
 absp0 = - 0.5; % 吸収係数
 b_po = 0.5 ; %凹み位置
 h = 0.02;%凹み幅
-w = 0.01;%凹みふかさ
+w = 0.02;%凹みふかさ
 
 
 ix = round(xrange / dx); %x空間感覚の数
@@ -756,7 +756,7 @@ for t = 1: tx
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
                 %dlmwrite('kairyouheko500sweep2to7.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
-                dlmwrite('powhekonoload1to3.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('pow7001to3_2cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
