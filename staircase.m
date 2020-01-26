@@ -1,7 +1,7 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 1;
 sweep = 1;
@@ -122,8 +122,8 @@ w_x = round(w / dx);
 td = 15; % 周波数の代入（？）
 id = round(xd / dx);%xの位置（？）
 id2 = round(xd2 / dx ) ;
-sokuteiten_x_g = round(sokuteiten_x / dx);
-sokuteiten_y_g = round(sokuteiten_y / dx);
+%sokuteiten_x_g = round(sokuteiten_x / dx);
+%sokuteiten_y_g = round(sokuteiten_y / dx);
 if range ~= 2
     jd = round(yd / dx) ; %y空間感覚の代入（？）
     jd_2 = round(yd2/dx);
@@ -348,7 +348,7 @@ for t = 1: tx
     e = ((1 - d1) * (1 - d2));
 
     for i = 2:ix + 1
-        for j = 2:jx + 1
+        for j = jx + 1: -1 : 2 
             if range ~= 2
                 if t <= tx && i >= id && i <= id2 && j >= jd && j <= jd_2
                     p1(i,j) = pin(t);
