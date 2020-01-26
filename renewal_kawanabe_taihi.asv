@@ -9,7 +9,7 @@ cal_time = 0.18;
 rou0 = 1.293;
 % rou0 = 1000;?
 freq_param = 0.129/0.17;
-freq_a = 2000;
+freq_a = 1000;
 freq_start = 1000;
 freq_add = 3000;
 freq = freq_a;
@@ -19,7 +19,7 @@ dx_param = 0.01; %0.05-0.025
 dx = ramuda*dx_param; % λの20-30分の一
 % dt = dx / (5 * c);
 % dt = dx*0.15 / (c0);
-crn_param = 0.4;
+crn_param = 0.2;
 dt = dx*crn_param/ (c0);
 % クー数から条件を立てる]
 
@@ -54,9 +54,9 @@ st = 1100; % フーリエ変換の開始周波数（Hz）
 ed = freq_e - 100; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
-csvrangemax = 90000;
+csvrangemax = size();
 
-load_data = csvread('powheko700to3.csv'); % 2行目より下を読み込む
+load_data = csvread('powheko700sweep1to3.csv'); % 2行目より下を読み込む
 noload_data = csvread('powhekonoload1to3.csv'); % 2行目より下を読み込む
 load_data = load_data(1:csvrangemax);
 noload_data = noload_data(1:csvrangemax);
@@ -70,7 +70,7 @@ cal_time_max_int = cal_time/(dt) - mod(cal_time/(dt), 100);
 cal_time_max = cal_time_max_int * dt;
 t_sec = dt : dt : cal_time;
 
-t = dt : dt : cal_time; % 時間軸
+t = 5 * dt : 5 * dt : cal_time; % 時間軸
 v_1 = load_data./e; % 入力電圧で割って定数化
 v_2 = load_data./e; % 入力電圧で割って定数化
 v_o = noload_data./e;
