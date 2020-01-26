@@ -1,12 +1,12 @@
-range = 0;
-boundary = 0;
+range = 1;
+boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 0;
 sweep = 0;
 SC = 4;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
-stair = 0;
+stair = 2;
 
 f1 = figure;
 % f2 = figure;
@@ -50,8 +50,8 @@ if range == 0
     xd2 = 4 * dx;
 end
 if range == 1
-    xrange = 0.2828;
-    yrange = 0.2828;
+    xrange = 0.2;
+    yrange = 0.2;
     xd = xrange / 2;
     xd2 = xrange / 2;
     yd = yrange / 2;
@@ -546,7 +546,7 @@ for t = 1: tx
             j1 = round(y1_s/dx) + 1;
             u1(i1, j1) = 0;
             v1(i1, j1) = 0;
-            for jstair = 1 : j1 - 1 
+            for jstair = 1 : j1 + 1
                 u1(i1, jstair) = 0;
                 v1(i1, jstair) = 0;
             end
@@ -556,10 +556,8 @@ for t = 1: tx
             i1 = round(x1_s/dx) + 1;
             j1 = round(y1_s/dx) + 1;
             u1(i1, j1) = 0;
-            v1(i1, j1) = 0;
-%           aaaaaaaaa
-%             for jstair = j1 + 1 : jx + 1 
-            for jstair = 1 : j1 - 1 
+            v1(i1, j1) = 0; 
+            for jstair = 1 : j1 + 1
                 u1(i1, jstair) = 0;
                 v1(i1, jstair) = 0;
             end
@@ -570,7 +568,7 @@ for t = 1: tx
             j1 = round(y1_s/dx) + 1;
             u1(i1, j1) = 0;
             v1(i1, j1) = 0;
-            for jstair = j1 + 1 : jx + 1 
+            for jstair = j1 : jx + 1 
                 u1(i1, jstair) = 0;
                 v1(i1, jstair) = 0;
             end
@@ -581,8 +579,34 @@ for t = 1: tx
             j1 = round(y1_s/dx) + 1;
             u1(i1, j1) = 0;
             v1(i1, j1) = 0;
-%           aaaaaaaaa
-            for jstair = j1 + 1 : jx + 1
+            for jstair = j1 : jx + 1
+                u1(i1, jstair) = 0;
+                v1(i1, jstair) = 0;
+            end
+        end
+    end
+    if stair == 2
+        center_x = 0.1;
+        center_y = 0.1;
+        kei = 0.1;
+        for x1_s = 0 : dx : xrange
+            y1_s = center_y + sqrt(kei^2 - (x1_s - center_x)^2);
+            i1 = round(x1_s/dx) + 1;
+            j1 = round(y1_s/dx) + 1;
+            u1(i1, j1) = 0;
+            v1(i1, j1) = 0;
+            for jstair = j1 : jx + 1
+                u1(i1, jstair) = 0;
+                v1(i1, jstair) = 0;
+            end
+        end
+        for x1_s = 0 : dx : xrange
+            y1_s = center_y - sqrt(kei^2 - (x1_s - center_x)^2);
+            i1 = round(x1_s/dx) + 1;
+            j1 = round(y1_s/dx) + 1;
+            u1(i1, j1) = 0;
+            v1(i1, j1) = 0;
+            for jstair = 1 : j1
                 u1(i1, jstair) = 0;
                 v1(i1, jstair) = 0;
             end
@@ -615,13 +639,14 @@ for t = 1: tx
     if mode_plot == 0
         if mod(t,10) == 0
 %         imagesc(y_p,x_p,pressure(x,y));
-        imagesc(y_p,x_p, pressure(x,y));
+        image_plot = pressure';
+        imagesc(y_p,x_p, image_plot(y ,x));
             colorbar
             %colormap gray ;
 %             title(['pressure when ',num2str(time),'seconds have passed'])
             title(['pressure when frequency =',num2str(freq),'Hz&&', num2str(time), '(s) have passed'])
-            xlabel('y(mm)')
-            ylabel('x(mm)')
+            xlabel('x(mm)')
+            ylabel('y(mm)')
         grid on;
         drawnow
         end
@@ -867,7 +892,7 @@ if mode == 3
         polarplot(theta,abs(dhi1));
         title(['Directivity when frequency is',num2str(freq),'Hz'])
         drawnow
-        pause(0.7);
+%        pause(0.7);
     end
   end
 end
