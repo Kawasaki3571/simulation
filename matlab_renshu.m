@@ -1,8 +1,8 @@
-mode_plot = 5;
+mode_plot = 0;
 hekomi_bool = 0;
 sweep = 1;
 input_mode = 0;
-niji = 1;
+niji = 0;
 
 c = 340;
 rou = 1.2;

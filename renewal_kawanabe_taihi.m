@@ -57,7 +57,7 @@ ed = 3000 - 100; % 終了周波数
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
 
-load_data = csvread('pow3001to3_1cm.csv'); % 2行目より下を読み込む
+load_data = csvread('pow5001to3_2cm.csv'); % 2行目より下を読み込む
 noload_data = csvread('powhekonoload1to3.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
 load_data = load_data(1 :csvrangemax);
@@ -71,7 +71,7 @@ t_sec = 5*dt : 5*dt : cal_time;
 
 sabun_zure = zeros(csvrangemax, 1);
 sabun_zure(1 : csvrangemax - start_time_g + 1) = data_sabun(start_time_g : csvrangemax);
-load_data = noload_data + sabun_zure;
+%load_data = noload_data + sabun_zure;
 
 plot(t_sec, sabun_zure)
 

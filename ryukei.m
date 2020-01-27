@@ -9,6 +9,7 @@ c = 340;
 pai = 3.1415;
 sweep = 1;
 gosahyoka = 0;
+csvrangemax = 90000;
 
 if sweep == 1
     freq = freq_start + freq_add*t/0.18;
@@ -88,12 +89,13 @@ kasou_out3 = zeros(90000, 1);
 
 achieve_time = (2*xL)/c0;
 achieve_time_g = round(achieve_time / dt);
-kasou_out3(1 : csvrangemax - start_time_g + 1) = kasou_out1(start_time_g : csvrangemax);
+
+kasou_out3(1 : csvrangemax - achieve_time_g + 1) = kasou_out1(achieve_time_g : csvrangemax);
 
 kasou_in = csvread('1dnoloadkasou.csv');
 nosweep = csvread('1dnosweep.csv');
 
-gousei = kasou_out1 + pi;
+gousei = kasou_out3 + pi;
 % gousei = kasou_out + pi;
 kaishi = 0.0;
 shuryo = kaishi + 0.02;
@@ -103,14 +105,13 @@ kasou_outnyu = kasou_out2(round((2*xL/340)/dt) : round(cal_time/dt));
 pr_outnyu = pr(round((2*xL/340)/dt) : round(cal_time/dt));
 
 hold on
-plot(t(kaishi /dt + 1 : shuryo/dt), kasou_out3 (kaishi /dt + 1 : shuryo/dt));
-plot(t(kaishi /dt + 1 : shuryo/dt), pr0(kaishi /dt + 1 : shuryo/dt));
-%plot(t(kaishi /dt + 1 : shuryo/dt), po2(kaishi /dt + 1 : shuryo/dt));
-
+%plot(t(kaishi /dt + 1 : shuryo/dt), kasou_out3 (kaishi /dt + 1 : shuryo/dt));
+plot(t(kaishi /dt + 1 : shuryo/dt), pr2(kaishi /dt + 1 : shuryo/dt));
+plot(t(kaishi /dt + 1 : shuryo/dt), kasou_out1(kaishi /dt + 1 : shuryo/dt));
 %legend('1éü', '2éü', 'óùò_íl')
 hold off
 
 % plot(t, po)
-%dlmwrite('riron03002.csv', po2, 'precision', '%.10f', 'delimiter', ',')
+%dlmwrite('riron03002.csv', gousei, 'precision', '%.10f', 'delimiter', ',')
 %dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')
 

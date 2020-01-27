@@ -48,17 +48,17 @@ achieve_time = 2*xL/c0;
 achieve_time_g = round(achieve_time / dt);
 freq_e = freq_start + freq_add*((cal_time - achieve_time)/cal_time);
 
-f1 = 1000; % スイープ開始周波数（Hz）
+f1 = 0000; % スイープ開始周波数（Hz）
 f2 = 4000; % 終了周波数
 
-st = 1100; % フーリエ変換の開始周波数（Hz）
+st = 100; % フーリエ変換の開始周波数（Hz）
 ed = 3900; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 csvrangemax = 90000;
 
-load_data = csvread('1d0500kasou.csv'); % 2行目より下を読み込む
-noload_data = csvread('1dnoloadkasou.csv'); % 2行目より下を読み込む
+load_data = csvread('riron03002.csv'); % 2行目より下を読み込む
+noload_data = csvread('rironnoload.csv'); % 2行目より下を読み込む
 load_data = load_data(1:csvrangemax);
 noload_data = noload_data(1:csvrangemax);
 data_sabun = load_data - noload_data;
