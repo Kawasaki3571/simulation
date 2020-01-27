@@ -1,9 +1,9 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 2; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 1;
+hekomi = 0;
 sweep = 1;
 SC = 4;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 0;
@@ -39,13 +39,15 @@ dt = dx*crn_param/ (c0);
 
 cal_time = 0.18;
 if range == 0
-    xrange = 0.01;
-%    xrange = 0.52;
+    xrange = 1.01;
+%    xrange = 0.51;
     yrange = 0.02;
 %     yd = 0.01 - 2*dx;
 %     yd2 = 0.01 + 2*dx;
-    yd = dx;
-    yd2 = 0.02 - dx;
+%    yd = dx;
+%    yd2 = 0.02 - dx;
+    yd = yrange / 2;
+    yd2 = yd;
     xd = 2 * dx;
     xd2 = 3 * dx;
 end
@@ -107,9 +109,9 @@ t2 = 0;
 speed = 0;
 disp_hensu = 0;
 absp0 = - 0.5; % 吸収係数
-b_po = 0.2 ; %凹み位置
-h = 0.05;%凹み幅
-w = 0.02;%凹みふかさ
+b_po = 0.3 ; %凹み位置
+h = 0.02;%凹み幅
+w = 0.01;%凹みふかさ
 
 
 ix = round(xrange / dx); %x空間感覚の数
@@ -122,8 +124,8 @@ w_x = round(w / dx);
 td = 15; % 周波数の代入（？）
 id = round(xd / dx);%xの位置（？）
 id2 = round(xd2 / dx ) ;
-sokuteiten_x_g = round(sokuteiten_x / dx);
-sokuteiten_y_g = round(sokuteiten_y / dx);
+%sokuteiten_x_g = round(sokuteiten_x / dx);
+%sokuteiten_y_g = round(sokuteiten_y / dx);
 if range ~= 2
     jd = round(yd / dx) ; %y空間感覚の代入（？）
     jd_2 = round(yd2/dx);
@@ -348,7 +350,7 @@ for t = 1: tx
     e = ((1 - d1) * (1 - d2));
 
     for i = 2:ix + 1
-        for j = 2:jx + 1
+        for j = jx + 1: -1 : 2 
             if range ~= 2
                 if t <= tx && i >= id && i <= id2 && j >= jd && j <= jd_2
                     p1(i,j) = pin(t);
@@ -464,13 +466,13 @@ for t = 1: tx
             p2(i,j) = p1(i,j);
         end
     end
-    for i = 2 : ix
-        for j = 2 : jx
+    for i = 1 : ix
+        for j = 1 : jx + 1
             u1(i,j) = cv1 .* u2(i,j) - cv2 .* (p2(i + 1, j) - p2(i,j));
         end
     end
-    for i = 2 : ix
-        for j = 2 : jx
+    for i = 1 : ix + 1
+        for j = 1 : jx
             v1(i,j) = cv1 * v2(i,j) - cv2 * (p2(i, j + 1) - p2(i,j));
         end
     end
@@ -627,7 +629,7 @@ for t = 1: tx
     if mode_plot == 0
         if mod(t,10) == 0
 %         imagesc(y_p,x_p,pressure(x,y));
-            plot_image = p1';
+            plot_image = pressure';
             imagesc(x_p, y_p, plot_image(y, x));
             colorbar
             %colormap gray ;
@@ -689,7 +691,8 @@ for t = 1: tx
 %         plot(x_p,pressure(x, y_half));
 %         plot(x_p,p1(x, y_half));
         plot(x_p(1:0.5/dx),p1(x(1:0.5/dx),y_half))
-        grid on;
+        plot(x_p(1:0.5/dx),p1(x(1:0.5/dx),1))
+        
         drawnow
         end
     end
@@ -756,7 +759,7 @@ for t = 1: tx
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
                 %dlmwrite('kairyouheko500sweep2to7.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
-                dlmwrite('pow700s1to3.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('pow3001to3_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
@@ -903,7 +906,7 @@ if mode == 5
     imagesc(y_p,x_p,p1(x,y));
     colorbar
     %colormap gray ;
-%   title(['pressure when ',num2str(time),'seconds have passed'])
+    %   title(['pressure when ',num2str(time),'seconds have passed'])
     title(['pressure when frequency =',num2str(freq),'Hz&&', num2str(time), '(s) have passed'])
     xlabel('y(mm)')
     ylabel('x(mm)')

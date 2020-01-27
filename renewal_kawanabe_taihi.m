@@ -44,9 +44,8 @@ opol = 100; % トレンド近似の字数を決定
 m = 25;% 窓間隔
 d = 1; % 分割間隔
 
-xL = 0.5;
+xL = 0.3;
 achieve_time = 2*xL/c0;
-freq_e = freq_start + freq_add*((cal_time - achieve_time)/cal_time);
 start_time_g = round(achieve_time / (5*dt));
 
 f1 = 1000; % スイープ開始周波数（Hz）
@@ -57,7 +56,8 @@ ed = 3000 - 100; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
-load_data = csvread('pow7001to3_2cm.csv'); % 2行目より下を読み込む
+
+load_data = csvread('pow5001to3_2cm.csv'); % 2行目より下を読み込む
 noload_data = csvread('powhekonoload1to3.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
 load_data = load_data(1 :csvrangemax);
@@ -65,7 +65,7 @@ noload_data = noload_data(1:csvrangemax );
 
 data_sabun = load_data - noload_data;
 
-dlmwrite('sabun700s1to3.csv', data_sabun, 'precision', '%.10f', 'delimiter', ',')
+dlmwrite('sabun300s1to3.csv', data_sabun, 'precision', '%.10f', 'delimiter', ',')
 
 t_sec = 5*dt : 5*dt : cal_time;
 
