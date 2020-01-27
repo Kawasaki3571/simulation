@@ -1,9 +1,9 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 2; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 1;
+hekomi = 0;
 sweep = 1;
 SC = 4;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 0;
@@ -39,13 +39,15 @@ dt = dx*crn_param/ (c0);
 
 cal_time = 0.18;
 if range == 0
-    xrange = 2.01;
-%    xrange = 0.52;
+    xrange = 1.01;
+%    xrange = 0.51;
     yrange = 0.02;
 %     yd = 0.01 - 2*dx;
 %     yd2 = 0.01 + 2*dx;
-    yd = dx;
-    yd2 = 0.02 - dx;
+%    yd = dx;
+%    yd2 = 0.02 - dx;
+    yd = yrange / 2;
+    yd2 = yd;
     xd = 2 * dx;
     xd2 = 3 * dx;
 end
@@ -107,9 +109,9 @@ t2 = 0;
 speed = 0;
 disp_hensu = 0;
 absp0 = - 0.5; % 吸収係数
-b_po = 0.5 ; %凹み位置
+b_po = 0.3 ; %凹み位置
 h = 0.02;%凹み幅
-w = 0.02;%凹みふかさ
+w = 0.01;%凹みふかさ
 
 
 ix = round(xrange / dx); %x空間感覚の数
@@ -464,13 +466,13 @@ for t = 1: tx
             p2(i,j) = p1(i,j);
         end
     end
-    for i = 2 : ix
-        for j = 2 : jx
+    for i = 1 : ix
+        for j = 1 : jx + 1
             u1(i,j) = cv1 .* u2(i,j) - cv2 .* (p2(i + 1, j) - p2(i,j));
         end
     end
-    for i = 2 : ix
-        for j = 2 : jx
+    for i = 1 : ix + 1
+        for j = 1 : jx
             v1(i,j) = cv1 * v2(i,j) - cv2 * (p2(i, j + 1) - p2(i,j));
         end
     end
@@ -688,8 +690,9 @@ for t = 1: tx
         if mod(t,10) == 0
 %         plot(x_p,pressure(x, y_half));
 %         plot(x_p,p1(x, y_half));
-        plot(x_p(1:0.5/dx),p1(x(1:0.5/dx),y_half))
-        grid on;
+        plot(x_p(1:0.5/dx),p1(x(1:0.5/dx),y_half) - p1(x(1:0.5/dx),1))
+        %plot(x_p(1:0.5/dx),p1(x(1:0.5/dx),1))
+        
         drawnow
         end
     end
@@ -756,7 +759,7 @@ for t = 1: tx
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
                 %dlmwrite('kairyouheko500sweep2to7.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
-                dlmwrite('pow7001to3_2cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('pow3001to3_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end

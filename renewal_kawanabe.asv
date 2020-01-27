@@ -45,7 +45,6 @@ d = 1; % 分割間隔
 
 xL = 0.5;
 achieve_time = 2*xL/c0;
-achieve_time_g = round(achieve_time / dt);
 freq_e = freq_start + freq_add*((cal_time - achieve_time)/cal_time);
 
 f1 = 1000; % スイープ開始周波数（Hz）
@@ -57,14 +56,12 @@ ed = 3900; % 終了周波数
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 csvrangemax = 90000;
 
-load_data = csvread('1d0500kasou.csv'); % 2行目より下を読み込む
+load_data = csvread('1d0500nama2.csv'); % 2行目より下を読み込む
 noload_data = csvread('1dnoloadkasou.csv'); % 2行目より下を読み込む
 load_data = load_data(1:csvrangemax);
 noload_data = noload_data(1:csvrangemax);
-data_sabun = load_data - noload_data;
-sabun_zure = zeros(csvrangemax, 1);
-sabun_zure(1 : csvrangemax - start_time_g + 1) = data_sabun(start_time_g : csvrangemax);
-load_data = noload_data + sabun_zure;
+sabun_data = load_data - noload_data;
+
 
 % st_wave = 104;  % スイープ波形の始まる時間　可変
 st_wave = 1;
