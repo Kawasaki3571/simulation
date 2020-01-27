@@ -46,7 +46,6 @@ for i = 1 : 90000
         end
         counter = 1;
         pr(i) = p0.*(exp(j .* hasu(i) * 2.* xL)) .* exp(-1* j .* omega(i) .* t(i)- j*(2 * xL/340));
-        pr0(i) = p0.*(exp(j .* hasu(i) * 2.* xL)) .* exp(-1* j .* omega(i) .* t(i));
         %pr2(i) = p0.*(exp(j .* hasu(i - i_hasu) * 2.* xL)) .* exp(-1* j .* omega(i - i_hasu) .* t(i)- j*(2 * xL/340));
         pr2(i) = p0.*(exp(j .* hasu(i - i_hasu) * 2.* xL)) .* exp(-1* j .* omega(i - i_hasu) .* t(i)- j*(2 * xL/340));
     else
@@ -56,6 +55,7 @@ end
 
 for i = 1 : 90000
     pr2(i) = p0.*(exp(j .* hasu(i) * 2.* xL)) .* exp(-1* j .* omega(i) .* t(i));
+    pr0(i) = p0.*(exp(j .* hasu(i) * 2.* xL)) .* exp(-1* j .* omega(i) .* t(i));
 end
 
 
@@ -70,7 +70,7 @@ end
 
 pr  = pr';
 pr2 = pr2';
-pr0 = pr0';
+pr0 = pr0' + 0.01;
 pi = pi';
 po = pi + pr;
 po2 = pi + pr2;
@@ -103,7 +103,7 @@ kasou_outnyu = kasou_out2(round((2*xL/340)/dt) : round(cal_time/dt));
 pr_outnyu = pr(round((2*xL/340)/dt) : round(cal_time/dt));
 
 hold on
-plot(t(kaishi /dt + 1 : shuryo/dt), pr(kaishi /dt + 1 : shuryo/dt));
+plot(t(kaishi /dt + 1 : shuryo/dt), kasou_out3 (kaishi /dt + 1 : shuryo/dt));
 plot(t(kaishi /dt + 1 : shuryo/dt), pr0(kaishi /dt + 1 : shuryo/dt));
 %plot(t(kaishi /dt + 1 : shuryo/dt), po2(kaishi /dt + 1 : shuryo/dt));
 

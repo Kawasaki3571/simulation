@@ -31,6 +31,7 @@ p = p0.*(1 + exp(j .* 2 .* hasu .* xL)) .* exp(-1 * j .* omega .* t - pai/2);
 
 % pt = p0.*(exp(j .* hasu .* x)) .* exp(-1 * j .* omega .* t - pai/2  - (0.6/340));
 pr = zeros(1, 90000);
+pr0 = zeros(1, 90000);
 pr2 = zeros(1, 90000);
 pi = zeros(1, 90000);
 po = zeros(1, 90000);
@@ -54,6 +55,7 @@ end
 
 for i = 1 : 90000
     pr2(i) = p0.*(exp(j .* hasu(i) * 2.* xL)) .* exp(-1* j .* omega(i) .* t(i));
+    pr0(i) = p0.*(exp(j .* hasu(i) * 2.* xL)) .* exp(-1* j .* omega(i) .* t(i));
 end
 
 
@@ -68,6 +70,7 @@ end
 
 pr  = pr';
 pr2 = pr2';
+pr0 = pr0' + 0.01;
 pi = pi';
 po = pi + pr;
 po2 = pi + pr2;
@@ -83,7 +86,9 @@ kasou_out1 = csvread('1d0500nama.csv');
 kasou_out2 = csvread('1d0500kasou.csv');
 kasou_out3 = zeros(90000, 1);
 
-achieve_time = (2*xL)/
+achieve_time = (2*xL)/c0;
+achieve_time_g = round(achieve_time / dt);
+kasou_out3(1 : csvrangemax - start_time_g + 1) = kasou_out1(start_time_g : csvrangemax);
 
 kasou_in = csvread('1dnoloadkasou.csv');
 nosweep = csvread('1dnosweep.csv');
@@ -98,8 +103,8 @@ kasou_outnyu = kasou_out2(round((2*xL/340)/dt) : round(cal_time/dt));
 pr_outnyu = pr(round((2*xL/340)/dt) : round(cal_time/dt));
 
 hold on
-plot(t(kaishi /dt + 1 : shuryo/dt), kasou_out1(kaishi /dt + 1 : shuryo/dt));
-plot(t(kaishi /dt + 1 : shuryo/dt), pr(kaishi /dt + 1 : shuryo/dt));
+plot(t(kaishi /dt + 1 : shuryo/dt), kasou_out3 (kaishi /dt + 1 : shuryo/dt));
+plot(t(kaishi /dt + 1 : shuryo/dt), pr0(kaishi /dt + 1 : shuryo/dt));
 %plot(t(kaishi /dt + 1 : shuryo/dt), po2(kaishi /dt + 1 : shuryo/dt));
 
 %legend('1éü', '2éü', 'óùò_íl')
