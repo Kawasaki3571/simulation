@@ -8,7 +8,7 @@ c0 = 340;
 cal_time = 0.18;
 rou0 = 1.293;
 % rou0 = 1000;?
-freq_param = 0.129/0.17;
+freq_param = 1;
 freq_a = 2000;
 freq_start = 1000;
 freq_add = 3000;
@@ -43,28 +43,28 @@ opol = 100; % トレンド近似の字数を決定
 m = 25;% 窓間隔
 d = 1; % 分割間隔
 
-xL = 0.5;
+xL = 0.3;
 achieve_time = 2*xL/c0;
 achieve_time_g = round(achieve_time / dt);
 freq_e = freq_start + freq_add*((cal_time - achieve_time)/cal_time);
 
-f1 = 0000; % スイープ開始周波数（Hz）
+f1 = 1000; % スイープ開始周波数（Hz）
 f2 = 4000; % 終了周波数
 
-st = 100; % フーリエ変換の開始周波数（Hz）
+st = 1100; % フーリエ変換の開始周波数（Hz）
 ed = 3900; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 csvrangemax = 90000;
 
-load_data = csvread('riron03002.csv'); % 2行目より下を読み込む
-noload_data = csvread('rironnoload.csv'); % 2行目より下を読み込む
+load_data = csvread('riron1000zure.csv'); % 2行目より下を読み込む
+noload_data = csvread('rironnoloadzure.csv'); % 2行目より下を読み込む
 load_data = load_data(1:csvrangemax);
 noload_data = noload_data(1:csvrangemax);
 data_sabun = load_data - noload_data;
 sabun_zure = zeros(csvrangemax, 1);
 sabun_zure(1 : csvrangemax - start_time_g + 1) = data_sabun(start_time_g : csvrangemax);
-load_data = noload_data + sabun_zure;
+%load_data = noload_data + sabun_zure;
 
 % st_wave = 104;  % スイープ波形の始まる時間　可変
 st_wave = 1;

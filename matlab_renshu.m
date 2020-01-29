@@ -2,14 +2,14 @@ mode_plot = 0;
 hekomi_bool = 0;
 sweep = 1;
 input_mode = 0;
-niji = 0;
+niji = 1;
 
 c = 340;
 rou = 1.2;
 baf = 0.001;
 l = 2 + baf;
 x_in = 0;
-hekomi = 0.5 + baf;
+hekomi = 1.0 + baf;
 keisokuten = x_in + baf;
 keisokuten2 = x_in + 2 * (hekomi-baf);
 
@@ -248,8 +248,8 @@ for t = 1 : time_max_g
         p_keisoku_shin = p_keisoku_shin';
         p_keisoku_in10 = p_keisoku_in10';
 %       dlmwrite('1d0500kasou.csv', p_keisoku_in10, 'precision', '%.10f', 'delimiter', ',')
-       dlmwrite('1d0500kasou.csv', p_keisoku_taihi2, 'precision', '%.10f', 'delimiter', ',')
-       dlmwrite('1d0500nama.csv', p_keisoku_in, 'precision', '%.10f', 'delimiter', ',')
+       dlmwrite('1d1000kasou.csv', p_keisoku_taihi2, 'precision', '%.10f', 'delimiter', ',')
+       dlmwrite('1d1000nama.csv', p_keisoku_in, 'precision', '%.10f', 'delimiter', ',')
        dlmwrite('1dnoloadkasou.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
 %       dlmwrite('1dnosweep.csv', p_keisoku_in, 'precision', '%.10f', 'delimiter', ',')
         disp("‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ‚ ")

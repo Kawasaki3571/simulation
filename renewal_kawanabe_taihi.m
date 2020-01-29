@@ -57,7 +57,7 @@ ed = 3000 - 100; % 終了周波数
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
 
-load_data = csvread('pow5001to3_2cm.csv'); % 2行目より下を読み込む
+load_data = csvread('pow10001to3_1cm.csv'); % 2行目より下を読み込む
 noload_data = csvread('powhekonoload1to3.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
 load_data = load_data(1 :csvrangemax);
@@ -65,7 +65,7 @@ noload_data = noload_data(1:csvrangemax );
 
 data_sabun = load_data - noload_data;
 
-dlmwrite('sabun300s1to3.csv', data_sabun, 'precision', '%.10f', 'delimiter', ',')
+dlmwrite('sabun500s1to3.csv', data_sabun, 'precision', '%.10f', 'delimiter', ',')
 
 t_sec = 5*dt : 5*dt : cal_time;
 
