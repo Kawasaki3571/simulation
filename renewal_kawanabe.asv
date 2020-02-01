@@ -37,7 +37,7 @@ set(0, 'DefaultFigureColor', 'w');
 
 %% 各種パラメーター
 
-bai = 1;
+bai == 
 
 e = 0.1; % 入力電圧
 opol = 100; % トレンド近似の字数を決定
@@ -59,7 +59,7 @@ ed = 3900; % 終了周波数
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 csvrangemax = 90000;
 
-load_data = csvread('riron1000zure.csv'); % 2行目より下を読み込む
+load_data = csvread('riron1000.csv'); % 2行目より下を読み込む
 noload_data = csvread('rironnoload.csv'); % 2行目より下を読み込む
 load_data = real(load_data(1:csvrangemax));
 noload_data = real(noload_data(1:csvrangemax));
@@ -220,9 +220,7 @@ V_x = fft(ripple_f, n); % フーリエ変換して位置応答を作成
 
 x = 0:dx/n:dx - dx/n; % 位置軸を作成
 
-if bai == 1
-    x = x / 2;
-end
+x = x * 2;
 
 x = x';
 
@@ -262,14 +260,8 @@ xlim([0 2500]);
 
 [peak_val, nx] = max(abs(V_x).*10^-4); % 位置応答のピークを抽出
 
-
 peak_x = (nx - 1)*dx/n; % ピーク位置の場所を算出
 peak_x_for_display = round(peak_x*10^3);
-
-
-if  bai == 1
-    peak_x = peak_x / 2 ;
-end
 
 if peak_val > 3; % 閾値を用いてピークが負荷によるものかを判定
     display('負荷あり');

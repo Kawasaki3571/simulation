@@ -3,9 +3,10 @@ r = 1;
 cal_time = 0.18;
 dt = cal_time / 90000;
 t = 0 : dt : cal_time - dt;
-freq_start = 1000;
-freq_add = 3000;
+freq_start = 000;
+freq_add = 4000;
 c = 340;
+c0 = 340;
 pai = 3.1415;
 sweep = 1;
 gosahyoka = 0;
@@ -22,7 +23,7 @@ end
 omega = freq * 2 * pai;
 hasu = 2 * pai * freq / c;
 j = sqrt(-1);
-xL = 1.0;
+xL = 0.5;
 x = 0 : 0.001 : 2;
 
 p = p0.*(1 + exp(j .* 2 .* hasu .* xL)) .* exp(-1 * j .* omega .* t - pai/2);
@@ -113,5 +114,6 @@ hold off
 
 % plot(t, po)
 dlmwrite('riron1000zure.csv', po2, 'precision', '%.10f', 'delimiter', ',')
-dlmwrite('rironnoloadzure.csv', pi, 'precision', '%.10f', 'delimiter', ',')
+dlmwrite('riron1000.csv', po, 'precision', '%.10f', 'delimiter', ',')
+dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')
 
