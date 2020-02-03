@@ -1,11 +1,11 @@
 range = 1;
-boundary = 1;
+boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 0;
 sweep = 0;
-SC = 5;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
+SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 0;
 
 f1 = figure;
@@ -410,26 +410,28 @@ for t = 1: tx
 %                   p1(i, j - 1) = p1_taihi(i,j - 1);
                 end
         case 1
-            i = 1;
-                for j = 2 : jx
+            for i = 1 : 1
+                for j = 1 : jx + 1
                     %p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
                     u1(i,j) = 0;
                     v1(i,j) = 0;
                 end
+            end
             i = ix + 1;
-                for j = 2 : jx
+                for j = 1 : jx + 1
                     %p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
                     u1(i,j) = 0;
                     v1(i,j) = 0;
                 end
-            j = 1;
-                for i = 2 : ix
+            for j = 1 : 1
+                for i = 1 : ix + 1
                     %p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
                     u1(i,j) = 0;
                     v1(i,j) = 0;
                 end
+            end
             j = jx + 1 ;
-                for i = 2 : ix
+                for i = 1 : ix + 1
                     %p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
                     u1(i,j) = 0;
                     v1(i,j) = 0;
