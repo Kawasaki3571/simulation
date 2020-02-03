@@ -3,10 +3,10 @@ boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 0;
-sweep = 0;
-SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
-stair = 0;
+hekomi = 1;
+sweep = 1;
+SC = 5;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
+stair = 3;
 
 f1 = figure;
 % f2 = figure;
@@ -106,9 +106,9 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 absp0 = - 0.5; % 吸収係数
-b_po = 0.3 ; %凹み位置
+b_po = 0.5 ; %凹み位置
 h = 0.02;%凹み幅
-w = 0.02;%凹みふかさ
+w = 0.001;%凹みふかさ
 
 
 ix = round(xrange / dx); %x空間感覚の数
@@ -600,6 +600,31 @@ for t = 1: tx
             end
         end
     end
+    if stair == 3
+        for istair = 1 : 3
+            for jstair = 1 : jx + 1
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+        end
+        for istair = 4 : ix - 3
+            for jstair = 1 : 3
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+            for jstair = jx - 2 : jx + 1
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+        end
+        for istair = ix - 2 : ix + 1
+            for jstair = 1 : jx + 1
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+        end
+    end
+    
     for i = 1 : ix + 1
         for j = 1 : jx + 1
             u2(i,j) = u1(i,j);
@@ -629,8 +654,8 @@ for t = 1: tx
         if mod(t,10) == 0
 %         imagesc(y_p,x_p,pressure(x,y));
             plot_image = pressure';
-            %imagesc(x_p, y_p, plot_image(y, x));
-            surf(x_p, y_p, abs(p1(y, x)));
+            imagesc(x_p, y_p, plot_image(y, x));
+            %surf(x_p, y_p, abs(p1(x, y)));
             colorbar
             %colormap gray ;
 %             title(['pressure when ',num2str(time),'seconds have passed'])
@@ -739,7 +764,7 @@ for t = 1: tx
             t_x = 1 : 1: t/5;
             time = t_x * dt * 5;
            p_keisoku_spec = (abs(p_keisoku_taihi)).^2;
-           plot(time, p_keisoku_taihi(t_x)); 
+           plot(time, p_keisoku_taihi(t_x));
            grid on;
            drawnow;
         end
@@ -758,8 +783,8 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                %dlmwrite('kairyouheko500sweep2to7.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
-                dlmwrite('pow3001to3_2cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('pow500_200.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
