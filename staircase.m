@@ -346,8 +346,8 @@ for t = 1: tx
     d = ((1 - d1) + (1 - d2));
     e = ((1 - d1) * (1 - d2));
 
-    for i = 2:ix + 1
-        for j = jx + 1: -1 : 2
+    for i = 2 : ix + 1
+        for j = 2 : jx + 1
             if range ~= 2
                 if t <= tx && i >= id && i <= id2 && j >= jd && j <= jd_2
                     p1(i,j) = pin(t);
@@ -627,8 +627,8 @@ for t = 1: tx
         if mod(t,10) == 0
 %         imagesc(y_p,x_p,pressure(x,y));
             plot_image = pressure';
-            imagesc(x_p, y_p, plot_image(y, x));
-            %surf(x_p, y_p, abs(p1(y, x)));
+            %imagesc(x_p, y_p, plot_image(y, x));
+            surf(x_p, y_p, abs(p1(y, x)));
             colorbar
             %colormap gray ;
 %             title(['pressure when ',num2str(time),'seconds have passed'])
