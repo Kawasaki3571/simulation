@@ -3,9 +3,10 @@ boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 0;
+hekomi = 1;
 sweep = 1;
-SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ
+SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
+stair = 0;
 
 f1 = figure;
 % f2 = figure;
@@ -19,36 +20,48 @@ freq_param = 1;
 freq_a = 1000;
 freq_start = 000*freq_param;
 freq_add = 4000*freq_param;
-freq = freq_a*freq_param;
+% freq = freq_a*freq_param;
+
+freq = freq_a;
+
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
-dx_param = 0.005; %0.05-0.025 
+dx_param = 0.005; %0.05-0.025
+
+% dx_param = 0.01;
+
 dx = ramuda*dx_param; % λの20-30分の一
-% dt = dx / (5 * c);
-% dt = dx*0.15 / (c0);
 crn_param = 0.2;
 dt = dx*crn_param/ (c0);
 % クー数から条件を立てる]
 
 cal_time = 0.18;
 if range == 0
-    xrange = 2.01;
-%    xrange = 0.52;
+    xrange = 1.01;
+%    xrange = 0.51;
     yrange = 0.02;
 %     yd = 0.01 - 2*dx;
 %     yd2 = 0.01 + 2*dx;
-    yd = dx;
-    yd2 = 0.02 - dx;
-    xd = 3 * dx;
-    xd2 = 4 * dx;
+%    yd = dx;
+%    yd2 = 0.02 - dx;
+    yd = yrange / 2;
+    yd2 = yd;
+    xd = 2 * dx;
+    xd2 = 3 * dx;
 end
 if range == 1
     xrange = 0.2;
     yrange = 0.2;
-    xd = 0.099;
-    xd2 = 0.101;
-    yd = 0.099;
-    yd2 = 0.101;
+    xrange = 0.2;
+    yrange = 0.2;
+    xd = xrange / 2 ;
+    xd2 = xrange / 2 ;
+    yd = yrange / 2 ;
+    yd2 = yrange / 2 ;
+    sokuteiten_x = 0.1 * (3*sqrt(2)/4);
+    sokuteiten_y = 0.1 * (3*sqrt(2)/4);
+    sokuteiten_x = 0.15;
+    sokuteiten_y = 0.1;
 end
 if range == 2
     b_haba = 0.002;
@@ -92,11 +105,10 @@ y2 = 0.44;
 t1 = 0;
 t2 = 0;
 speed = 0;
-disp_hensu = 0;
 absp0 = - 0.5; % 吸収係数
 b_po = 0.5 ; %凹み位置
-h = 0.05;%凹み幅
-w = 0.015;%凹みふかさ
+h = 0.02;%凹み幅
+w = 0.001;%凹みふかさ
 
 
 ix = round(xrange / dx); %x空間感覚の数
@@ -109,6 +121,8 @@ w_x = round(w / dx);
 td = 15; % 周波数の代入（？）
 id = round(xd / dx);%xの位置（？）
 id2 = round(xd2 / dx ) ;
+%sokuteiten_x_g = round(sokuteiten_x / dx);
+%sokuteiten_y_g = round(sokuteiten_y / dx);
 if range ~= 2
     jd = round(yd / dx) ; %y空間感覚の代入（？）
     jd_2 = round(yd2/dx);
@@ -144,7 +158,7 @@ pressure = zeros(ix + 1 , jx + 1);
 WN = 1;
 W_end = round(2*WN/(freq*dt)) - 1 ;
 pin = zeros(1,tx+100);
-p_keisoku_taihi = zeros(1,tx);
+p_keisoku_taihi = zeros(1,round(tx / 5));
 crn =(c0 * dt)/dx ; %クーラン数
 dd = 199/200 ;%higdons absorption boundary
 pai = 3.1415 ;
@@ -213,9 +227,6 @@ sn = 0;
 if xd > xd2
     error("xrangeがおかしい")
 end
-% if yd > yd2
-%     error("yrangeがおかしい")
-% end
 if range ~= 2
     if id < 1 || id2 > ix || jd < 1 || jd_2 > jx
     id
@@ -279,11 +290,21 @@ w = 2 * pai * freq ;
                 j = sqrt(-1);
                 if tc < pai / (w * dt)
 %                     pin(tc) = sin(w * time);
-                    pin(tc) = exp(j * w * time - j * pi/2);
+                    pin(tc) = exp(j * w * time);
                 else
 %                     pin(tc) = sin(w * time);
-                    pin(tc) = exp(j * w * time - j * pi / 2);
+                    pin(tc) = exp(j * w * time);
 %                   pin(t) = 0;
+                end
+            end
+        case 5
+            pulse_second = 0.0001;
+            for tc = 1 : tx + 100
+                time = tc * dt;
+                if time < pulse_second
+                    pin(tc) = 1;
+                else
+                    pin(tc) = 0;
                 end
             end
     end
@@ -292,7 +313,7 @@ if mode == 0
 for t = 1: tx
    time = t * dt;
    if sweep == 1
-       freq = 2000 + 7000*(time/cal_time);
+%       freq = 2000 + 7000*(time/cal_time);
    end
    if crn >= 1
        disp("クーラン数が不適切です。");
@@ -325,8 +346,8 @@ for t = 1: tx
     d = ((1 - d1) + (1 - d2));
     e = ((1 - d1) * (1 - d2));
 
-    for i = 2:ix
-        for j = 2:jx
+    for i = 2 : ix + 1
+        for j = 2 : jx + 1
             if range ~= 2
                 if t <= tx && i >= id && i <= id2 && j >= jd && j <= jd_2
                     p1(i,j) = pin(t);
@@ -365,27 +386,6 @@ for t = 1: tx
             end
         end
     end
-    i = 1;
-    for j = 2 : jx
-        p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
-%         p1(i + 1, j) = p1_taihi(i + 1, j);
-    end
-    i = ix + 1;
-    for j = 2 : jx
-        p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-%          p1(i - 1, j) = p1_taihi(i - 1, j);
-    end
-    j = 1;
-    for i = 2 : ix
-        p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
-%         p1(i ,j + 1) = p1_taihi(i, j + 1);
-    end
-    j = jx + 1;
-    for i = 2 : ix
-        p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
-%         p1(i, j - 1) = p1_taihi(i,j - 1);
-    end
-    
     switch(boundary)
         case 0
             i = 1;
@@ -396,7 +396,8 @@ for t = 1: tx
             i = ix + 1;
                 for j = 2 : jx
                     p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-                    p1(i - 1, j) = p3(i-1,j);
+                    u1(i, j) = 0;
+                    v1(i, j) = 0;
                 end
             j = 1;
                 for i = 2 : ix
@@ -409,51 +410,70 @@ for t = 1: tx
 %                   p1(i, j - 1) = p1_taihi(i,j - 1);
                 end
         case 1
-            i = 1;
-                for j = 2 : jx
+            for i = 1 : 1
+                for j = 1 : jx + 1
                     %p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
-                    p1(i + 1, j) = p2(i + 1, j);
-                    p1(i,j) = 0;
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
                 end
+            end
             i = ix + 1;
-                for j = 2 : jx
+                for j = 1 : jx + 1
                     %p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
-                    p1(i - 1, j) = p2(i - 1, j);
-                    p1(i,j) = 0;
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
                 end
-            j = 1;
-                for i = 2 : ix
+            for j = 1 : 1
+                for i = 1 : ix + 1
                     %p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
-                    p1(i ,j + 1) = p2(i, j + 1);
-                    p1(i,j) = 0;
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
                 end
-            j = jx + 1;
-                for i = 2 : ix
+            end
+            j = jx + 1 ;
+                for i = 1 : ix + 1
                     %p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
-                    p1(i, j - 1) = p2(i,j - 1);
-                    p1(i,j) = 0;
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
                 end
         case 2
             i = 1;
-                for j = 2 : jx
+                for j = 2 : jx 
                     p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
 %                   p1(i + 1, j) = p1_taihi(i + 1, j);
                 end
             i = ix + 1;
-                for j = 2 : jx
+                for j = 1 : jx
                     p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
 %                    p1(i - 1, j) = p1_taihi(i - 1, j);
                 end
             j = 1;
-                for i = 2 : ix
+                for i = 1 : ix
                     p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
 %                   p1(i ,j + 1) = p1_taihi(i, j + 1);
                 end
             j = jx + 1;
-                for i = 2 : ix
+                for i = 2 : ix 
                     p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
 %                   p1(i, j - 1) = p1_taihi(i,j - 1);
                 end
+    end
+    
+    for i = 1 : ix + 1
+        for j = 1 : jx + 1
+            p3(i,j) = p2(i,j);
+            p2(i,j) = p1(i,j);
+        end
+    end
+    for i = 1 : ix
+        for j = 1 : jx + 1
+            u1(i,j) = cv1 .* u2(i,j) - cv2 .* (p2(i + 1, j) - p2(i,j));
+        end
+    end
+    for i = 1 : ix + 1
+        for j = 1 : jx
+            v1(i,j) = cv1 * v2(i,j) - cv2 * (p2(i, j + 1) - p2(i,j));
+        end
     end
     if hekomi == 1
         for i = b_x : b_x + h_x
@@ -477,66 +497,111 @@ for t = 1: tx
         end
     end
     
-    for i = 1 : ix + 1
-        for j = 1 : jx + 1
-            p3(i,j) = p2(i,j);
-            p2(i,j) = p1(i,j);
-        end
-    end
-    for i = 1 : ix
-        for j = 2 : jx
-            u1(i,j) = cv1 .* u2(i,j) - cv2 .* (p2(i + 1, j) - p2(i,j));
-        end
-    end
-    for i = 2 : ix
-        for j = 1 : jx
-            v1(i,j) = cv1 * v2(i,j) - cv2 * (p2(i, j + 1) - p2(i,j));
-        end
-    end
     
-    switch(boundary)
-        case 0
-            i = 1;
-                for j = 2 : jx
-%                     u1(i,j) = 0;
-%                     v1(i,j) = 0;
+    if stair == 1
+        grad = yrange / xrange;
+        for x1_s = 0 : dx : xrange / 2
+            y1_s = yrange/2 - grad*x1_s;
+            i1 = round(x1_s/dx) + 1;
+            j1 = round(y1_s/dx) + 1;
+            u1(i1, j1) = 0;
+            v1(i1, j1) = 0;
+            if j1 < 3
+                for jstair = 1 : j1 + 1
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
                 end
-            i = ix + 1;
-                for j = 2 : jx
-                    u1(i,j) = 0;
-                    v1(i,j) = 0;
+            else
+                for jstair = j1 - 2 : j1 + 1
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
                 end
-            j = 1;
-                for i = 2 : ix
-%                     u1(i,j) = 0;
-%                     v1(i,j) = 0;
+            end
+        end
+        for x1_s = xrange / 2 : dx : xrange
+            y1_s = grad*x1_s - yrange/2;
+            i1 = round(x1_s/dx) + 1;
+            j1 = round(y1_s/dx) + 1;
+            u1(i1, j1) = 0;
+            v1(i1, j1) = 0; 
+            if j1 < 3
+                for jstair = 1 : j1 + 1
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
                 end
-            j = jx + 1;
-                for i = 2 : ix
-%                     u1(i,j) = 0;
-%                     v1(i,j) = 0;
+            else
+                for jstair = j1 - 2 : j1 + 1
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
                 end
-        case 1
-            i = 1;
-                for j = 2 : jx
-                    u1(i,j) = 0;
-                    v1(i,j) = 0;
+            end
+        end
+        for x1_s = xrange/2 : dx : xrange
+            y1_s = 1.5*yrange - grad*x1_s;
+            i1 = round(x1_s/dx) + 1;
+            j1 = round(y1_s/dx) + 1;
+            u1(i1, j1) = 0;
+            v1(i1, j1) = 0;
+            if j1 > jx - 2
+                for jstair = j1 : jx + 1 
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
                 end
-            i = ix + 1;
-                for j = 2 : jx
-                    u1(i,j) = 0;
-                    v1(i,j) = 0;
+            else
+                for jstair = j1 : j1 + 3
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
                 end
-            j = 1;
-                for i = 2 : ix
-                    u1(i,j) = 0;
-                    v1(i,j) = 0;
+            end
+        end
+        for x1_s = 0 : dx : xrange / 2
+            y1_s = grad*x1_s + yrange/2;
+            i1 = round(x1_s/dx) + 1;
+            j1 = round(y1_s/dx) + 1;
+            u1(i1, j1) = 0;
+            v1(i1, j1) = 0;
+            if j1 > jx - 2
+                for jstair = j1 : jx + 1 
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
                 end
-            j = jx + 1;
-                for i = 2 : ix
-                    u1(i,j) = 0;
-                    v1(i,j) = 0;
+            else
+                for jstair = j1 : j1 + 3
+                    u1(i1, jstair) = 0;
+                    v1(i1, jstair) = 0;
                 end
+            end
+        end
+    end
+    if stair == 2
+        center_x = 0.1;
+        center_y = 0.1;
+        kei = 0.1;
+        for x1_s = 0 : dx : xrange
+            y1_s = center_y + sqrt(kei^2 - (x1_s - center_x)^2);
+            i1 = round(x1_s/dx) + 1;
+            j1 = round(y1_s/dx) + 1;
+            u1(i1, j1) = 0;
+            v1(i1, j1) = 0;
+            for jstair = j1 : jx + 1
+                u1(i1, jstair) = 0;
+                v1(i1, jstair) = 0;
+            end
+        end
+        for x1_s = 0 : dx : xrange
+            y1_s = center_y - sqrt(kei^2 - (x1_s - center_x)^2);
+            i1 = round(x1_s/dx) + 1;
+            j1 = round(y1_s/dx) + 1;
+            u1(i1, j1) = 0;
+            v1(i1, j1) = 0;
+            for jstair = 1 : j1
+                u1(i1, jstair) = 0;
+                v1(i1, jstair) = 0;
+            end
+        end
+    end
+    if stair == 3
+        
     end
     for i = 1 : ix + 1
         for j = 1 : jx + 1
@@ -552,8 +617,9 @@ for t = 1: tx
     if mod(t,5)==0
 %         計測点
         p_keisoku_taihi(t/5) = p1(5, y_half);
+%        p_keisoku_taihi(t/5) = p1(sokuteiten_x_g, sokuteiten_y_g);
     end
-    if mod(t,500) == 0
+    if mod(t,50) == 0
         disp(t);
         time
     end
@@ -563,16 +629,19 @@ for t = 1: tx
     x_p = x * dx;
     y_p = y * dx;
     if mode_plot == 0
-        if mod(t,100) == 0
-        imagesc(y_p,x_p,pressure(x,y));
+        if mod(t,10) == 0
+%         imagesc(y_p,x_p,pressure(x,y));
+            plot_image = pressure';
+            imagesc(x_p, y_p, plot_image(y, x));
+            %surf(x_p, y_p, abs(p1(x, y)));
             colorbar
             %colormap gray ;
 %             title(['pressure when ',num2str(time),'seconds have passed'])
             title(['pressure when frequency =',num2str(freq),'Hz&&', num2str(time), '(s) have passed'])
-            xlabel('y(mm)')
-            ylabel('x(mm)')
-        grid on;
-        drawnow
+            xlabel('x(mm)')
+            ylabel('y(mm)')
+            grid on;
+            drawnow
         end
     end
     if mode_plot == 1
@@ -610,14 +679,6 @@ for t = 1: tx
              end
              min_x = minor_i * dx;
              max_x = major_i * dx;
-%              for i = 1 : ix + 1
-%                  if real(p1(i,y_half)) == min_v
-%                      min_x = i * dx;
-%                  elseif real(p1(i,y_half)) == max_v
-%                      max_x = i * dx;
-%                  end
-%              end
-            
                 hacho = abs(max_x - min_x) * 2;
                 min_x
                 max_x
@@ -632,35 +693,22 @@ for t = 1: tx
         if mod(t,10) == 0
 %         plot(x_p,pressure(x, y_half));
 %         plot(x_p,p1(x, y_half));
-        plot(x_p(1:0.5/dx),p1(x(1:0.5/dx),y_half))
-        grid on;
+        plot(x_p(1:0.5/dx),p1(x(1:0.5/dx),y_half) - p1(x(1:0.5/dx),1))
+        %plot(x_p(1:0.5/dx),p1(x(1:0.5/dx),1))
+        
         drawnow
         end
     end
     if mode_plot == 3
-        if t == 5000
-%         if mod(t,50) == 0
-            t_x = 1 : t;
-            time = t_x * dt;
-%            plot(time,p_keisoku_taihi(t_x));
-%             bekutoru(time) = p_keisoku_taihi(t_x);
-%             X = bekutoru(time);
-            plot(time,p_keisoku_taihi(t_x));
-            Fs = 1000;            % Sampling frequency                    
-            T = 1/Fs;             % Sampling period       
-            L = 1500;             % Length of signal
-            ft = (0:L-1)*T;        % Time vector
-            Y = fft(X);
-%             plot(1:5000,Y);
-            %P2 = abs(Y/L);
-            %P1 = P2(1:L/2+1);
-            %P1(2:end-1) = 2*P1(2:end-1);
-            %f = Fs*(0:(L/2))/L;
-            %plot(f,P1);
-            %title('Single-Sided Amplitude Spectrum of X(t)')
-            %xlabel('f (Hz)')
-            %ylabel('|P1(f)|')
-            break;
+        if mod(t, 50) == 0
+            t_x = 1 : t / 5;
+            time = t_x *5 * dt;
+            plot(time, p_keisoku_taihi(t_x));
+            drawnow
+        end
+        if time > 0.01
+                dlmwrite('kyokaisei.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                break;
         end
     end
     if mode_plot == 4
@@ -691,10 +739,10 @@ for t = 1: tx
     if mode_plot == 6
         if mod(t,500) == 0
             figure(f1);
-            t_x = 1 : 1: t/10;
-            time = t_x * dt * 10;
+            t_x = 1 : 1: t/5;
+            time = t_x * dt * 5;
            p_keisoku_spec = (abs(p_keisoku_taihi)).^2;
-           plot(time, p_keisoku_taihi(t_x)); 
+           plot(time, p_keisoku_taihi(t_x));
            grid on;
            drawnow;
         end
@@ -713,8 +761,8 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                %dlmwrite('kairyouheko500sweep2to7.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
-                dlmwrite('pownoload_200.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('pow500_200.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
@@ -816,7 +864,7 @@ if mode == 3
         polarplot(theta,abs(dhi1));
         title(['Directivity when frequency is',num2str(freq),'Hz'])
         drawnow
-        pause(0.7);
+%        pause(0.7);
     end
   end
 end
@@ -828,4 +876,42 @@ if mode == 4
     j = sqrt(-1);
     p = exp(j *(hasu * x_p - w * t_time));
     plot(x_p,p)
+end
+if mode == 5
+    for x1 = 0 : dx : 0.1
+        y1 = 0.1 - x1;
+        i1 = round(x1/dx) + 1;
+        j1 = round(y1/dx) + 1;
+        p1(i1, j1) = 1;
+    end
+    for x1 = 0.1 : dx : 0.2
+        y1 = x1 - 0.1;
+        i1 = round(x1/dx) + 1;
+        j1 = round(y1/dx) + 1;
+        p1(i1, j1) = 0.5;
+    end
+    for x1 = 0.1 : dx : 0.2
+        y1 = 0.3 - x1;
+        i1 = round(x1/dx) + 1;
+        j1 = round(y1/dx) + 1;
+        p1(i1, j1) = -0.5;
+    end
+    for x1 = 0 : dx : 0.1
+        y1 = x1 + 0.1;
+        i1 = round(x1/dx) + 1;
+        j1 = round(y1/dx) + 1;
+        p1(i1, j1) = -1;
+    end
+    y = 1 : jx + 1 ;
+    x = 1 : ix + 1;
+    x_p = x * dx;
+    y_p = y * dx;
+    imagesc(y_p,x_p,p1(x,y));
+    colorbar
+    %colormap gray ;
+    %   title(['pressure when ',num2str(time),'seconds have passed'])
+    title(['pressure when frequency =',num2str(freq),'Hz&&', num2str(time), '(s) have passed'])
+    xlabel('y(mm)')
+    ylabel('x(mm)')
+    grid on;
 end

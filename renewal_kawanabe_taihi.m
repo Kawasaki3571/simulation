@@ -1,6 +1,7 @@
 %%y
 % オシロスコープから抽出したデータを二回フーリエ変換して位置応答に変換する
 %%%%オーバーラップあり
+bai = 1;
 for i = 1 : 2
 
 c = 340; %音速
@@ -16,7 +17,7 @@ freq_add = 2000;
 freq = freq_a;
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
-dx_param = 0.01; %0.05-0.025 
+dx_param = 0.005; %0.05-0.025 
 dx = ramuda*dx_param; % λの20-30分の一
 % dt = dx / (5 * c);
 % dt = dx*0.15 / (c0);
@@ -48,32 +49,28 @@ xL = 0.3;
 achieve_time = 2*xL/c0;
 start_time_g = round(achieve_time / (5*dt));
 
-f1 = 1000; % スイープ開始周波数（Hz）
-f2 = 3000; % 終了周波数
+f1 = 000; % スイープ開始周波数（Hz）
+f2 = 4000; % 終了周波数
 
-st = 1100; % フーリエ変換の開始周波数（Hz）
-ed = 3000 - 100; % 終了周波数
+st = 100; % フーリエ変換の開始周波数（Hz）
+ed = 2000; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
 
-load_data = csvread('pow10001to3_1cm.csv'); % 2行目より下を読み込む
-noload_data = csvread('powhekonoload1to3.csv'); % 2行目より下を読み込む
+load_data = csvread('pow700_200.csv'); % 2行目より下を読み込む
+noload_data = csvread('pownoload_200.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
-load_data = load_data(1 :csvrangemax);
-noload_data = noload_data(1:csvrangemax );
+load_data = real(load_data(1 :csvrangemax));
+noload_data = real(noload_data(1:csvrangemax ));
 
 data_sabun = load_data - noload_data;
 
-dlmwrite('sabun500s1to3.csv', data_sabun, 'precision', '%.10f', 'delimiter', ',')
+%dlmwrite('sabun500s1to3.csv', data_sabun, 'precision', '%.10f', 'delimiter', ',')
 
 t_sec = 5*dt : 5*dt : cal_time;
 
-sabun_zure = zeros(csvrangemax, 1);
-sabun_zure(1 : csvrangemax - start_time_g + 1) = data_sabun(start_time_g : csvrangemax);
-%load_data = noload_data + sabun_zure;
-
-plot(t_sec, sabun_zure)
+plot(t_sec, data_sabun)
 
 % st_wave = 104;  % スイープ波形の始まる時間　可変
 st_wave = 1;
@@ -229,6 +226,10 @@ V_x = fft(ripple_f, n); % フーリエ変換して位置応答を作成
 x = 0:dx/n:dx - dx/n; % 位置軸を作成
 x = x';
 
+if bai == 1
+    x = x / 2;
+end
+
 
 for k = 0:1:2; % 位置応答を平滑化
     
@@ -267,6 +268,10 @@ xlim([0 2500]);
 
 peak_x = (nx - 1)*dx/n; % ピーク位置の場所を算出
 peak_x_for_display = round(peak_x*10^3);
+
+if bai == 1
+    peak_x = peak_x / 2;
+end
 
 if peak_val > 3; % 閾値を用いてピークが負荷によるものかを判定
     display('負荷あり');

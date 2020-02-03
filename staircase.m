@@ -1,12 +1,12 @@
-range = 1;
+range = 0;
 boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 0;
-sweep = 0;
-SC = 5;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
-stair = 2;
+hekomi = 1;
+sweep = 1;
+SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
+stair = 3;
 
 f1 = figure;
 % f2 = figure;
@@ -18,8 +18,8 @@ rou0 = 1.293;
 % rou0 = 1000;?
 freq_param = 1;
 freq_a = 1000;
-freq_start = 1000*freq_param;
-freq_add = 2000*freq_param;
+freq_start = 000*freq_param;
+freq_add = 4000*freq_param;
 % freq = freq_a*freq_param;
 
 freq = freq_a;
@@ -31,8 +31,6 @@ dx_param = 0.005; %0.05-0.025
 % dx_param = 0.01;
 
 dx = ramuda*dx_param; % λの20-30分の一
-% dt = dx / (5 * c);
-% dt = dx*0.15 / (c0);
 crn_param = 0.2;
 dt = dx*crn_param/ (c0);
 % クー数から条件を立てる]
@@ -48,8 +46,8 @@ if range == 0
 %    yd2 = 0.02 - dx;
     yd = yrange / 2;
     yd2 = yd;
-    xd = 2 * dx;
-    xd2 = 3 * dx;
+    xd = 3 * dx;
+    xd2 = 4 * dx;
 end
 if range == 1
     xrange = 0.2;
@@ -107,19 +105,18 @@ y2 = 0.44;
 t1 = 0;
 t2 = 0;
 speed = 0;
-disp_hensu = 0;
 absp0 = - 0.5; % 吸収係数
-b_po = 0.3 ; %凹み位置
+b_po = 0.7 ; %凹み位置
 h = 0.02;%凹み幅
-w = 0.02;%凹みふかさ
+w = 0.005;%凹みふかさ
 
 
 ix = round(xrange / dx); %x空間感覚の数
 jx = round(yrange / dx); %y空間感覚の数
 tx = fix(cal_time / dt ); %時間感覚の数
-b_x = round(b_po / dx);
-h_x = round(h / dx);
-w_x = round(w / dx);
+b_x = round(b_po / dx) + 1;
+h_x = round(h / dx) + 1;
+w_x = round(w / dx) + 1;
 %  １おわ
 td = 15; % 周波数の代入（？）
 id = round(xd / dx);%xの位置（？）
@@ -127,7 +124,7 @@ id2 = round(xd2 / dx ) ;
 %sokuteiten_x_g = round(sokuteiten_x / dx);
 %sokuteiten_y_g = round(sokuteiten_y / dx);
 if range ~= 2
-    jd = round(yd / dx) ; %y空間感覚の代入（？）
+    jd = round(yd / dx)  ; %y空間感覚の代入（？）
     jd_2 = round(yd2/dx);
 else
     jd_a = round(yd_a / dx) ; %y空間感覚の代入（？）
@@ -349,8 +346,8 @@ for t = 1: tx
     d = ((1 - d1) + (1 - d2));
     e = ((1 - d1) * (1 - d2));
 
-    for i = 2:ix + 1
-        for j = jx + 1: -1 : 2 
+    for i = 2 : ix + 1
+        for j = 2 : jx + 1
             if range ~= 2
                 if t <= tx && i >= id && i <= id2 && j >= jd && j <= jd_2
                     p1(i,j) = pin(t);
@@ -413,26 +410,28 @@ for t = 1: tx
 %                   p1(i, j - 1) = p1_taihi(i,j - 1);
                 end
         case 1
-            i = 1;
-                for j = 2 : jx
+            for i = 1 : 1
+                for j = 1 : jx + 1
                     %p1(i,j) = a .* (p1(i + 1,j)-p2(i,j)) - b .* (p1(i + 2,j) - 2 .* p2(i + 1,j) + p3(i,j)) - c .* (p2(i + 2,j) - p3(i + 1,j)) + d .* p2(i + 1,j) - e .* p3(i + 2,j);
                     u1(i,j) = 0;
                     v1(i,j) = 0;
                 end
+            end
             i = ix + 1;
-                for j = 2 : jx
+                for j = 1 : jx + 1
                     %p1(i,j) = a .* (p1(i - 1,j) - p2(i,j)) - b .* (p1(i-2,j) - 2*p2(i-1,j) + p3(i,j)) - c .* (p2(i - 2,j) - p3(i-1,j)) + d .* p2(i -1,j) - e .* p3(i-2,j);
                     u1(i,j) = 0;
                     v1(i,j) = 0;
                 end
-            j = 1;
-                for i = 2 : ix
+            for j = 1 : 1
+                for i = 1 : ix + 1
                     %p1(i,j) = a .* (p1(i,j+1) - p2(i,j)) - b .* (p1(i,j+2) - 2 * p2(i,j+1) + p3(i,j)) - c .* (p2(i,j+2) - p3(i,j + 1)) + d .* p2(i,j + 1) - e .* p3(i,j + 2);
                     u1(i,j) = 0;
                     v1(i,j) = 0;
                 end
+            end
             j = jx + 1 ;
-                for i = 2 : ix
+                for i = 1 : ix + 1
                     %p1(i,j) = a .* (p1(i,j-1) - p2(i,j)) - b .* (p1(i,j-2) - 2 * p2(i,j-1) + p3(i,j)) - c .* (p2(i,j-2) - p3(i,j - 1)) + d .* p2(i,j - 1) - e .* p3(i,j - 2);
                     u1(i,j) = 0;
                     v1(i,j) = 0;
@@ -479,26 +478,12 @@ for t = 1: tx
     if hekomi == 1
         for i = b_x : b_x + h_x
             for j = 1 : w_x
-%                 p1(i,j) = 0;
                 u1(i,j) = 0;
                 v1(i,j) = 0;
             end
         end
-        i = b_x - 1;
-        for j = 1 : w_x + 1
-%             p1(i,j) = p2(i,j);
-        end
-        j = w_x + 1;
-        for i = b_x - 1 : b_x + h_x + 1
-%             p1(i,j) = p2(i,j);
-        end
-        i = b_x + h_x + 1;
-        for j = 1 : w_x + 1
-%             p1(i,j) = p2(i,j);
-        end
     end
-    
-    
+        
     if stair == 1
         grad = yrange / xrange;
         for x1_s = 0 : dx : xrange / 2
@@ -601,6 +586,31 @@ for t = 1: tx
             end
         end
     end
+    if stair == 3
+        for istair = 1 : 2
+            for jstair = 1 : jx + 1
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+        end
+        for istair = 3 : ix - 1
+            for jstair = 1 : 2
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+            for jstair = jx  : jx + 1
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+        end
+        for istair = ix : ix + 1
+            for jstair = 1 : jx + 1
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+        end
+    end
+    
     for i = 1 : ix + 1
         for j = 1 : jx + 1
             u2(i,j) = u1(i,j);
@@ -614,7 +624,7 @@ for t = 1: tx
     end
     if mod(t,5)==0
 %         計測点
-        p_keisoku_taihi(t/5) = p1(5, y_half);
+        p_keisoku_taihi(t/5) = p1(6, y_half);
 %        p_keisoku_taihi(t/5) = p1(sokuteiten_x_g, sokuteiten_y_g);
     end
     if mod(t,50) == 0
@@ -631,7 +641,7 @@ for t = 1: tx
 %         imagesc(y_p,x_p,pressure(x,y));
             plot_image = pressure';
             imagesc(x_p, y_p, plot_image(y, x));
-            %surf(x_p, y_p, abs(p1(y, x)));
+            %surf(x_p, y_p, abs(p1(x, y)));
             colorbar
             %colormap gray ;
 %             title(['pressure when ',num2str(time),'seconds have passed'])
@@ -740,7 +750,7 @@ for t = 1: tx
             t_x = 1 : 1: t/5;
             time = t_x * dt * 5;
            p_keisoku_spec = (abs(p_keisoku_taihi)).^2;
-           plot(time, p_keisoku_taihi(t_x)); 
+           plot(time, p_keisoku_taihi(t_x));
            grid on;
            drawnow;
         end
@@ -759,8 +769,8 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                %dlmwrite('kairyouheko500sweep2to7.csv', p_keisoku_spec_col, 'precision', '%.10f', 'delimiter', ',')
-                dlmwrite('pow3001to3_2cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('pow700_200.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
     end
