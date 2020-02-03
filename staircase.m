@@ -1,11 +1,11 @@
-range = 1;
-boundary = 0;
+range = 0;
+boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 1;
 sweep = 1;
-SC = 5;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
+SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 3;
 
 f1 = figure;
@@ -46,8 +46,8 @@ if range == 0
 %    yd2 = 0.02 - dx;
     yd = yrange / 2;
     yd2 = yd;
-    xd = 2 * dx;
-    xd2 = 3 * dx;
+    xd = 3 * dx;
+    xd2 = 4 * dx;
 end
 if range == 1
     xrange = 0.2;
@@ -106,17 +106,17 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 absp0 = - 0.5; % 吸収係数
-b_po = 0.5 ; %凹み位置
+b_po = 0.7 ; %凹み位置
 h = 0.02;%凹み幅
-w = 0.001;%凹みふかさ
+w = 0.005;%凹みふかさ
 
 
 ix = round(xrange / dx); %x空間感覚の数
 jx = round(yrange / dx); %y空間感覚の数
 tx = fix(cal_time / dt ); %時間感覚の数
-b_x = round(b_po / dx);
-h_x = round(h / dx);
-w_x = round(w / dx);
+b_x = round(b_po / dx) + 1;
+h_x = round(h / dx) + 1;
+w_x = round(w / dx) + 1;
 %  １おわ
 td = 15; % 周波数の代入（？）
 id = round(xd / dx);%xの位置（？）
@@ -124,7 +124,7 @@ id2 = round(xd2 / dx ) ;
 %sokuteiten_x_g = round(sokuteiten_x / dx);
 %sokuteiten_y_g = round(sokuteiten_y / dx);
 if range ~= 2
-    jd = round(yd / dx) ; %y空間感覚の代入（？）
+    jd = round(yd / dx)  ; %y空間感覚の代入（？）
     jd_2 = round(yd2/dx);
 else
     jd_a = round(yd_a / dx) ; %y空間感覚の代入（？）
@@ -478,26 +478,12 @@ for t = 1: tx
     if hekomi == 1
         for i = b_x : b_x + h_x
             for j = 1 : w_x
-%                 p1(i,j) = 0;
                 u1(i,j) = 0;
                 v1(i,j) = 0;
             end
         end
-        i = b_x - 1;
-        for j = 1 : w_x + 1
-%             p1(i,j) = p2(i,j);
-        end
-        j = w_x + 1;
-        for i = b_x - 1 : b_x + h_x + 1
-%             p1(i,j) = p2(i,j);
-        end
-        i = b_x + h_x + 1;
-        for j = 1 : w_x + 1
-%             p1(i,j) = p2(i,j);
-        end
     end
-    
-    
+        
     if stair == 1
         grad = yrange / xrange;
         for x1_s = 0 : dx : xrange / 2
@@ -601,23 +587,23 @@ for t = 1: tx
         end
     end
     if stair == 3
-        for istair = 1 : 3
+        for istair = 1 : 2
             for jstair = 1 : jx + 1
                 u1(istair, jstair) = 0;
                 v1(istair, jstair) = 0;
             end
         end
-        for istair = 4 : ix - 3
-            for jstair = 1 : 3
+        for istair = 3 : ix - 1
+            for jstair = 1 : 2
                 u1(istair, jstair) = 0;
                 v1(istair, jstair) = 0;
             end
-            for jstair = jx - 2 : jx + 1
+            for jstair = jx  : jx + 1
                 u1(istair, jstair) = 0;
                 v1(istair, jstair) = 0;
             end
         end
-        for istair = ix - 2 : ix + 1
+        for istair = ix : ix + 1
             for jstair = 1 : jx + 1
                 u1(istair, jstair) = 0;
                 v1(istair, jstair) = 0;
@@ -638,7 +624,7 @@ for t = 1: tx
     end
     if mod(t,5)==0
 %         計測点
-        p_keisoku_taihi(t/5) = p1(5, y_half);
+        p_keisoku_taihi(t/5) = p1(6, y_half);
 %        p_keisoku_taihi(t/5) = p1(sokuteiten_x_g, sokuteiten_y_g);
     end
     if mod(t,50) == 0
@@ -783,7 +769,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('pow500_200.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('pow700_200.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
