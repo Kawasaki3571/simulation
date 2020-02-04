@@ -1,9 +1,9 @@
 range = 0;
 boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 0;
+hekomi = 1;
 sweep = 1;
 SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 3;
@@ -15,7 +15,7 @@ c = 340; %音速
 c0 = 340;
 % rou0 = 1.293; %密度（kg/m^3
 rou0 = 1.293;
-% rou0 = 1000;?
+% rou0 = 1000;
 freq_param = 1;
 freq_a = 1000;
 freq_start = 000*freq_param;
@@ -26,7 +26,7 @@ freq = freq_a;
 
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
-dx_param = 0.025; %0.05-0.025
+dx_param = 0.005; %0.05-0.025
 
 % dx_param = 0.01;
 
@@ -37,7 +37,7 @@ dt = dx*crn_param/ (c0);
 
 cal_time = 0.18;
 if range == 0
-    xrange = 0.5;
+    xrange = 0.8;
 %    xrange = 0.51;
     yrange = 0.02;
     zrange = 0.02;
@@ -50,7 +50,7 @@ if range == 0
 end
     
 absp0 = - 0.5; % 吸収係数
-b_po = 0.7 ; %凹み位置
+b_po = 0.2 ; %凹み位置
 h = 0.02;%凹み幅
 w = 0.005;%凹みふかさ
 b_de = 0.02;
@@ -69,8 +69,8 @@ id = round(xd / dx);%xの位置（？）
 id2 = round(xd2 / dx ) ;
 %sokuteiten_x_g = round(sokuteiten_x / dx);
 %sokuteiten_y_g = round(sokuteiten_y / dx);
-jd = round(yd / dx)  ; %y空間感覚の代入（？）
-jd_2 = round(yd2/dx);
+jd = round(yd / dx) + 1  ; %y空間感覚の代入（？）
+jd_2 = round(yd2/dx) + 1;
 kd = round(zd / dx);
 kd_2 = round(zd2 / dx);
 
@@ -385,8 +385,8 @@ for t = 1: tx
     for i = 1 : ix + 1
         for j = 1 : jx + 1
             for k = 1 : kx + 1
-                p3(i,j) = p2(i,j);
-                p2(i,j) = p1(i,j);
+                p3(i,j,k) = p2(i,j,k);
+                p2(i,j,k) = p1(i,j,k);
             end
         end
     end
@@ -516,8 +516,10 @@ for t = 1: tx
     
     y = 1 : jx + 1 ;
     x = 1 : ix + 1;
+    z = 1 : kx + 1;
     x_p = x * dx;
     y_p = y * dx;
+    z_p = z_for_p * dx;
     if mode_plot == 0
         if mod(t,10) == 0
 %         imagesc(y_p,x_p,pressure(x,y));
@@ -588,53 +590,6 @@ for t = 1: tx
             end
         end
     end
-    if mode_plot ==2
-        if mod(t,10) == 0
-%         plot(x_p,pressure(x, y_half));
-%         plot(x_p,p1(x, y_half));
-        plot(x_p(1:0.5/dx),p1(x(1:0.5/dx),y_half) - p1(x(1:0.5/dx),1))
-        %plot(x_p(1:0.5/dx),p1(x(1:0.5/dx),1))
-        
-        drawnow
-        end
-    end
-    if mode_plot == 3
-        if mod(t, 50) == 0
-            t_x = 1 : t / 5;
-            time = t_x *5 * dt;
-            plot(time, p_keisoku_taihi(t_x));
-            drawnow
-        end
-        if time > 0.01
-                dlmwrite('kyokaisei.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
-                break;
-        end
-    end
-    if mode_plot == 4
-        p_kei(t) = p1(1, y_half);
-        p_kei(t)
-        if time == cal_time - 0.001
-            t_x = 1 : tx;
-            plot(t_x * dt , p_kei(t_x))
-            disp("計算が終了しました")
-        end
-    end
-    if mode_plot == 5
-        if t == tx
-            t_x = 0 : 10: t;
-            time = t_x * dt;
-            p_keisoku_spec = abs(p_keisoku_taihi).^2;
-            plot(time,p_keisoku_spec(t_x));
-            Fs = 1000;            % Sampling frequency                    
-            T = 1/Fs;             % Sampling period       
-            L = 1500;             % Length of signal
-            ft = (0:L-1)*T;        % Time vector
-            Y = fft(p_keisoku_spec,L);
-            disp(size(Y))
-            plot(1:L,Y)
-            break;
-        end
-    end
     if mode_plot == 6
         if mod(t,500) == 0
             figure(f1);
@@ -645,14 +600,6 @@ for t = 1: tx
            grid on;
            drawnow;
         end
-%        if time > 0.01
-%            if mod(t,10) == 0
-%                p_keisoku_spec(t/10)
-%                time
-%                break;
-%            end
-%        end
-%             if t == tx - rem(tx,10)
             if t == tx - rem(tx,10)
                 disp(size(time));
                 disp(size(p_keisoku_spec));
@@ -660,7 +607,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('pow700_200.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('3d200_200.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
@@ -671,20 +618,22 @@ for t = 1: tx
             break;
         end
     end
-    if mode_plot == 8
-        sokutei_point = 300;
-        if abs(p_keisoku_taihi(sokutei_point)) > 0
-            sokutei_point * dx
-            disp(sokutei_point * dx / time);
-            break;
-        end
-        if mod(t,5) == 0
-%         plot(x_p,pressure(x, y_half));
-            plot(x_p,p1(x, y_half));
+    if mode_plot == 9
+        if mod(t,50) == 0
+            [X,Y,Z] = meshgrid(x,y,z);
+            xslice = 1;   
+            yslice = 1;
+            zslice = 1;
+            slice(X,Y,Z,p1(X,Y,Z),xslice,yslice,zslice)
+            colorbar
+            title(['3d'])
+            xlabel('y(mm)')
+            ylabel('x(mm)')
             grid on;
             drawnow
         end
     end
+    
 end
 end
 if mode == 1

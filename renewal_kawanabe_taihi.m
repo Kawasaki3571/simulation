@@ -58,8 +58,8 @@ ed = 2000; % 終了周波数
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
 
-load_data = csvread('pow300_200.csv'); % 2行目より下を読み込む
-noload_data = csvread('pownoload_200.csv'); % 2行目より下を読み込む
+load_data = csvread('3d200_200.csv'); % 2行目より下を読み込む
+noload_data = csvread('3dnoload_200.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
 load_data = real(load_data(1 :csvrangemax));
 noload_data = real(noload_data(1:csvrangemax ));

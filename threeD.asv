@@ -3,7 +3,7 @@ boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 1;
+hekomi = 0;
 sweep = 1;
 SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 3;
@@ -15,7 +15,7 @@ c = 340; %音速
 c0 = 340;
 % rou0 = 1.293; %密度（kg/m^3
 rou0 = 1.293;
-% rou0 = 1000;?
+% rou0 = 1000;
 freq_param = 1;
 freq_a = 1000;
 freq_start = 000*freq_param;
@@ -37,7 +37,7 @@ dt = dx*crn_param/ (c0);
 
 cal_time = 0.18;
 if range == 0
-    xrange = 1.01;
+    xrange = 0.8;
 %    xrange = 0.51;
     yrange = 0.02;
     zrange = 0.02;
@@ -50,7 +50,7 @@ if range == 0
 end
     
 absp0 = - 0.5; % 吸収係数
-b_po = 0.7 ; %凹み位置
+b_po = 0.2 ; %凹み位置
 h = 0.02;%凹み幅
 w = 0.005;%凹みふかさ
 b_de = 0.02;
@@ -69,10 +69,10 @@ id = round(xd / dx);%xの位置（？）
 id2 = round(xd2 / dx ) ;
 %sokuteiten_x_g = round(sokuteiten_x / dx);
 %sokuteiten_y_g = round(sokuteiten_y / dx);
-jd = round(yd / dx)  ; %y空間感覚の代入（？）
-jd_2 = round(yd2/dx);
+jd = round(yd / dx) + 1  ; %y空間感覚の代入（？）
+jd_2 = round(yd2/dx) + 1;
 kd = round(zd / dx);
-kd2 = round(zd2 / dx);
+kd_2 = round(zd2 / dx);
 
 %ix1 = round(x1/dx);
 %ix2 = round(x2/dx);
@@ -135,6 +135,7 @@ e = ((1 - d1) * (1 - d2));
 % 編集点↑
 
 y_half = round(jx / 2);
+z_half = round(kx / 2);
 p_kei = zeros(1, tx);
 % y_half_g = round(y_half / dx);
 for i = 1 : ix + 1
@@ -384,107 +385,44 @@ for t = 1: tx
     for i = 1 : ix + 1
         for j = 1 : jx + 1
             for k = 1 : kx + 1
-                p3(i,j) = p2(i,j);
-                p2(i,j) = p1(i,j);
+                p3(i,j,k) = p2(i,j,k);
+                p2(i,j,k) = p1(i,j,k);
             end
         end
     end
     for i = 1 : ix
         for j = 1 : jx + 1
             for k = 1 : kx + 1
-                u1(i,j,k) = cv1 .* u2(i,j) - cv2 .* (p2(i + 1, j) - p2(i,j));
+                u1(i,j,k) = cv1 .* u2(i,j,k) - cv2 .* (p2(i + 1, j, k) - p2(i,j,k));
             end
         end
     end
     for i = 1 : ix + 1
         for j = 1 : jx
-            v1(i,j) = cv1 * v2(i,j) - cv2 * (p2(i, j + 1) - p2(i,j));
+            for k = 1 : kx + 1
+                v1(i,j,k) = cv1 .* v2(i,j,k) - cv2 .* (p2(i, j+1, k) - p2(i,j,k));
+            end
+        end
+    end
+    for i = 1 : ix + 1
+        for j = 1 : jx + 1
+            for k = 1 : kx
+                w1(i,j,k) = cv1 .* w2(i,j,k) - cv2 .* (p2(i, j, k+1) - p2(i,j,k));
+            end
         end
     end
     if hekomi == 1
         for i = b_x : b_x + h_x
             for j = 1 : w_x
-                u1(i,j) = 0;
-                v1(i,j) = 0;
+                for k = 1 : bd_x
+                    u1(i,j,k) = 0;
+                    v1(i,j,k) = 0;
+                    w1(i,j,k) = 0;
+                end
             end
         end
     end
         
-    if stair == 1
-        grad = yrange / xrange;
-        for x1_s = 0 : dx : xrange / 2
-            y1_s = yrange/2 - grad*x1_s;
-            i1 = round(x1_s/dx) + 1;
-            j1 = round(y1_s/dx) + 1;
-            u1(i1, j1) = 0;
-            v1(i1, j1) = 0;
-            if j1 < 3
-                for jstair = 1 : j1 + 1
-                    u1(i1, jstair) = 0;
-                    v1(i1, jstair) = 0;
-                end
-            else
-                for jstair = j1 - 2 : j1 + 1
-                    u1(i1, jstair) = 0;
-                    v1(i1, jstair) = 0;
-                end
-            end
-        end
-        for x1_s = xrange / 2 : dx : xrange
-            y1_s = grad*x1_s - yrange/2;
-            i1 = round(x1_s/dx) + 1;
-            j1 = round(y1_s/dx) + 1;
-            u1(i1, j1) = 0;
-            v1(i1, j1) = 0; 
-            if j1 < 3
-                for jstair = 1 : j1 + 1
-                    u1(i1, jstair) = 0;
-                    v1(i1, jstair) = 0;
-                end
-            else
-                for jstair = j1 - 2 : j1 + 1
-                    u1(i1, jstair) = 0;
-                    v1(i1, jstair) = 0;
-                end
-            end
-        end
-        for x1_s = xrange/2 : dx : xrange
-            y1_s = 1.5*yrange - grad*x1_s;
-            i1 = round(x1_s/dx) + 1;
-            j1 = round(y1_s/dx) + 1;
-            u1(i1, j1) = 0;
-            v1(i1, j1) = 0;
-            if j1 > jx - 2
-                for jstair = j1 : jx + 1 
-                    u1(i1, jstair) = 0;
-                    v1(i1, jstair) = 0;
-                end
-            else
-                for jstair = j1 : j1 + 3
-                    u1(i1, jstair) = 0;
-                    v1(i1, jstair) = 0;
-                end
-            end
-        end
-        for x1_s = 0 : dx : xrange / 2
-            y1_s = grad*x1_s + yrange/2;
-            i1 = round(x1_s/dx) + 1;
-            j1 = round(y1_s/dx) + 1;
-            u1(i1, j1) = 0;
-            v1(i1, j1) = 0;
-            if j1 > jx - 2
-                for jstair = j1 : jx + 1 
-                    u1(i1, jstair) = 0;
-                    v1(i1, jstair) = 0;
-                end
-            else
-                for jstair = j1 : j1 + 3
-                    u1(i1, jstair) = 0;
-                    v1(i1, jstair) = 0;
-                end
-            end
-        end
-    end
     if stair == 2
         center_x = 0.1;
         center_y = 0.1;
@@ -515,42 +453,60 @@ for t = 1: tx
     if stair == 3
         for istair = 1 : 2
             for jstair = 1 : jx + 1
-                u1(istair, jstair) = 0;
-                v1(istair, jstair) = 0;
+                for kstair = 1 : kx + 1
+                    u1(istair, jstair, kstair) = 0;
+                    v1(istair, jstair, kstair) = 0;
+                end
             end
         end
         for istair = 3 : ix - 1
             for jstair = 1 : 2
-                u1(istair, jstair) = 0;
-                v1(istair, jstair) = 0;
+                for kstair = 1 : kx + 1
+                    u1(istair, jstair, kstair) = 0;
+                    v1(istair, jstair, kstair) = 0;
+                end
+            end
+            for jstair = 3 : jx - 1
+                for kstair = [1 2 kx kx+1]
+                    u1(istair, jstair, kstair) = 0;
+                    v1(istair, jstair, kstair) = 0;
+                end
             end
             for jstair = jx  : jx + 1
-                u1(istair, jstair) = 0;
-                v1(istair, jstair) = 0;
+                for kstair = 1 : kx + 1
+                    u1(istair, jstair, kstair) = 0;
+                    v1(istair, jstair, kstair) = 0;
+                end
             end
         end
         for istair = ix : ix + 1
             for jstair = 1 : jx + 1
-                u1(istair, jstair) = 0;
-                v1(istair, jstair) = 0;
+                for kstair = 1 : kx + 1
+                    u1(istair, jstair, kstair) = 0;
+                    v1(istair, jstair, kstair) = 0;
+                end
             end
         end
     end
     
     for i = 1 : ix + 1
         for j = 1 : jx + 1
-            u2(i,j) = u1(i,j);
-            v2(i,j) = v1(i,j);
+            for k = 1 : kx + 1
+                u2(i,j,k) = u1(i,j,k);
+                v2(i,j,k) = v1(i,j,k);
+            end
         end
     end
     for i = 1 : ix + 1
         for j = 1 : jx + 1
-            pressure(i,j) = (real(p1(i,j)) .^2).^0.5 ;
+            for k = 1 : kx + 1
+                pressure(i,j,k) = (real(p1(i,j,k)) .^2).^0.5 ;
+            end
         end
     end
     if mod(t,5)==0
 %         計測点
-        p_keisoku_taihi(t/5) = p1(6, y_half);
+        p_keisoku_taihi(t/5) = p1(6, y_half, z_half);
 %        p_keisoku_taihi(t/5) = p1(sokuteiten_x_g, sokuteiten_y_g);
     end
     if mod(t,50) == 0
@@ -560,20 +516,30 @@ for t = 1: tx
     
     y = 1 : jx + 1 ;
     x = 1 : ix + 1;
+    z
     x_p = x * dx;
     y_p = y * dx;
     if mode_plot == 0
         if mod(t,10) == 0
 %         imagesc(y_p,x_p,pressure(x,y));
-            plot_image = pressure';
-            imagesc(x_p, y_p, plot_image(y, x));
+            z = z_half;
+            
+            %plot_image = pressure(z)';
+            for x_plot = 1 : ix + 1
+                for y_plot = 1 : jx + 1
+                    plot_image(x_plot, y_plot) = pressure(x_plot, y_plot, z_half);
+                end
+            end
+            
+            imagesc(y_p, x_p, plot_image(x, y));
+            
             %surf(x_p, y_p, abs(p1(x, y)));
             colorbar
             %colormap gray ;
 %             title(['pressure when ',num2str(time),'seconds have passed'])
             title(['pressure when frequency =',num2str(freq),'Hz&&', num2str(time), '(s) have passed'])
-            xlabel('x(mm)')
-            ylabel('y(mm)')
+            xlabel('y(mm)')
+            ylabel('x(mm)')
             grid on;
             drawnow
         end
@@ -695,7 +661,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('pow700_200.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('3dnoload_200.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
@@ -720,6 +686,19 @@ for t = 1: tx
             drawnow
         end
     end
+    if mode_plot == 9
+        if mod(t,50) == 0
+            z = z_half;
+            imagesc(y_p, x_p, plot_image(x, y));
+            colorbar
+            title(['pressure when frequency =',num2str(freq),'Hz&&', num2str(time), '(s) have passed'])
+            xlabel('y(mm)')
+            ylabel('x(mm)')
+            grid on;
+            drawnow
+        end
+    end
+    
 end
 end
 if mode == 1
