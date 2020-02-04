@@ -26,16 +26,17 @@ freq = freq_a;
 
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
-dx_param = 0.005; %0.05-0.025
+dx_param = 0.0025; %0.05-0.025
 
 % dx_param = 0.01;
 
 dx = ramuda*dx_param; % ƒÉ‚Ì20-30•ª‚Ìˆê
 crn_param = 0.2;
+crn = crn_param;
 dt = dx*crn_param/ (c0);
 % ƒN[”‚©‚çðŒ‚ð—§‚Ä‚é]
 
-cal_time = 0.18;
+cal_time = 0.03;
 if range == 0
     xrange = 0.8;
 %    xrange = 0.51;
@@ -157,12 +158,6 @@ end
 x=0:dx:xrange; 
 y=0:dx:yrange;
 z=0:dx:zrange;
-for i = jx1 : jx2
-    for j = jx1 : jx2
-            mo(i,j) = 0 ;
-    end
-end
-sn = 0;
 %%timeloop
 if xd > xd2
     error("xrange‚ª‚¨‚©‚µ‚¢")
@@ -519,7 +514,7 @@ for t = 1: tx
     z = 1 : kx + 1;
     x_p = x * dx;
     y_p = y * dx;
-    z_p = z_for_p * dx;
+    z_p = z * dx;
     if mode_plot == 0
         if mod(t,10) == 0
 %         imagesc(y_p,x_p,pressure(x,y));
@@ -607,7 +602,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('3d200_200.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('3d200_200_30ms.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end

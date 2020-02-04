@@ -35,7 +35,9 @@ crn_param = 0.2;
 dt = dx*crn_param/ (c0);
 % クー数から条件を立てる]
 
-cal_time = 0.18;
+%cal_time = 0.18;
+cal_time = 0.06;
+cal_time = 0.03;
 if range == 0
     xrange = 1.01;
 %    xrange = 0.51;
@@ -109,7 +111,9 @@ absp0 = - 0.5; % 吸収係数
 b_po = 0.3 ; %凹み位置
 h = 0.02;%凹み幅
 w = 0.005;%凹みふかさ
-
+b_po2 = 0.6 ; %凹み位置
+h2 = 0.02;%凹み幅
+w2 = 0.015;%凹みふかさ
 
 ix = round(xrange / dx); %x空間感覚の数
 jx = round(yrange / dx); %y空間感覚の数
@@ -117,6 +121,9 @@ tx = fix(cal_time / dt ); %時間感覚の数
 b_x = round(b_po / dx) + 1;
 h_x = round(h / dx) + 1;
 w_x = round(w / dx) + 1;
+b_x_2 = round(b_po2 / dx) + 1;
+h_x_2 = round(h2 / dx) + 1;
+w_x_2 = round(w2 / dx) + 1;
 %  １おわ
 td = 15; % 周波数の代入（？）
 id = round(xd / dx);%xの位置（？）
@@ -475,9 +482,18 @@ for t = 1: tx
             v1(i,j) = cv1 * v2(i,j) - cv2 * (p2(i, j + 1) - p2(i,j));
         end
     end
-    if hekomi == 1
+    if hekomi == 1 || hekomi == 2
         for i = b_x : b_x + h_x
             for j = 1 : w_x
+                u1(i,j) = 0;
+                v1(i,j) = 0;
+            end
+        end
+    end
+    
+    if hekomi == 2
+        for i = b_x_2 : b_x_2 + h_x_2
+            for j = 1 : w_x_2
                 u1(i,j) = 0;
                 v1(i,j) = 0;
             end
@@ -769,7 +785,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('pow300_200.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('pow300_200_10ms.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
