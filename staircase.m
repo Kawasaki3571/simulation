@@ -106,7 +106,7 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 absp0 = - 0.5; % ‹zûŒW”
-b_po = 0.7 ; %‰š‚İˆÊ’u
+b_po = 0.3 ; %‰š‚İˆÊ’u
 h = 0.02;%‰š‚İ•
 w = 0.005;%‰š‚İ‚Ó‚©‚³
 
@@ -769,7 +769,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('pow700_200.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('pow300_200.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end

@@ -1,14 +1,14 @@
-xrange = 0.2;
-yrange = 0.2;
+xrange = 0.4;
+yrange = 0.4;
 dx = xrange / 10;
-dx = 0.005;
+dx = 0.017;
 ix = round(xrange / dx);
 jx = round(yrange / dx);
 p1 = ones(ix, jx);
 
 center_x = xrange/2;
 center_y = yrange/2;
-kei = 0.1;
+kei = xrange / 2;
 for x1_s = 0 : dx : xrange
 	y1_s = center_y + sqrt(kei^2 - (x1_s - center_x)^2);
     i1 = round(x1_s/dx) + 1;
