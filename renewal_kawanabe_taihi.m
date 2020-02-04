@@ -1,15 +1,21 @@
 %%y
 % オシロスコープから抽出したデータを二回フーリエ変換して位置応答に変換する
 %%%%オーバーラップあり
+clear
 bai = 1;
 for i = 1 : 2
 
 c = 340; %音速
 c0 = 340;
 % rou0 = 1.293; %密度（kg/m^3
-cal_time = 0.18;
+long = 0;
+if long == 1
+    cal_time = 0.18;
+else
+    cal_time = 0.03;
+end
 rou0 = 1.293;
-% rou0 = 1000;?
+% rou0 = 1000;
 freq_param = 1;
 freq_a = 1000;
 freq_start = 1000;
@@ -53,13 +59,13 @@ f1 = 000; % スイープ開始周波数（Hz）
 f2 = 4000; % 終了周波数
 
 st = 100; % フーリエ変換の開始周波数（Hz）
-ed = 2000; % 終了周波数
+ed = 3900; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
 
-load_data = csvread('pow700_200.csv'); % 2行目より下を読み込む
-noload_data = csvread('pownoload_200.csv'); % 2行目より下を読み込む
+load_data = csvread('pow300_200_10ms.csv'); % 2行目より下を読み込む
+noload_data = csvread('pownoload_200_10ms.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
 load_data = real(load_data(1 :csvrangemax));
 noload_data = real(noload_data(1:csvrangemax ));
@@ -101,8 +107,14 @@ n_fft = 2^12; % 4096点FFT
 dt = t(2) - t(1); % サンプリング周期
 Fs = 1/dt; % 周波数領域での周期
 
-st_1 = st_wave:d:st_wave+1700; % スイープ波形の分割
-ed_1 = st_wave+m:d:st_wave+1700+m;
+if long == 1
+    st_1 = st_wave:d:st_wave+1700; % スイープ波形の分割
+    ed_1 = st_wave+m:d:st_wave+1700+m;
+else
+    st_1 = st_wave:d:st_wave+270; % スイープ波形の分割
+    ed_1 = st_wave+m:d:st_wave+270+m;
+end
+
 
 for i = 1:1:length(st_1); % オーバーラップ法にて周波数特性を作成
     
