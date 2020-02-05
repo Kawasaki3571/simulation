@@ -1,10 +1,10 @@
-range = 4;
+range = 0;
 boundary = 1;
-mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 2; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ6..へこみ
+mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 1;
-sweep = 0;
+sweep = 1;
 SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 3;
 
@@ -26,21 +26,22 @@ freq = freq_a;
 
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
-dx_param = 0.001; %0.05-0.025
+dx_param = 0.002; %0.05-0.025
 
 % dx_param = 0.01;
 
 dx = ramuda*dx_param; % λの20-30分の一
+dx = 0.001;
 crn_param = 0.2;
 dt = dx*crn_param/ (c0);
 % クー数から条件を立てる]
 
-%cal_time = 0.18;
-cal_time = 0.06;
-cal_time = 0.03;
+cal_time = 0.18;
+%cal_time = 0.06;
+%cal_time = 0.03;
 
 if range == 0
-    xrange = 1.01;
+    xrange = 2.01;
 %    xrange = 0.51;
     yrange = 0.02;
 %     yd = 0.01 - 2*dx;
@@ -129,9 +130,9 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 absp0 = - 0.5; % 吸収係数
-b_po = 0.3 ; %凹み位置
-h = 0.02;%凹み幅
-w = 0.005;%凹みふかさ
+b_po = 0.6 ; %凹み位置
+h = 0.001;%凹み幅
+w = 0.001;%凹みふかさ
 b_po2 = 0.6 ; %凹み位置
 h2 = 0.02;%凹み幅
 w2 = 0.015;%凹みふかさ
@@ -141,7 +142,7 @@ jx = round(yrange / dx); %y空間感覚の数
 tx = fix(cal_time / dt ); %時間感覚の数
 b_x = round(b_po / dx) + 1;
 h_x = round(h / dx) + 1;
-w_x = round(w / dx) + 1;
+w_x = round(w / dx) + 2;
 b_x_2 = round(b_po2 / dx) + 1;
 h_x_2 = round(h2 / dx) + 1;
 w_x_2 = round(w2 / dx) + 1;
@@ -695,7 +696,7 @@ for t = 1: tx
         p_keisoku_taihi(t/5) = p1(6, y_half);
 %        p_keisoku_taihi(t/5) = p1(sokuteiten_x_g, sokuteiten_y_g);
     end
-    if mod(t,50) == 0
+    if mod(t,500) == 0
         disp(t);
         time
     end
@@ -816,7 +817,7 @@ for t = 1: tx
         end
     end
     if mode_plot == 6
-        if mod(t,500) == 0
+        if mod(t,5000) == 0
             figure(f1);
             t_x = 1 : 1: t/5;
             time = t_x * dt * 5;
@@ -840,7 +841,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('pow300_200_10ms.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('pow600_1mm_180ms_fin.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
@@ -993,4 +994,49 @@ if mode == 5
     xlabel('y(mm)')
     ylabel('x(mm)')
     grid on;
+end
+if mode == 6
+    for i = 1 : ix + 1
+        for j = 1 : jx + 1
+            p1(i, j) = 5;
+        end
+    end
+        for istair = 1 : 2
+            for jstair = 1 : jx + 1
+                p1(istair, jstair) = 10;
+            end
+        end
+        for istair = 3 : ix - 1
+            for jstair = 1 : 2
+                p1(istair, jstair) = 10;
+            end
+            for jstair = jx  : jx + 1
+                p1(istair, jstair) = 10;
+            end
+        end
+        for istair = ix : ix + 1
+            for jstair = 1 : jx + 1
+                p1(istair, jstair) = 10;
+            end
+        end
+        p1(ix+1, jx+1) = 0;
+        b_po = 0.3 ; %凹み位置
+        h = 0.02;%凹み幅
+        w = 0.001;%凹みふかさ
+        b_x = round(b_po / dx) + 1;
+        h_x = round(h / dx) + 1;
+        w_x = round(w / dx) + 2;
+        for i = b_x : b_x + h_x
+            for j = 1 : w_x
+                p1(i,j) = 10;
+            end
+        end
+        
+        x_i = 1 : ix + 1 ;
+        y_i = 1 : jx + 1;
+        x = x_i*dx;
+        y = y_i*dx;
+        p1 = p1';
+        imagesc(x, y, p1(y_i,x_i));
+        colorbar;
 end

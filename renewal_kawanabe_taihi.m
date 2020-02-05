@@ -8,7 +8,7 @@ for i = 1 : 2
 c = 340; %音速
 c0 = 340;
 % rou0 = 1.293; %密度（kg/m^3
-long = 0;
+long = 1;
 if long == 1
     cal_time = 0.18;
 else
@@ -25,6 +25,7 @@ freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
 dx_param = 0.005; %0.05-0.025 
 dx = ramuda*dx_param; % λの20-30分の一
+dx = 0.001;
 % dt = dx / (5 * c);
 % dt = dx*0.15 / (c0);
 crn_param = 0.2;
@@ -64,8 +65,8 @@ ed = 3900; % 終了周波数
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
 
-load_data = csvread('pow300_200_10ms.csv'); % 2行目より下を読み込む
-noload_data = csvread('pownoload_200_10ms.csv'); % 2行目より下を読み込む
+load_data = csvread('pow300_1mm_180ms_fin.csv'); % 2行目より下を読み込む
+noload_data = csvread('pownoload_1mm_180ms_fin.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
 load_data = real(load_data(1 :csvrangemax));
 noload_data = real(noload_data(1:csvrangemax ));
