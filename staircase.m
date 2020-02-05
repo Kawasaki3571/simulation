@@ -1,12 +1,12 @@
-range = 0;
+range = 4;
 boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 1;
-sweep = 1;
+sweep = 0;
 SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
-stair = 3;
+stair = 4;
 
 f1 = figure;
 % f2 = figure;
@@ -98,6 +98,25 @@ if range == 3
     yd_d2 = 0.01 - b_haba;
     yd_e = 0.01 - 2*b_haba;
     yd_e2 = 0.01 - 2*b_haba;
+end
+if range == 4
+    xrange = 0.2;
+    yrange = 0.2;
+    xrange = 0.2;
+    yrange = 0.2;
+    xd = xrange / 2 ;
+    xd2 = xrange / 2 ;
+    
+%     xd = 5*dx;
+    xd = 0.2 - 4*dx;
+    xd2 = xd;
+    
+    yd = yrange / 2 ;
+    yd2 = yrange / 2 ;
+    sokuteiten_x = 0.1 * (3*sqrt(2)/4);
+    sokuteiten_y = 0.1 * (3*sqrt(2)/4);
+    sokuteiten_x = 0.15;
+    sokuteiten_y = 0.1;
 end
     
 x1 = 0.03;
@@ -255,6 +274,8 @@ w = 2 * pai * freq ;
                     if sweep == 1
                         %freq = 2000 + 7000*(time/cal_time);
                         freq = freq_start + freq_add*(time/cal_time);
+                    else
+                        freq = 3000;
                     end
 %                 freq = 5000;
                 w = 2 * pai * freq ;
@@ -621,6 +642,29 @@ for t = 1: tx
         end
         for istair = ix : ix + 1
             for jstair = 1 : jx + 1
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+        end
+    end
+    if stair == 4
+        for istair = 1 : 2
+            for jstair = 1 : jx + 1
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+        end
+        for istair = 3 : ix 
+            nodo_length = yrange / 2;
+            nodo_length = 0;
+            kuchi_length = yrange*0.7;
+            y_length = yrange;
+            grad = (kuchi_length - nodo_length)/(2*(ix - 3)*dx);
+            for jstair = 1 : round((0.5*y_length - nodo_length/2 - dx*grad*(istair - 3))/dx)
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+            for jstair = round((0.5*y_length + nodo_length/2 + dx*grad*(istair - 3))/dx) : jx + 1
                 u1(istair, jstair) = 0;
                 v1(istair, jstair) = 0;
             end
