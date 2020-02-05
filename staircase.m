@@ -1,7 +1,7 @@
 range = 4;
 boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 2; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 1;
 sweep = 0;
@@ -26,7 +26,7 @@ freq = freq_a;
 
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
-dx_param = 0.005; %0.05-0.025
+dx_param = 0.002; %0.05-0.025
 
 % dx_param = 0.01;
 
@@ -38,6 +38,7 @@ dt = dx*crn_param/ (c0);
 %cal_time = 0.18;
 cal_time = 0.06;
 cal_time = 0.03;
+
 if range == 0
     xrange = 1.01;
 %    xrange = 0.51;
@@ -100,15 +101,15 @@ if range == 3
     yd_e2 = 0.01 - 2*b_haba;
 end
 if range == 4
-    xrange = 0.2;
-    yrange = 0.2;
-    xrange = 0.2;
-    yrange = 0.2;
+    xrange = .8;
+    yrange = 0.05;
+    %xrange = 0.2;
+    %yrange = 0.2;
     xd = xrange / 2 ;
     xd2 = xrange / 2 ;
     
 %     xd = 5*dx;
-    xd = 0.2 - 4*dx;
+    xd = xrange - 4*dx;
     xd2 = xd;
     
     yd = yrange / 2 ;
@@ -657,7 +658,7 @@ for t = 1: tx
         for istair = 3 : ix 
             nodo_length = yrange / 2;
             nodo_length = 0;
-            kuchi_length = yrange*0.7;
+            kuchi_length = yrange;
             y_length = yrange;
             grad = (kuchi_length - nodo_length)/(2*(ix - 3)*dx);
             for jstair = 1 : round((0.5*y_length - nodo_length/2 - dx*grad*(istair - 3))/dx)
@@ -665,6 +666,12 @@ for t = 1: tx
                 v1(istair, jstair) = 0;
             end
             for jstair = round((0.5*y_length + nodo_length/2 + dx*grad*(istair - 3))/dx) : jx + 1
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+        end
+        for istair = ix : ix + 1
+            for jstair = 1 : jx + 1
                 u1(istair, jstair) = 0;
                 v1(istair, jstair) = 0;
             end
@@ -758,13 +765,16 @@ for t = 1: tx
         end
     end
     if mode_plot ==2
-        if mod(t,10) == 0
-%         plot(x_p,pressure(x, y_half));
-%         plot(x_p,p1(x, y_half));
-        plot(x_p(1:0.5/dx),p1(x(1:0.5/dx),y_half) - p1(x(1:0.5/dx),1))
-        %plot(x_p(1:0.5/dx),p1(x(1:0.5/dx),1))
-        
-        drawnow
+        if time > 0.003
+            for i = 1 : ix + 1
+                px(i) = p1(i, y_half);
+            end
+            i = 1 : ix + 1;
+            x_i = i * dx;
+            plot(x_i, px)
+            px = px';
+            dlmwrite('horn_x.csv', px, 'precision', '%.10f', 'delimiter', ',')
+            break;
         end
     end
     if mode_plot == 3
