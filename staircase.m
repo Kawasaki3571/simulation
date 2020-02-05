@@ -6,7 +6,7 @@ mode_plot = 2; %ƒvƒƒbƒgƒ‚[ƒh‘I‘ğ 0...ƒJƒ‰[ƒ}ƒbƒvis 1...xƒvƒƒbƒg 2...xƒvƒƒ
 hekomi = 1;
 sweep = 0;
 SC = 0;%—ãUŠÖ” ‚O‚È‚ç˜A‘±1‚È‚çƒKƒEƒVƒAƒ“2ƒnƒjƒ“ƒO3³Œ·”g””g4ƒXƒC[ƒv5ƒCƒ“ƒpƒ‹ƒX
-stair = 4;
+stair = 3;
 
 f1 = figure;
 % f2 = figure;
@@ -26,7 +26,7 @@ freq = freq_a;
 
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
-dx_param = 0.002; %0.05-0.025
+dx_param = 0.001; %0.05-0.025
 
 % dx_param = 0.01;
 
@@ -102,14 +102,15 @@ if range == 3
 end
 if range == 4
     xrange = .8;
-    yrange = 0.05;
+    yrange = 0.02;
     %xrange = 0.2;
     %yrange = 0.2;
     xd = xrange / 2 ;
     xd2 = xrange / 2 ;
     
-%     xd = 5*dx;
-    xd = xrange - 4*dx;
+    xd = 100*dx;
+
+    %xd = xrange - 4*dx;
     xd2 = xd;
     
     yd = yrange / 2 ;
@@ -773,7 +774,7 @@ for t = 1: tx
             x_i = i * dx;
             plot(x_i, px)
             px = px';
-            dlmwrite('horn_x.csv', px, 'precision', '%.10f', 'delimiter', ',')
+            dlmwrite('nothorn_x.csv', px, 'precision', '%.10f', 'delimiter', ',')
             break;
         end
     end
