@@ -19,7 +19,7 @@ rou0 = 1.293;
 freq_param = 1;
 freq_a = 1000;
 freq_start = 000*freq_param;
-freq_add = 4000*freq_param;
+freq_add = 12000*freq_param;
 % freq = freq_a*freq_param;
 
 freq = freq_a;
@@ -130,7 +130,7 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 absp0 = - 0.5; % ‹zûŒW”
-b_po = 0.6 ; %‰š‚İˆÊ’u
+b_po = 0.9 ; %‰š‚İˆÊ’u
 h = 0.001;%‰š‚İ•
 w = 0.001;%‰š‚İ‚Ó‚©‚³
 b_po2 = 0.6 ; %‰š‚İˆÊ’u
@@ -841,7 +841,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('pow600_1mm_180ms_fin.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('pow900_1mm_0to12kHz_180ms_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
