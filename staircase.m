@@ -36,7 +36,7 @@ crn_param = 0.2;
 dt = dx*crn_param/ (c0);
 % クー数から条件を立てる]
 
-cal_time = 0.18;
+cal_time = 0.06;
 %cal_time = 0.06;
 %cal_time = 0.03;
 
@@ -130,9 +130,9 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 absp0 = - 0.5; % 吸収係数
-b_po = 0.9 ; %凹み位置
+b_po = 0.3 ; %凹み位置
 h = 0.001;%凹み幅
-w = 0.001;%凹みふかさ
+w = 0.003;%凹みふかさ
 b_po2 = 0.6 ; %凹み位置
 h2 = 0.02;%凹み幅
 w2 = 0.015;%凹みふかさ
@@ -841,7 +841,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('pow900_1mm_0to12kHz_180ms_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
+                dlmwrite('pow300_1mm_0to12kHz_60ms_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
