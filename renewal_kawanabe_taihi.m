@@ -8,11 +8,11 @@ for i = 1 : 2
 c = 340; %音速
 c0 = 340;
 % rou0 = 1.293; %密度（kg/m^3
-long = 1;
+long = 0;
 if long == 1
     cal_time = 0.18;
 else
-    cal_time = 0.03;
+    cal_time = 0.06;
 end
 rou0 = 1.293;
 % rou0 = 1000;
@@ -43,11 +43,10 @@ set(0, 'DefaultTextFontSize', 15);
 set(0, 'DefaultAxesLineWidth', 1);
 set(0, 'DefaultFigureColor', 'w');
 
-
 %% 各種パラメーター
 
 e = 0.1; % 入力電圧
-opol = 100; % トレンド近似の字数を決定
+opol = 1000; % トレンド近似の字数を決定
 
 m = 25;% 窓間隔
 d = 1; % 分割間隔
@@ -57,16 +56,15 @@ achieve_time = 2*xL/c0;
 start_time_g = round(achieve_time / (5*dt));
 
 f1 = 000; % スイープ開始周波数（Hz）
-f2 = 4000; % 終了周波数
+f2 = 12000; % 終了周波数
 
-st = 1100; % フーリエ変換の開始周波数（Hz）
-ed = 2000; % 終了周波数
+st = 2000; % フーリエ変換の開始周波数（Hz）
+ed = 11900; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
-
-load_data = csvread('pow900_1mm_0to12kHz_180ms_fin.csv'); % 2行目より下を読み込む
-noload_data = csvread('pownoload_1mm_0to12kHz_180ms_fin.csv'); % 2行目より下を読み込む
+load_data = csvread('pow300_1mm_0to12kHz_60ms_fin.csv'); % 2行目より下を読み込む
+noload_data = csvread('pownoload_1mm_0to12kHz_60ms_fin.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
 load_data = real(load_data(1 :csvrangemax));
 noload_data = real(noload_data(1:csvrangemax ));
@@ -115,8 +113,8 @@ if long == 1
     st_1 = st_wave:d:st_wave+1700; % スイープ波形の分割
     ed_1 = st_wave+m:d:st_wave+1700+m;
 else
-    st_1 = st_wave:d:st_wave+270; % スイープ波形の分割
-    ed_1 = st_wave+m:d:st_wave+270+m;
+    st_1 = st_wave:d:st_wave+570; % スイープ波形の分割
+    ed_1 = st_wave+m:d:st_wave+570+m;
 end
 
 
@@ -208,8 +206,7 @@ peak_taihi = peak_l ;
 f_y = polyval(p, f3, [], mu);
 
 
-%peak_l = peak_l - f_y; % トレンドを除去
-
+peak_l = peak_l - f_y; % トレンドを除去
 
 
 figure('Name', '直流成分除去後のリプル', 'NumberTitle', 'off')
@@ -232,7 +229,7 @@ ed_3 = round((ed - f1)/df3);
 
 
 ripple_f = peak_taihi(st_3:ed_3); % 波形の切り出し
-%ripple_f = ripple_f.*hamming(length(ed_3 - st_3));
+ripple_f = ripple_f.*hamming(length(ed_3 - st_3));
 
 
 
