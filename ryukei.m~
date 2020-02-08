@@ -115,6 +115,5 @@ hold off
 % plot(t, po)
 % dlmwrite('riron1000zure.csv', po2, 'precision', '%.10f', 'delimiter', ',')
 % dlmwrite('riron1000.csv', po, 'precision', '%.10f', 'delimiter', ',')
-dlmwrite('ccccccccccccccccccccr.csv', pi, 'precision', '%.10f', 'delimiter', ',')
-% csvwrite('bbbbbbbbbbbbbbbbbbbbbbbbbr.csv', pi)
+% csvwrite('aaaaaaaaaaaaaaaaaaaaaaaaaaaar.csv', pi, 'precision', '%.10f', 'delimiter', ',')
 

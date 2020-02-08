@@ -3,7 +3,8 @@ boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 1;
+hekomi = 0;
+
 sweep = 1;
 SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 3;
@@ -19,26 +20,30 @@ rou0 = 1.293;
 freq_param = 1;
 freq_a = 1000;
 freq_start = 000*freq_param;
-freq_add = 4000*freq_param;
+freq_add = 12000*freq_param;
 % freq = freq_a*freq_param;
 
 freq = freq_a;
 
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
-dx_param = 0.0025; %0.05-0.025
+dx_param = 0.005; %0.05-0.025
 
 % dx_param = 0.01;
 
 dx = ramuda*dx_param; % λの20-30分の一
+% dx = 0.001 ;
+
 crn_param = 0.2;
 crn = crn_param;
 dt = dx*crn_param/ (c0);
 % クー数から条件を立てる]
 
-cal_time = 0.03;
+cal_time = 0.06;
+
+
 if range == 0
-    xrange = 0.8;
+    xrange = 2.01;
 %    xrange = 0.51;
     yrange = 0.02;
     zrange = 0.02;
@@ -51,8 +56,8 @@ if range == 0
 end
     
 absp0 = - 0.5; % 吸収係数
-b_po = 0.2 ; %凹み位置
-h = 0.02;%凹み幅
+b_po = 0.6 ; %凹み位置
+h = 0.005;%凹み幅
 w = 0.005;%凹みふかさ
 b_de = 0.02;
 
@@ -602,7 +607,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('3d200_200_30ms.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
+                dlmwrite('3dtsu_noload_1.7mm_180ms.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
