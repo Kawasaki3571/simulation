@@ -1,7 +1,7 @@
 xrange = 0.02;
 yrange = 0.02;
 dx = xrange / 10;
-dx = 0.0017/2;
+dx = 0.0017;
 ix = round(xrange / dx);
 jx = round(yrange / dx);
 p1 = ones(ix, jx);

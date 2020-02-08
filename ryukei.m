@@ -84,17 +84,17 @@ p = p';
 f2 = figure;
 figure(f2);
 
-kasou_out1 = csvread('1d0500nama.csv');
-kasou_out2 = csvread('1d0500kasou.csv');
+% kasou_out1 = csvread('1d0500nama.csv');
+% kasou_out2 = csvread('1d0500kasou.csv');
 kasou_out3 = zeros(90000, 1);
 
 achieve_time = (2*xL)/c0;
 achieve_time_g = round(achieve_time / dt);
 
-kasou_out3(1 : csvrangemax - achieve_time_g + 1) = kasou_out1(achieve_time_g : csvrangemax);
+% kasou_out3(1 : csvrangemax - achieve_time_g + 1) = kasou_out1(achieve_time_g : csvrangemax);
 
-kasou_in = csvread('1dnoloadkasou.csv');
-nosweep = csvread('1dnosweep.csv');
+% kasou_in = csvread('1dnoloadkasou.csv');
+% nosweep = csvread('1dnosweep.csv');
 
 gousei = kasou_out3 + pi;
 % gousei = kasou_out + pi;
@@ -102,7 +102,7 @@ kaishi = 0.0;
 shuryo = kaishi + 0.18;
 
 kasou_outnyu = zeros(1, round((cal_time-2*xL/340)/dt));
-kasou_outnyu = kasou_out2(round((2*xL/340)/dt) : round(cal_time/dt));
+% kasou_outnyu = kasou_out2(round((2*xL/340)/dt) : round(cal_time/dt));
 pr_outnyu = pr(round((2*xL/340)/dt) : round(cal_time/dt));
 
 hold on
@@ -113,7 +113,8 @@ plot(t(kaishi /dt + 1 : shuryo/dt), po2(kaishi /dt + 1 : shuryo/dt));
 hold off
 
 % plot(t, po)
-dlmwrite('riron1000zure.csv', po2, 'precision', '%.10f', 'delimiter', ',')
-dlmwrite('riron1000.csv', po, 'precision', '%.10f', 'delimiter', ',')
-dlmwrite('rironnoload.csv', pi, 'precision', '%.10f', 'delimiter', ',')
+% dlmwrite('riron1000zure.csv', po2, 'precision', '%.10f', 'delimiter', ',')
+% dlmwrite('riron1000.csv', po, 'precision', '%.10f', 'delimiter', ',')
+dlmwrite('ccccccccccccccccccccr.csv', pi, 'precision', '%.10f', 'delimiter', ',')
+% csvwrite('bbbbbbbbbbbbbbbbbbbbbbbbbr.csv', pi)
 
