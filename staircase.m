@@ -1,12 +1,12 @@
 range = 5;%5...ロボットハンド
 boundary = 1;
 mode = 7; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ6..へこみ
-mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 1;
+hekomi = 0;
 sweep = 1;
 SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
-stair = 3;%5...ロボットハンド
+stair = 5;%5...ロボットハンド
 
 f1 = figure;
 % f2 = figure;
@@ -17,7 +17,7 @@ c0 = 340;
 rou0 = 1.293;
 % rou0 = 1000;?
 freq_param = 1;
-freq_a = 1000;
+freq_a = 100;
 freq_start = 000*freq_param;
 freq_add = 12000*freq_param;
 % freq = freq_a*freq_param;
@@ -33,7 +33,7 @@ dx_param = 0.002; %0.05-0.025
 dx = ramuda*dx_param; % λの20-30分の一
 dx = 0.001;
 if range == 5
-    dx = 0.0001;
+    dx = 0.0005;
 end
 crn_param = 0.2;
 dt = dx*crn_param/ (c0);
@@ -127,12 +127,12 @@ end
 if range == 5
     xrange = 0.06;
     yrange = 0.11;
-    xd = 0.5 + 3*dx;
+    xd = 0.005 + 3*dx;
     xd2 = xd;
     yd = 3*dx;
     yd2 = yd;
 end
-    
+
 x1 = 0.03;
 x2 = 0.04;
 y1 = 0.1;
@@ -686,7 +686,87 @@ for t = 1: tx
         end
     end
     if stair == 5
-        disp("とちゅう")
+        theta = 40;
+        div = tand(theta);
+        j_0 = round(0.04/dx);
+        j_1 = round((0.04 + 0.01*sind(theta))/dx);
+        j_2 = round((0.04 + 0.07*cosd(theta))/dx);
+        for istair = 1 : 2
+            for jstair = 1 : jx + 1
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+        end
+        for istair = 3 : ix - 1
+            for jstair = 1 : 2
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+            for jstair = jx  : jx + 1
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+        end
+        for istair = ix : ix + 1
+            for jstair = 1 : jx + 1
+                u1(istair, jstair) = 0;
+                v1(istair, jstair) = 0;
+            end
+        end
+%       1
+        for j = 3 : round((0.04)/dx)
+%             for i = 3 : round((0.01/dx))
+%                 p1(i,j) = 0;
+%             end
+            for i = 1 : 2
+                u1(i, j) = 0;
+                v1(i, j) = 0;
+            end
+            for i = round((0.01/dx)) + 1 : round((0.01/dx)) + 8
+                u1(i, j) = 0;
+                v1(i, j) = 0;
+            end
+        end
+%        2
+        x1 = 3*dx;
+        x2 = 0.01 - 0.01*cosd(theta);
+        x3 = 0.01;
+        x4 = x2 + 0.01/cosd(theta);
+        for j = round(0.04/dx) : j_1
+            xj = x1 + (j - j_0)*((x2 - x1)/(j_1 - j_0));
+            xj_2 = x3 + (j - j_0)*((x4 - x3)/(j_1 - j_0));
+%             for i = round(xj/dx) : round(xj_2/dx)
+%                 p1(i,j) = 0;
+%             end
+            for i = round(xj/dx) - 2 : round(xj/dx) - 1
+                u1(i, j) = 0;
+                v1(i, j) = 0;
+            end
+            for i = round(xj_2/dx) + 1 : round(xj_2/dx) + 4
+                u1(i, j) = 0;
+                v1(i, j) = 0;
+            end
+        end
+%        3
+        x1 = 0.01 - 0.01*cosd(theta);
+        x2 = (0.01 + 0.07*sind(theta)) - 0.01/cosd(theta);
+        k = 0;
+        for j = j_1 : j_2
+            xj = x1 + (j - j_1)*((x2 - x1)/(j_2 - j_1));
+%             for i = round(xj/dx) : round((xj + 0.01/cosd(theta))/dx)
+%                 p1(i, j) = 0;
+%             end
+            for i = round(xj/dx) - 4 : round(xj/dx) - 1
+                u1(i, j) = 0;
+                v1(i, j) = 0;
+            end
+            for i = round((xj + 0.01/cosd(theta))/dx) + 1 : round((xj + 0.01/cosd(theta))/dx) + 4
+                u1(i, j) = 0;
+                v1(i, j) = 0;
+            end
+        end
+    else
+        disp("rangeをロボット用にしてくれ");
     end
     
     for i = 1 : ix + 1
@@ -715,7 +795,7 @@ for t = 1: tx
     x_p = x * dx;
     y_p = y * dx;
     if mode_plot == 0
-        if mod(t,10) == 0
+        if mod(t,100) == 0
 %         imagesc(y_p,x_p,pressure(x,y));
             plot_image = pressure';
             imagesc(x_p, y_p, plot_image(y, x));
@@ -1053,8 +1133,6 @@ if mode == 7
     if range == 5
         theta = 40;
         div = tand(theta);
-        ix
-        jx
         j_0 = round(0.04/dx);
         j_1 = round((0.04 + 0.01*sind(theta))/dx);
         j_2 = round((0.04 + 0.07*cosd(theta))/dx);
