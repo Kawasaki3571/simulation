@@ -1,5 +1,5 @@
 range = 0;
-boundary = 1;
+boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
@@ -45,8 +45,8 @@ cal_time = 0.18;
 if range == 0
     xrange = 2.01;
 %    xrange = 0.51;
-    yrange = 0.015;
-    zrange = 0.015;
+    yrange = 0.04;
+    zrange = 0.04;
     yd = yrange / 2;
     yd2 = yd;
     zd = zrange / 2;
@@ -56,7 +56,7 @@ if range == 0
 end
     
 absp0 = - 0.5; % 吸収係数
-b_po = 1.2 ; %凹み位置
+b_po = 0.3 ; %凹み位置
 h = 0.005;%凹み幅
 w = 0.005;%凹みふかさ
 b_de = 0.02;
@@ -607,7 +607,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('3dtsu_1200_1.5cm_1.7mm_180ms.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
+                dlmwrite('3dtsu_300_4cm_1.7mm_180ms.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
