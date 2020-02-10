@@ -8,11 +8,15 @@ for i = 1 : 2
 c = 340; %音速
 c0 = 340;
 % rou0 = 1.293; %密度（kg/m^3
-long = 0;
+long = 2;
 if long == 1
     cal_time = 0.18;
-else
+end
+if long == 0
     cal_time = 0.06;
+end
+if long == 2
+    cal_time = 0.36;
 end
 rou0 = 1.293;
 % rou0 = 1000;
@@ -56,15 +60,15 @@ achieve_time = 2*xL/c0;
 start_time_g = round(achieve_time / (5*dt));
 
 f1 = 000; % スイープ開始周波数（Hz）
-f2 = 12000; % 終了周波数
+f2 = 36000; % 終了周波数
 
-st = 2000; % フーリエ変換の開始周波数（Hz）
-ed = 11900; % 終了周波数
+st = 1000; % フーリエ変換の開始周波数（Hz）
+ed = 35900; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
-load_data = csvread('pow300_1mm_0to12kHz_60ms_fin.csv'); % 2行目より下を読み込む
-noload_data = csvread('pownoload_1mm_0to12kHz_60ms_fin.csv'); % 2行目より下を読み込む
+load_data = csvread('pow900_1mm_0to36kHz_360ms_fin.csv'); % 2行目より下を読み込む
+noload_data = csvread('pownoload_1mm_0to36kHz_360ms_fin.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
 load_data = real(load_data(1 :csvrangemax));
 noload_data = real(noload_data(1:csvrangemax ));
@@ -112,9 +116,14 @@ Fs = 1/dt; % 周波数領域での周期
 if long == 1
     st_1 = st_wave:d:st_wave+1700; % スイープ波形の分割
     ed_1 = st_wave+m:d:st_wave+1700+m;
-else
+end
+if long == 0
     st_1 = st_wave:d:st_wave+570; % スイープ波形の分割
     ed_1 = st_wave+m:d:st_wave+570+m;
+end
+if long == 2
+    st_1 = st_wave:d:st_wave+3550; % スイープ波形の分割
+    ed_1 = st_wave+m:d:st_wave+3550+m;
 end
 
 

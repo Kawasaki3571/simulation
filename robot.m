@@ -1,12 +1,12 @@
-range = 0;%5...ロボットハンド
+range = 5;%5...ロボットハンド
 boundary = 1;
-mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ6..へこみ
+mode = 7; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ6..へこみ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 1;
 sweep = 1;
 SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
-stair = 3;%5...ロボットハンド
+stair = 5;%5...ロボットハンド
 
 f1 = figure;
 % f2 = figure;
@@ -17,9 +17,9 @@ c0 = 340;
 rou0 = 1.293;
 % rou0 = 1000;?
 freq_param = 1;
-freq_a = 100;
+freq_a = 1000;
 freq_start = 000*freq_param;
-freq_add = 36000*freq_param;
+freq_add = 12000*freq_param;
 % freq = freq_a*freq_param;
 
 freq = freq_a;
@@ -35,14 +35,13 @@ dx = ramuda*dx_param; % λの20-30分の一
 dx = 0.001;
 
 if range == 5
-    dx = 0.0005;
+    dx = 0.0001;
 end
 crn_param = 0.2;
 dt = dx*crn_param/ (c0);
 % クー数から条件を立てる]
 
-cal_time = 0.18;
-cal_time = 0.36;
+cal_time = 0.05;
 
 if range == 0
     xrange = 2.01;
@@ -132,6 +131,7 @@ if range == 5
     xd2 = xd;
     yd = 3*dx;
     yd2 = yd;
+    theta = 20;
 end
 
 x1 = 0.03;
@@ -514,10 +514,31 @@ for t = 1: tx
         end
     end
     if hekomi == 1 || hekomi == 2
-        for i = b_x : b_x + h_x
-            for j = 1 : w_x
-                u1(i,j) = 0;
-                v1(i,j) = 0;
+        if stair ~=  5
+            for i = b_x : b_x + h_x
+                for j = 1 : w_x
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
+                end
+            end
+        else
+            j_1 = round((0.04 + 0.01*sind(theta))/dx);
+            j_2 = round((0.04 + 0.07*cosd(theta))/dx);
+            b_po = 0.02;
+            w = 0.002;
+            h = 0.005;
+            b_po2 = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta);
+            w_2 = w*cosd(theta);
+            h_2 = h*cosd(theta);
+            b_g = round(b_po2 / dx);
+            w_g = round(w_2 / dx);
+            h_g = round(h_2 / dx);
+            xj = x1 + (b_g - j_1)*((x2 - x1)/(j_2 - j_1));
+            for i = round(xj/dx) : round(xj/dx) + w_g
+                for j = b_g : b_g + h_g
+                    u1(i,j) = 0;
+                    v1(i,j) = 0;
+                end
             end
         end
     end
@@ -687,7 +708,6 @@ for t = 1: tx
         end
     end
     if stair == 5
-        theta = 40;
         div = tand(theta);
         j_0 = round(0.04/dx);
         j_1 = round((0.04 + 0.01*sind(theta))/dx);
@@ -782,7 +802,7 @@ for t = 1: tx
     end
     if mod(t,5)==0
 %         計測点
-        p_keisoku_taihi(t/5) = p1(6, y_half);
+        p_keisoku_taihi(t/5) = p1(id + 2, jd);
 %        p_keisoku_taihi(t/5) = p1(sokuteiten_x_g, sokuteiten_y_g);
     end
     if mod(t,500) == 0
@@ -912,6 +932,7 @@ for t = 1: tx
             time = t_x * dt * 5;
            p_keisoku_spec = (abs(p_keisoku_taihi)).^2;
            plot(time, p_keisoku_taihi(t_x));
+           disp(p_keisoku_taihi(t/5))
            grid on;
            drawnow;
         end
@@ -930,7 +951,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('pow900_1mm_0to36kHz_360ms_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
+                dlmwrite('robot_2cm_0.1mm_0to12kHz_50ms_20deg_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
@@ -1131,7 +1152,6 @@ if mode == 6
 end
 if mode == 7
     if range == 5
-        theta = 40;
         div = tand(theta);
         j_0 = round(0.04/dx);
         j_1 = round((0.04 + 0.01*sind(theta))/dx);
@@ -1186,6 +1206,23 @@ if mode == 7
             for i = round(xj/dx) : round((xj + 0.01/cosd(theta))/dx)
                 p1(i, j) = 0;
             end
+        end
+        if hekomi == 1
+            b_po = 0.03;
+            w = 0.002;
+            h = 0.005;
+            b_po2 = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta);
+            w_2 = w*cosd(theta);
+            h_2 = h*cosd(theta);
+            b_g = round(b_po2 / dx);
+            w_g = round(w_2 / dx);
+            h_g = round(h_2 / dx);
+            xj = x1 + (b_g - j_1)*((x2 - x1)/(j_2 - j_1));
+            for i = round(xj/dx) : round(xj/dx) + w_g
+                for j = b_g : b_g + h_g
+                    p1(i,j) = 5;
+                end
+            end 
         end
         x_i = 1 : ix + 1 ;
         y_i = 1 : jx + 1;
