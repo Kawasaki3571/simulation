@@ -1,6 +1,6 @@
 range = 5;%5...ロボットハンド
 boundary = 1;
-mode = 7; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ6..へこみ
+mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ6..へこみ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 1;
@@ -35,13 +35,13 @@ dx = ramuda*dx_param; % λの20-30分の一
 dx = 0.001;
 
 if range == 5
-    dx = 0.0001;
+    dx = 0.0002;
 end
 crn_param = 0.2;
 dt = dx*crn_param/ (c0);
 % クー数から条件を立てる]
 
-cal_time = 0.05;
+cal_time = 0.01;
 
 if range == 0
     xrange = 2.01;
@@ -777,7 +777,7 @@ for t = 1: tx
 %             for i = round(xj/dx) : round((xj + 0.01/cosd(theta))/dx)
 %                 p1(i, j) = 0;
 %             end
-            for i = round(xj/dx) - 4 : round(xj/dx) - 1
+            for i = round(xj/dx) - 2 : round(xj/dx) - 1
                 u1(i, j) = 0;
                 v1(i, j) = 0;
             end
@@ -951,7 +951,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('robot_2cm_0.1mm_0to12kHz_50ms_20deg_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
+                dlmwrite('robot_2cm_0.2mm_0to12kHz_10ms_20deg_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
