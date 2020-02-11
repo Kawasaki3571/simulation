@@ -1,7 +1,7 @@
 range = 5;%5...ロボットハンド
 boundary = 1;
-mode = 7; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ6..へこみ
-mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ6..へこみ
+mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 1;
 sweep = 1;
@@ -522,9 +522,10 @@ for t = 1: tx
                 end
             end
         else
+%           robot
             j_1 = round((0.04 + 0.01*sind(theta))/dx);
             j_2 = round((0.04 + 0.07*cosd(theta))/dx);
-            b_po = 0.02;
+            b_po = 0.05;
             w = 0.002;
             h = 0.005;
             b_po2 = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta);
@@ -800,9 +801,11 @@ for t = 1: tx
 %             for i = round(xj/dx) : round(xj_2/dx)
 %                 p1(i,j) = 0;
 %             end
-            for i = round(xj/dx) - 2 : round(xj/dx) - 1
-                u1(i, j) = 0;
-                v1(i, j) = 0;
+            for i = round(xj/dx) - 5 : round(xj/dx) - 1
+                if i > 0
+                    u1(i, j) = 0;
+                    v1(i, j) = 0;
+                end
             end
             for i = round(xj_2/dx) + 1 : round(xj_2/dx) + 4
                 u1(i, j) = 0;
@@ -818,11 +821,19 @@ for t = 1: tx
 %             for i = round(xj/dx) : round((xj + 0.01/cosd(theta))/dx)
 %                 p1(i, j) = 0;
 %             end
-            for i = round(xj/dx) - 2 : round(xj/dx) - 1
+            for i = round(xj/dx) - 5 : round(xj/dx) - 1
+                if i > 0
+                    u1(i, j) = 0;
+                    v1(i, j) = 0;
+                end
+            end
+            for i = round((xj + 0.01/cosd(theta))/dx) + 1 : round((xj + 0.01/cosd(theta))/dx) + 4
                 u1(i, j) = 0;
                 v1(i, j) = 0;
             end
-            for i = round((xj + 0.01/cosd(theta))/dx) + 1 : round((xj + 0.01/cosd(theta))/dx) + 4
+        end
+        for j = j_2 + 1 : j_2 + 5
+            for i = round(xj/dx) - 1 : round((xj + 0.01/cosd(theta))/dx) + 1
                 u1(i, j) = 0;
                 v1(i, j) = 0;
             end
@@ -992,7 +1003,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('robot_2cm_0.2mm_0to12kHz_10ms_20deg_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
+                dlmwrite('robot_5cm_0.2mm_0to12kHz_10ms_20deg_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
