@@ -65,12 +65,12 @@ start_time_g = round(achieve_time / (5*dt));
 f1 = 000; % スイープ開始周波数（Hz）
 f2 = 12000; % 終了周波数
 
-st = 1000; % フーリエ変換の開始周波数（Hz）
-ed = 11900; % 終了周波数
+st = 2000; % フーリエ変換の開始周波数（Hz）
+ed = 10000; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
-load_data = csvread('robot_2cm_0.2mm_0to12kHz_10ms_20deg_fin.csv'); % 2行目より下を読み込む
+load_data = csvread('robot_6cm_0.2mm_0to12kHz_10ms_20deg_fin.csv'); % 2行目より下を読み込む
 noload_data = csvread('robot_noload_0.2mm_0to12kHz_10ms_20deg_fin.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
 load_data = real(load_data(1 :csvrangemax));
@@ -129,15 +129,17 @@ if long == 2
     ed_1 = st_wave+m:d:st_wave+3550+m;
 end
 if long == 3
-    st_1 = st_wave:d:st_wave+50; % スイープ波形の分割
-    ed_1 = st_wave+m:d:st_wave+50+m;
+%     st_1 = st_wave:d:st_wave+10000; % スイープ波形の分割
+%     ed_1 = st_wave+m:d:st_wave+10000+m;
+    st_1 = st_wave:d:st_wave+970; % スイープ波形の分割
+    ed_1 = st_wave+m:d:st_wave+970+m;
 end
 
 
 for i = 1:1:length(st_1); % オーバーラップ法にて周波数特性を作成
     
-    st_2 = round(st_1(i)*10^-4/dt); % スイープ波形から切り出し開始
-    ed_2 = round(ed_1(i)*10^-4/dt); % 切り出し終わり
+    st_2 = round(st_1(i)*10^-5/dt); % スイープ波形から切り出し開始
+    ed_2 = round(ed_1(i)*10^-5/dt); % 切り出し終わり
 
     v_2 = v_1(st_2:ed_2); 
     v_3 = v_o(st_2:ed_2);
@@ -284,7 +286,7 @@ plot(x*10^3, abs(V_show)*10^-4, 'r', 'linewidth', 2);
 
 xlabel('Position (mm)');
 ylabel('Relative response (arb)');
-xlim([0 2500]);
+xlim([0 130]);
 
 %% 応答ピークが負荷の影響かを判定
 

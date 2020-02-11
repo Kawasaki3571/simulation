@@ -1,6 +1,6 @@
 range = 5;%5...ロボットハンド
 boundary = 1;
-mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ6..へこみ
+mode = 7; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ6..へこみ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 1;
@@ -131,7 +131,7 @@ if range == 5
     xd2 = xd;
     yd = 3*dx;
     yd2 = yd;
-    theta = 20;
+    theta = 10;
 end
 
 x1 = 0.03;
@@ -1212,17 +1212,50 @@ if mode == 7
             w = 0.002;
             h = 0.005;
             b_po2 = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta);
-            w_2 = w*cosd(theta);
-            h_2 = h*cosd(theta);
+%             w_2 = w*cosd(theta);
+%             h_2 = h*cosd(theta);
             b_g = round(b_po2 / dx);
-            w_g = round(w_2 / dx);
-            h_g = round(h_2 / dx);
+%             w_g = round(w_2 / dx);
+%             h_g = round(h_2 / dx);
             xj = x1 + (b_g - j_1)*((x2 - x1)/(j_2 - j_1));
-            for i = round(xj/dx) : round(xj/dx) + w_g
-                for j = b_g : b_g + h_g
-                    p1(i,j) = 5;
+            
+            d_1_x = xj * dx + w*cosd(theta);
+            
+            d_1_y = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta) - w*sind(theta);
+            d_2_x = xj * dx;
+            d_2_y = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta);
+            d_3_x = xj * dx + w*cosd(theta) + h*sind(theta);
+            d_3_y = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta) - w*sind(theta) +h*cosd(theta);
+            d_4_x = xj * dx + h*sind(theta);
+            d_4_y = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta) + w*cosd(theta);
+            
+            hekomi_color = 100;
+            for j = round(d_1_y/dx) : round(d_2_y/dx)
+                xj = round(d_1_x/dx) + (j - round(d_1_y/dx))*((round(d_2_x/dx) - round(d_1_x/dx))/(round(d_2_y/dx) - round(d_1_y/dx)));
+                xj_2 = round(d_1_x/dx) + (j - round(d_1_y/dx))*((round(d_3_x/dx) - round(d_1_x/dx))/(round(d_3_y/dx) - round(d_1_y/dx)));
+                for i = xj : xj_2
+                    if i > 0
+                        p1(i,j) = hekomi_color;
+                    end
                 end
-            end 
+            end
+            for j = round(d_2_y/dx) : round(d_3_y/dx)
+                xj = round(d_2_x/dx) + (j - round(d_2_y/dx))*((round(d_4_x/dx) - round(d_2_x/dx))/(round(d_4_y/dx) - round(d_2_y/dx)));
+                xj_2 = round(d_1_x/dx) + (j - round(d_1_y/dx))*((round(d_3_x/dx) - round(d_1_x/dx))/(round(d_3_y/dx) - round(d_1_y/dx)));
+                for i = round(xj) : round(xj_2)
+                    if i > 0
+                        p1(i,j) = hekomi_color;
+                    end
+                end
+            end
+            
+            
+
+%             for i = round(xj/dx) : round(xj/dx) + w_g
+%                 for j = b_g : b_g + h_g
+%                     p1(i,j) = 5;
+%                 end
+%             end 
         end
         x_i = 1 : ix + 1 ;
         y_i = 1 : jx + 1;
