@@ -131,7 +131,7 @@ if range == 5
     xd2 = xd;
     yd = 3*dx;
     yd2 = yd;
-    theta = 10;
+    theta = 20;
 end
 
 x1 = 0.03;
@@ -533,11 +533,52 @@ for t = 1: tx
             b_g = round(b_po2 / dx);
             w_g = round(w_2 / dx);
             h_g = round(h_2 / dx);
+%             xj = x1 + (b_g - j_1)*((x2 - x1)/(j_2 - j_1));
+%             for i = round(xj/dx) : round(xj/dx) + w_g
+%                 for j = b_g : b_g + h_g
+%                     u1(i,j) = 0;
+%                     v1(i,j) = 0;
+%                 end
+%             end
             xj = x1 + (b_g - j_1)*((x2 - x1)/(j_2 - j_1));
-            for i = round(xj/dx) : round(xj/dx) + w_g
-                for j = b_g : b_g + h_g
-                    u1(i,j) = 0;
-                    v1(i,j) = 0;
+            
+            d_1_x = xj  + w*cosd(theta);
+            d_1_y = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta) - w*sind(theta);
+            d_2_x = xj ;
+            d_2_y = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta);
+            d_3_x = xj  + w*cosd(theta) + h*sind(theta);
+            d_3_y = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta) - w*sind(theta) +h*cosd(theta);
+            d_4_x = xj  + h*sind(theta);
+            d_4_y = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta) + w*cosd(theta);
+            
+            for j = round(d_1_y/dx) : round(d_2_y/dx)
+                xj_1 = round(d_1_x/dx) + (j - round(d_1_y/dx))*((round(d_2_x/dx) - round(d_1_x/dx))/(round(d_2_y/dx) - round(d_1_y/dx)));
+                xj_2 = round(d_1_x/dx) + (j - round(d_1_y/dx))*((round(d_3_x/dx) - round(d_1_x/dx))/(round(d_3_y/dx) - round(d_1_y/dx)));
+                for i = round(xj_1) : round(xj_2) 
+                    if i > 0
+                        u1(i,j) = 0;
+                        v1(i,j) = 0;
+                    end
+                end
+            end
+            for j = round(d_2_y/dx) : round(d_3_y/dx)
+                xj_1 = round(d_2_x/dx) + (j - round(d_2_y/dx))*((round(d_4_x/dx) - round(d_2_x/dx))/(round(d_4_y/dx) - round(d_2_y/dx)));
+                xj_2 = round(d_1_x/dx) + (j - round(d_1_y/dx))*((round(d_3_x/dx) - round(d_1_x/dx))/(round(d_3_y/dx) - round(d_1_y/dx)));
+                for i = round(xj_1) - 10  : round(xj_2)
+                    if i > 0
+                        u1(i,j) = 0;
+                        v1(i,j) = 0;
+                    end
+                end
+            end
+            for j = round(d_3_y/dx) : round(d_4_y/dx)
+                xj_1 = round(d_2_x/dx) + (j - round(d_2_y/dx))*((round(d_4_x/dx) - round(d_2_x/dx))/(round(d_4_y/dx) - round(d_2_y/dx)));
+                xj_2 = round(d_3_x/dx) + (j - round(d_3_y/dx))*((round(d_4_x/dx) - round(d_3_x/dx))/(round(d_4_y/dx) - round(d_3_y/dx)));
+                for i = round(xj_1) - 10  : round(xj_2)
+                    if i > 0
+                        u1(i,j) = 0;
+                        v1(i,j) = 0;
+                    end
                 end
             end
         end
@@ -1208,9 +1249,9 @@ if mode == 7
             end
         end
         if hekomi == 1
-            b_po = 0.03;
-            w = 0.002;
-            h = 0.005;
+            b_po = 0.05;
+            w = 0.005;
+            h = 0.01;
             b_po2 = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta);
 %             w_2 = w*cosd(theta);
 %             h_2 = h*cosd(theta);
@@ -1219,30 +1260,38 @@ if mode == 7
 %             h_g = round(h_2 / dx);
             xj = x1 + (b_g - j_1)*((x2 - x1)/(j_2 - j_1));
             
-            d_1_x = xj * dx + w*cosd(theta);
-            
+            d_1_x = xj  + w*cosd(theta);
             d_1_y = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta) - w*sind(theta);
-            d_2_x = xj * dx;
+            d_2_x = xj ;
             d_2_y = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta);
-            d_3_x = xj * dx + w*cosd(theta) + h*sind(theta);
+            d_3_x = xj  + w*cosd(theta) + h*sind(theta);
             d_3_y = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta) - w*sind(theta) +h*cosd(theta);
-            d_4_x = xj * dx + h*sind(theta);
+            d_4_x = xj  + h*sind(theta);
             d_4_y = (0.04 + 0.01*sind(theta)) + b_po*cosd(theta) + w*cosd(theta);
             
-            hekomi_color = 100;
+            hekomi_color = 10;
             for j = round(d_1_y/dx) : round(d_2_y/dx)
-                xj = round(d_1_x/dx) + (j - round(d_1_y/dx))*((round(d_2_x/dx) - round(d_1_x/dx))/(round(d_2_y/dx) - round(d_1_y/dx)));
+                xj_1 = round(d_1_x/dx) + (j - round(d_1_y/dx))*((round(d_2_x/dx) - round(d_1_x/dx))/(round(d_2_y/dx) - round(d_1_y/dx)));
                 xj_2 = round(d_1_x/dx) + (j - round(d_1_y/dx))*((round(d_3_x/dx) - round(d_1_x/dx))/(round(d_3_y/dx) - round(d_1_y/dx)));
-                for i = xj : xj_2
+                for i = round(xj_1) : round(xj_2) 
                     if i > 0
                         p1(i,j) = hekomi_color;
                     end
                 end
             end
             for j = round(d_2_y/dx) : round(d_3_y/dx)
-                xj = round(d_2_x/dx) + (j - round(d_2_y/dx))*((round(d_4_x/dx) - round(d_2_x/dx))/(round(d_4_y/dx) - round(d_2_y/dx)));
+                xj_1 = round(d_2_x/dx) + (j - round(d_2_y/dx))*((round(d_4_x/dx) - round(d_2_x/dx))/(round(d_4_y/dx) - round(d_2_y/dx)));
                 xj_2 = round(d_1_x/dx) + (j - round(d_1_y/dx))*((round(d_3_x/dx) - round(d_1_x/dx))/(round(d_3_y/dx) - round(d_1_y/dx)));
-                for i = round(xj) : round(xj_2)
+                for i = round(xj_1)  : round(xj_2)
+                    if i > 0
+                        p1(i,j) = hekomi_color;
+                    end
+                end
+            end
+            for j = round(d_3_y/dx) : round(d_4_y/dx)
+                xj_1 = round(d_2_x/dx) + (j - round(d_2_y/dx))*((round(d_4_x/dx) - round(d_2_x/dx))/(round(d_4_y/dx) - round(d_2_y/dx)));
+                xj_2 = round(d_3_x/dx) + (j - round(d_3_y/dx))*((round(d_4_x/dx) - round(d_3_x/dx))/(round(d_4_y/dx) - round(d_3_y/dx)));
+                for i = round(xj_1)  : round(xj_2)
                     if i > 0
                         p1(i,j) = hekomi_color;
                     end
@@ -1253,7 +1302,7 @@ if mode == 7
 
 %             for i = round(xj/dx) : round(xj/dx) + w_g
 %                 for j = b_g : b_g + h_g
-%                     p1(i,j) = 5;
+%                     p1(i,j) = 50;
 %                 end
 %             end 
         end
