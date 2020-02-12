@@ -816,7 +816,7 @@ for t = 1: tx
         end
 %        3
         x1 = 0.01 - 0.01*cosd(theta);
-        x2 = (0.01 + 0.07*sind(theta)) - 0.01/cosd(theta);
+        x2 = (0.01 + 0.07*sind(theta));
         k = 0;
         for j = j_1 : j_2
             xj = x1 + (j - j_1)*((x2 - x1)/(j_2 - j_1));
@@ -834,8 +834,21 @@ for t = 1: tx
                 v1(i, j) = 0;
             end
         end
-        j_3 = 
-        for j = j_2 + 1 : j_2 + 5
+        j_3 = round((0.04 + 0.01*sind(theta) + 0.07*cosd(theta))/dx);
+        x3 = (0.01 + 0.07*sind(theta)) - 0.01/cosd(theta);
+        x4 = x1 + (j_2 - j_1)*((x2 - x1)/(j_2 - j_1));
+        for j_2 : j_3
+            xj1 = x4 + (j - j_2)*((x3 - x4)/(j_3 - j_2));
+            xj2 = x2 + (j - j_2)*((x3 - x2)/(j_3 - j_2));
+            for i = round(xj1/dx) - 5 : round(xj1/dx) - 1
+                if i > 0
+                    u1(i, j) = 0;
+                    v1(i, j) = 0;
+                end
+            end
+            
+        end
+        for j = j_3 + 1 : j_3 + 5
             for i = round(xj/dx) - 1 : round((xj + 0.01/cosd(theta))/dx) + 1
                 u1(i, j) = 0;
                 v1(i, j) = 0;
