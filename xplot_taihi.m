@@ -1,10 +1,8 @@
-i = 1 : ix + 1;
-rangeA = round(0.1/dx) : round(0.8/dx); 
-x_i = i(rangeA) * dx;
-px_horn = csvread('horn_x.csv');
-px_nothorn = csvread('nothorn_x.csv');
+y_20 = csvread('x_20deg.csv');
+y_40 = csvread('x_40deg.csv');
 hold on
-plot(x_i, px_horn(rangeA))
-plot(x_i, px_nothorn(rangeA))
-legend('horn', 'tube')
+plot(x*10^3, y_20)
+plot(x*10^3, y_40)
+legend('20', '40')
+xlim([0 130]);
 hold off
