@@ -127,13 +127,13 @@ if range == 4
     sokuteiten_y = 0.1;
 end
 if range == 5
-    xrange = 0.075;
-    yrange = 0.12;
+    xrange = 0.06;
+    yrange = 0.11;
     xd = 0.005 + 3*dx;
     xd2 = xd;
     yd = 3*dx;
     yd2 = yd;
-    theta = 60;
+    theta = 20;
 end
 
 x1 = 0.03;
@@ -816,10 +816,7 @@ for t = 1: tx
         end
 %        3
         x1 = 0.01 - 0.01*cosd(theta);
-        x4 = (0.01 + 0.07*sind(theta));
-        x3 = 0.01 + 0.07*sind(theta) - 0.01*cosd(theta);
-        %x4 = x1 + (j_2 - j_1)*((x2 - x1)/(j_2 - j_1));
-        x2 = 0.01 + 0.07*sind(theta) - 0.01/cosd(theta);
+        x2 = (0.01 + 0.07*sind(theta));
         k = 0;
         for j = j_1 : j_2
             xj = x1 + (j - j_1)*((x2 - x1)/(j_2 - j_1));
@@ -838,21 +835,18 @@ for t = 1: tx
             end
         end
         j_3 = round((0.04 + 0.01*sind(theta) + 0.07*cosd(theta))/dx);
-        for j = j_2 : j_3
-            xj2 = x4 + (j - j_2)*((x3 - x4)/(j_3 - j_2));
-            xj1 = x2 + (j - j_2)*((x3 - x2)/(j_3 - j_2));
+        x3 = (0.01 + 0.07*sind(theta)) - 0.01/cosd(theta);
+        x4 = x1 + (j_2 - j_1)*((x2 - x1)/(j_2 - j_1));
+        for j_2 : j_3
+            xj1 = x4 + (j - j_2)*((x3 - x4)/(j_3 - j_2));
+            xj2 = x2 + (j - j_2)*((x3 - x2)/(j_3 - j_2));
             for i = round(xj1/dx) - 5 : round(xj1/dx) - 1
                 if i > 0
                     u1(i, j) = 0;
                     v1(i, j) = 0;
                 end
             end
-            for i = round(xj2/dx) + 1 : round(xj2/dx) + 5
-                if i > 0
-                    u1(i, j) = 0;
-                    v1(i, j) = 0;
-                end
-            end
+            
         end
         for j = j_3 + 1 : j_3 + 5
             for i = round(xj/dx) - 1 : round((xj + 0.01/cosd(theta))/dx) + 1
@@ -1272,13 +1266,8 @@ if mode == 7
             end
         end
 %        3
-        %x1 = 0.01 - 0.01*cosd(theta);
-        %x2 = (0.01 + 0.07*sind(theta)) - 0.01/cosd(theta);
         x1 = 0.01 - 0.01*cosd(theta);
-        x4 = (0.01 + 0.07*sind(theta));
-        x3 = 0.01 + 0.07*sind(theta) - 0.01*cosd(theta);
-        %x4 = x1 + (j_2 - j_1)*((x2 - x1)/(j_2 - j_1));
-        x2 = 0.01 + 0.07*sind(theta) - 0.01/cosd(theta);
+        x2 = (0.01 + 0.07*sind(theta)) - 0.01/cosd(theta);
         k = 0;
         for j = j_1 : j_2
             xj = x1 + (j - j_1)*((x2 - x1)/(j_2 - j_1));
@@ -1286,22 +1275,6 @@ if mode == 7
                 p1(i, j) = 0;
             end
         end
-        j_3 = round((0.04 + 0.01*sind(theta) + 0.07*cosd(theta))/dx);
-        for j = j_2 : j_3
-            xj2 = x4 + (j - j_2)*((x3 - x4)/(j_3 - j_2));
-            xj1 = x2 + (j - j_2)*((x3 - x2)/(j_3 - j_2));
-            for i = round(xj1/dx)  :  round(xj2/dx)
-                if i > 0
-                    p1(i, j) = 0;
-                end
-            end
-        end
-        for j = j_3 + 1 : j_3 + 5
-            for i = round(xj/dx) - 1 : round((xj + 0.01/cosd(theta))/dx) + 1
-                p1(i, j) = 0;
-            end
-        end
-        
         if hekomi == 1
             b_po = 0.05;
             w = 0.005;
@@ -1351,6 +1324,14 @@ if mode == 7
                     end
                 end
             end
+            
+            
+
+%             for i = round(xj/dx) : round(xj/dx) + w_g
+%                 for j = b_g : b_g + h_g
+%                     p1(i,j) = 50;
+%                 end
+%             end 
         end
         x_i = 1 : ix + 1 ;
         y_i = 1 : jx + 1;
