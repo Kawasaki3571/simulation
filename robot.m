@@ -1,14 +1,14 @@
 range = 5;%5...ロボットハンド
 boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ6..へこみ
-mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 1;
 sweep = 1;
 SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 5;%5...ロボットハンド
 
-robot_b_po = 0.05;
+robot_b_po = 0.01;
 
 f1 = figure;
 % f2 = figure;
@@ -1025,7 +1025,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('robot_5cm_0.2mm_0to12kHz_10ms_20deg_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
+                dlmwrite('robot_1cm_0.2mm_0to12kHz_10ms_20deg_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
