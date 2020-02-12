@@ -834,12 +834,8 @@ for t = 1: tx
                 v1(i, j) = 0;
             end
         end
-        j_3 = round((0.04 + 0.01*sind(theta) + 0.07*cosd(theta))/dx);
-        x3 = (0.01 + 0.07*sind(theta)) - 0.01/cosd(theta);
-        for j_2 : j_3
-            
-        end
-        for j = j_3 + 1 : j_3 + 5
+        j_3 = 
+        for j = j_2 + 1 : j_2 + 5
             for i = round(xj/dx) - 1 : round((xj + 0.01/cosd(theta))/dx) + 1
                 u1(i, j) = 0;
                 v1(i, j) = 0;

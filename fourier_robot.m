@@ -65,12 +65,12 @@ start_time_g = round(achieve_time / (5*dt));
 f1 = 000; % スイープ開始周波数（Hz）
 f2 = 12000; % 終了周波数
 
-st = 1500; % フーリエ変換の開始周波数（Hz）
+st = 2000; % フーリエ変換の開始周波数（Hz）
 ed = 11000; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
-load_data = csvread('robot_2cm_0.2mm_0to12kHz_10ms_20deg_fin.csv'); % 2行目より下を読み込む
+load_data = csvread('robot_5cm_0.2mm_0to12kHz_10ms_20deg_fin.csv'); % 2行目より下を読み込む
 noload_data = csvread('robot_noload_0.2mm_0to12kHz_10ms_20deg_fin.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
 load_data = real(load_data(1 :csvrangemax));
