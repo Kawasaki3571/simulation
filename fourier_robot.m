@@ -70,8 +70,8 @@ ed = 11000; % 終了周波数
 % csvrangemax = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
-load_data = csvread('robot_5cm_0.2mm_0to12kHz_10ms_20deg_fin2.csv'); % 2行目より下を読み込む
-noload_data = csvread('robot_noload_0.2mm_0to12kHz_10ms_20deg_fin2.csv'); % 2行目より下を読み込む
+load_data = csvread('robot_3cm_0.2mm_0to12kHz_10ms_10deg_fin2.csv'); % 2行目より下を読み込む
+noload_data = csvread('robot_noload_0.2mm_0to12kHz_10ms_10deg_fin2.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
 load_data = real(load_data(1 :csvrangemax));
 noload_data = real(noload_data(1:csvrangemax ));
