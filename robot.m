@@ -8,7 +8,7 @@ sweep = 1;
 SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 5;%5...ロボットハンド
 
-robot_b_po = 0.01;
+robot_b_po = 0.05;
 
 f1 = figure;
 % f2 = figure;
@@ -133,7 +133,7 @@ if range == 5
     xd2 = xd;
     yd = 3*dx;
     yd2 = yd;
-    theta = 60;
+    theta = 20;
 end
 
 x1 = 0.03;
@@ -1025,7 +1025,7 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('robot_1cm_0.2mm_0to12kHz_10ms_20deg_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
+                dlmwrite('robot_5cm_0.2mm_0to12kHz_10ms_20deg_fin2.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
