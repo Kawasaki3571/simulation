@@ -1,13 +1,14 @@
 range = 0;
 boundary = 0;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ
-mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi =  0;
 
 sweep = 0;
 SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 3;
+circlecase = 1;
 
 f1 = figure;
 % f2 = figure;
@@ -18,13 +19,13 @@ c0 = 340;
 rou0 = 1.293;
 % rou0 = 1000;
 freq_param = 1;
-freq_a = 1000;
+freq_a = 10000;
 freq_start = 000*freq_param;
 freq_add = 12000*freq_param;
 % freq = freq_a*freq_param;
 
 freq = freq_a;
-freq = 10000;
+freq = 1000;
 
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
@@ -33,7 +34,7 @@ dx_param = 0.005; %0.05-0.025
 % dx_param = 0.01;
 
 dx = ramuda*dx_param; % λの20-30分の一
-% dx = 0.001 ;
+dx = 0.001 ;
 
 crn_param = 0.2;
 crn = crn_param;
@@ -44,10 +45,10 @@ cal_time = 0.18;
 
 
 if range == 0
-    xrange = 2.01;
+    xrange = 0.21;
 %    xrange = 0.51;
-    yrange = 0.04;
-    zrange = 0.04;
+    yrange = 0.05;
+    zrange = 0.05;
     yd = yrange / 2;
     yd2 = yd;
     zd = zrange / 2;
@@ -190,7 +191,7 @@ w = 2 * pai * freq ;
                         %freq = 2000 + 7000*(time/cal_time);
                         freq = freq_start + freq_add*(time/cal_time);
                     end
-%                 freq = 5000;
+                freq = 10000;
                 w = 2 * pai * freq ;
                 j = sqrt(-1);
                 if tc < pai / (w * dt)
@@ -485,6 +486,36 @@ for t = 1: tx
                 for kstair = 1 : kx + 1
                     u1(istair, jstair, kstair) = 0;
                     v1(istair, jstair, kstair) = 0;
+                end
+            end
+        end
+        if circlecase == 1
+            for istair = 1 : ix + 1
+                center_z = zrange/2;
+                center_y = yrange/2;
+                kei = zrange / 2;
+                for z1_s = 0 : dx : zrange
+                    y1_s = center_y + sqrt(kei^2 - (z1_s - center_z)^2);
+                    i1 = round(z1_s/dx) + 1;
+                    j1 = round(y1_s/dx) + 1;
+                    %u1(istair, i1, j1) = 0;
+                    %v1(istair, i1, j1) = 0;
+                        for jstair = j1 : jx + 1
+                            u1(istair, i1, jstair) = 0;
+                            v1(istair, i1, jstair) = 0;
+                            %v1(i1, jstair) = 0;
+                        end
+                end
+                for z1_s = 0 : dx : zrange
+                    y1_s = center_y - sqrt(kei^2 - (z1_s - center_z)^2);
+                    i1 = round(z1_s/dx) + 1;
+                    j1 = round(y1_s/dx) + 1;
+                    %p1(i1, j1) = 0;
+                    %v1(i1, j1) = 0;
+                    for jstair = 1 : j1
+                        u1(istair, i1, jstair) = 0;
+                        v1(istair, i1, jstair) = 0;
+                    end
                 end
             end
         end

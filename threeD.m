@@ -8,7 +8,7 @@ hekomi =  0;
 sweep = 0;
 SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 3;
-circlecase = 0;
+circlecase = 1;
 
 f1 = figure;
 % f2 = figure;
@@ -25,7 +25,7 @@ freq_add = 12000*freq_param;
 % freq = freq_a*freq_param;
 
 freq = freq_a;
-freq = 1000;
+freq = 30000;
 
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
@@ -45,10 +45,10 @@ cal_time = 0.18;
 
 
 if range == 0
-    xrange = 0.21;
+    xrange = 0.41;
 %    xrange = 0.51;
-    yrange = 0.051;
-    zrange = 0.051;
+    yrange = 0.05;
+    zrange = 0.05;
     yd = yrange / 2;
     yd2 = yd;
     zd = zrange / 2;
@@ -191,7 +191,7 @@ w = 2 * pai * freq ;
                         %freq = 2000 + 7000*(time/cal_time);
                         freq = freq_start + freq_add*(time/cal_time);
                     end
-%                 freq = 5000;
+                %freq = 10000;
                 w = 2 * pai * freq ;
                 j = sqrt(-1);
                 if tc < pai / (w * dt)
