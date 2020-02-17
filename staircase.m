@@ -3,7 +3,7 @@ boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ6..へこみ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 1;
+hekomi = 0;
 sweep = 1;
 SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 3;%5...ロボットハンド
@@ -19,7 +19,7 @@ rou0 = 1.293;
 freq_param = 1;
 freq_a = 1000;
 freq_start = 000*freq_param;
-freq_add = 9000*freq_param;
+freq_add = 12000*freq_param;
 % freq = freq_a*freq_param;
 
 freq = freq_a;
@@ -44,7 +44,7 @@ dt = dx*crn_param/ (c0);
 
 cal_time = 0.18;
 % cal_time = 0.36;
-cal_time = 0.06;
+% cal_time = 0.06;
 
 if range == 0
     xrange = 2.01;
@@ -937,8 +937,8 @@ for t = 1: tx
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
                 p_keisoku_detail = p_keisoku_detail.';
-                dlmwrite('pow900_1mm_0to9kHz_60ms_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
-                dlmwrite('pow900_1mm_0to9kHz_60ms_detail_fin.csv', p_keisoku_detail, 'precision', '%.15f', 'delimiter', ',')
+                dlmwrite('pownoload_1mm_0to12kHz_180ms_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
+                dlmwrite('pownoload_1mm_0to12kHz_180ms_detail_fin.csv', p_keisoku_detail, 'precision', '%.15f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
