@@ -8,7 +8,7 @@ for i = 1 : 2
 c = 340; %音速
 c0 = 340;
 % rou0 = 1.293; %密度（kg/m^3
-long = 2;
+long = 1;
 if long == 1
     cal_time = 0.18;
 end
@@ -18,6 +18,7 @@ end
 if long == 2
     cal_time = 0.36;
 end
+detail = 1;
 rou0 = 1.293;
 % rou0 = 1000;
 freq_param = 1;
@@ -51,6 +52,7 @@ set(0, 'DefaultFigureColor', 'w');
 
 e = 0.1; % 入力電圧
 opol = 1000; % トレンド近似の字数を決定
+% opol = 1000;
 
 m = 25;% 窓間隔
 d = 1; % 分割間隔
@@ -60,29 +62,41 @@ achieve_time = 2*xL/c0;
 start_time_g = round(achieve_time / (5*dt));
 
 f1 = 000; % スイープ開始周波数（Hz）
-f2 = 36000; % 終了周波数
+f2 = 12000; % 終了周波数
 
-st = 1000; % フーリエ変換の開始周波数（Hz）
-ed = 35900; % 終了周波数
-% csvrangemax = cal_time/(5*dt);
+% st = 3000; % フーリエ変換の開始周波数（Hz）
+st = 4000;
+ed = 10900; % 終了周波数
+% 0.7...2.5-10.9
+% max = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
-load_data = csvread('pow900_1mm_0to36kHz_360ms_fin.csv'); % 2行目より下を読み込む
-noload_data = csvread('pownoload_1mm_0to36kHz_360ms_fin.csv'); % 2行目より下を読み込む
+load_data = csvread('pow900_1mm_0to12kHz_180ms_detail_fin.csv'); % 2行目より下を読み込む
+noload_data = csvread('pownoload_1mm_0to12kHz_180ms_detail_fin.csv'); % 2行目より下を読み込む
 csvrangemax = round(cal_time/(5*dt));
+if detail == 1
+    csvrangemax = round(cal_time/(dt)) - 10;
+end
+disp(size(load_data));
+disp(size(noload_data));
+
 load_data = real(load_data(1 :csvrangemax));
 noload_data = real(noload_data(1:csvrangemax ));
+
 
 data_sabun = load_data - noload_data;
 
 dlmwrite('sabun900.csv', data_sabun, 'precision', '%.15f', 'delimiter', ',')
 
 dt_p = 5*dt;
-t_sec = dt_p : dt_p : cal_time;
+if detail == 1
+    dt_p = dt;
+end
+t_sec = dt_p : dt_p : cal_time - dt_p;
 plot_start = round(0.0/dt_p)+1;
 plot_end = round(cal_time/dt_p);
 
-plot(t_sec(plot_start:plot_end), data_sabun(plot_start:plot_end))
+% plot(t_sec(plot_start:plot_end), data_sabun(plot_start:plot_end))
 
 % st_wave = 104;  % スイープ波形の始まる時間　可変
 st_wave = 1;
@@ -92,8 +106,14 @@ c = 340; % 大気中での音速 (m/s)
 cal_time_max_int = cal_time/(dt) - mod(cal_time/(dt), 100);
 cal_time_max = cal_time_max_int * dt;
 t_sec = 5*dt : 5*dt : cal_time;
+if detail == 1
+    t_sec = dt : dt : cal_time - 10*dt;
+end
 
 t = 5 * dt : 5 * dt : cal_time; % 時間軸
+if detail == 1
+    t = dt : dt : cal_time - 10*dt; % 時間軸
+end
 v_1 = load_data./e; % 入力電圧で割って定数化
 v_2 = load_data./e; % 入力電圧で割って定数化
 v_o = noload_data./e;
@@ -110,12 +130,18 @@ ylabel('Relative response (arb)');
 %% 時間軸から周波数スペクトルを得る（負荷有りと負荷無し）
 
 n_fft = 2^12; % 4096点FFT
+n_fft = 2^14; % 4096点FFT
 dt = t(2) - t(1); % サンプリング周期
 Fs = 1/dt; % 周波数領域での周期
 
 if long == 1
-    st_1 = st_wave:d:st_wave+1700; % スイープ波形の分割
-    ed_1 = st_wave+m:d:st_wave+1700+m;
+%    st_1 = st_wave:d:st_wave+1700; % スイープ波形の分割
+%    ed_1 = st_wave+m:d:st_wave+1700+m;
+     st_1 = st_wave:d:st_wave+170000; % スイープ波形の分割
+     ed_1 = st_wave+m:d:st_wave+170000+m; % スイープ波形の分割
+    
+%     st_1 = st_wave+m:d:st_wave+8500+m;
+%     ed_1 = st_wave+m:d:st_wave+8500+m;
 end
 if long == 0
     st_1 = st_wave:d:st_wave+570; % スイープ波形の分割
@@ -129,12 +155,14 @@ end
 
 for i = 1:1:length(st_1); % オーバーラップ法にて周波数特性を作成
     
-    st_2 = round(st_1(i)*10^-4/dt); % スイープ波形から切り出し開始
-    ed_2 = round(ed_1(i)*10^-4/dt); % 切り出し終わり
-
-    st_2
-    ed_2
-    i
+    st_2 = round(st_1(i)*10^-6/dt); % スイープ波形から切り出し開始
+    ed_2 = round(ed_1(i)*10^-6/dt); % 切り出し終わり
+%     st_2 = round(st_1(i)*10^-4/dt); % スイープ波形から切り出し開始
+%     ed_2 = round(ed_1(i)*10^-4/dt); % 切り出し終わり
+% 
+%     st_2
+%     ed_2
+%     i
 
     v_2 = v_1(st_2:ed_2); 
     v_3 = v_o(st_2:ed_2);
@@ -229,7 +257,8 @@ ylabel('Relative response (arb)');
 %% 周波数スペクトルから位置応答を検出
 
 
-n = 2^14;
+n = 2^16;
+% n = 2^20;
 df3 = (f2 - f1)/(length(st_1) - 1); % 周波数領域のサンプリング間隔
 dx = (c/2)/df3 ; % 位置領域での周期
 

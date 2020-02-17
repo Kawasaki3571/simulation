@@ -3,7 +3,7 @@ boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ6..へこみ
 mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
-hekomi = 1;
+hekomi = 0;
 sweep = 1;
 SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
 stair = 3;%5...ロボットハンド
@@ -17,16 +17,17 @@ c0 = 340;
 rou0 = 1.293;
 % rou0 = 1000;?
 freq_param = 1;
-freq_a = 100;
+freq_a = 1000;
 freq_start = 000*freq_param;
-freq_add = 36000*freq_param;
+freq_add = 12000*freq_param;
 % freq = freq_a*freq_param;
 
 freq = freq_a;
 
 freq_abs = freq_a*freq_param;
 ramuda = c0 / freq;
-dx_param = 0.002; %0.05-0.025
+% dx_param = 0.002; %0.05-0.025
+dx_param = 0.005;
 
 % dx_param = 0.01;
 
@@ -42,7 +43,8 @@ dt = dx*crn_param/ (c0);
 % クー数から条件を立てる]
 
 cal_time = 0.18;
-cal_time = 0.36;
+% cal_time = 0.36;
+% cal_time = 0.06;
 
 if range == 0
     xrange = 2.01;
@@ -143,8 +145,8 @@ t2 = 0;
 speed = 0;
 absp0 = - 0.5; % 吸収係数
 b_po = 0.9 ; %凹み位置
-h = 0.001;%凹み幅
-w = 0.003;%凹みふかさ
+h = 0.005;%凹み幅
+w = 0.001;%凹みふかさ
 b_po2 = 0.6 ; %凹み位置
 h2 = 0.02;%凹み幅
 w2 = 0.015;%凹みふかさ
@@ -200,6 +202,7 @@ WN = 1;
 W_end = round(2*WN/(freq*dt)) - 1 ;
 pin = zeros(1,tx+100);
 p_keisoku_taihi = zeros(1,round(tx / 5));
+p_keisoku_detail = zeros(1,round(tx/2));
 crn =(c0 * dt)/dx ; %クーラン数
 dd = 199/200 ;%higdons absorption boundary
 pai = 3.1415 ;
@@ -785,6 +788,9 @@ for t = 1: tx
         p_keisoku_taihi(t/5) = p1(6, y_half);
 %        p_keisoku_taihi(t/5) = p1(sokuteiten_x_g, sokuteiten_y_g);
     end
+    if mod(t, 1) == 0
+        p_keisoku_detail(t) = p1(6, y_half);
+    end
     if mod(t,500) == 0
         disp(t);
         time
@@ -930,7 +936,9 @@ for t = 1: tx
                 %csv_array = [time; p_keisoku_spec];
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
-                dlmwrite('pow900_1mm_0to36kHz_360ms_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
+                p_keisoku_detail = p_keisoku_detail.';
+                dlmwrite('pownoload_1mm_0to12kHz_180ms_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
+                dlmwrite('pownoload_1mm_0to12kHz_180ms_detail_fin.csv', p_keisoku_detail, 'precision', '%.15f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
