@@ -8,7 +8,7 @@ for i = 1 : 2
 c = 340; %音速
 c0 = 340;
 % rou0 = 1.293; %密度（kg/m^3
-long = 1;
+long = 0;
 if long == 1
     cal_time = 0.18;
 end
@@ -18,7 +18,7 @@ end
 if long == 2
     cal_time = 0.36;
 end
-detail = 1;
+detail = 0;
 rou0 = 1.293;
 % rou0 = 1000;
 freq_param = 1;
@@ -65,15 +65,15 @@ f1 = 000; % スイープ開始周波数（Hz）
 f2 = 12000; % 終了周波数
 
 % st = 3000; % フーリエ変換の開始周波数（Hz）
-st = 4000;
-ed = 10900; % 終了周波数
+st = 4100;
+ed = 8000; % 終了周波数
 % 0.7...2.5-10.9
 % max = cal_time/(5*dt);
 % csvrangemax = cal_time/(dt) - mod(cal_time/(dt), 100)
 
-load_data = csvread('pow900_1mm_0to12kHz_180ms_detail_fin.csv'); % 2行目より下を読み込む
-noload_data = csvread('pownoload_1mm_0to12kHz_180ms_detail_fin.csv'); % 2行目より下を読み込む
-csvrangemax = round(cal_time/(5*dt));
+load_data = csvread('pow600_1mm_0to12kHz_60ms_fin.csv'); % 2行目より下を読み込む
+noload_data = csvread('pownoload_1mm_0to12kHz_60ms_fin.csv'); % 2行目より下を読み込む
+csvrangemax = round(cal_time/(5 * dt)) ;
 if detail == 1
     csvrangemax = round(cal_time/(dt)) - 10;
 end
@@ -130,22 +130,23 @@ ylabel('Relative response (arb)');
 %% 時間軸から周波数スペクトルを得る（負荷有りと負荷無し）
 
 n_fft = 2^12; % 4096点FFT
-n_fft = 2^14; % 4096点FFT
+n_fft = 2^16; % 4096点FFT
 dt = t(2) - t(1); % サンプリング周期
 Fs = 1/dt; % 周波数領域での周期
+sample_bai = 10;
 
 if long == 1
 %    st_1 = st_wave:d:st_wave+1700; % スイープ波形の分割
 %    ed_1 = st_wave+m:d:st_wave+1700+m;
-     st_1 = st_wave:d:st_wave+170000; % スイープ波形の分割
-     ed_1 = st_wave+m:d:st_wave+170000+m; % スイープ波形の分割
+     st_1 = st_wave:d:st_wave+(1700*sample_bai); % スイープ波形の分割
+     ed_1 = st_wave+m:d:st_wave+(1700*sample_bai)+m; % スイープ波形の分割
     
 %     st_1 = st_wave+m:d:st_wave+8500+m;
 %     ed_1 = st_wave+m:d:st_wave+8500+m;
 end
 if long == 0
-    st_1 = st_wave:d:st_wave+570; % スイープ波形の分割
-    ed_1 = st_wave+m:d:st_wave+570+m;
+    st_1 = st_wave:d:st_wave+570*sample_bai; % スイープ波形の分割
+    ed_1 = st_wave+m:d:st_wave+570*sample_bai+m;
 end
 if long == 2
     st_1 = st_wave:d:st_wave+3550; % スイープ波形の分割
@@ -155,12 +156,12 @@ end
 
 for i = 1:1:length(st_1); % オーバーラップ法にて周波数特性を作成
     
-    st_2 = round(st_1(i)*10^-6/dt); % スイープ波形から切り出し開始
-    ed_2 = round(ed_1(i)*10^-6/dt); % 切り出し終わり
+    st_2 = round(st_1(i)*(10^-4)/(sample_bai*dt)); % スイープ波形から切り出し開始
+    ed_2 = round(ed_1(i)*(10^-4)/(sample_bai*dt)); % 切り出し終わり
 %     st_2 = round(st_1(i)*10^-4/dt); % スイープ波形から切り出し開始
 %     ed_2 = round(ed_1(i)*10^-4/dt); % 切り出し終わり
 % 
-%     st_2
+%    st_2/sample_bai
 %     ed_2
 %     i
 

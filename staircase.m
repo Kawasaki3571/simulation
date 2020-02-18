@@ -1,12 +1,12 @@
-range = 0;%5...ロボットハンド
+range = 1;%5...ロボットハンド
 boundary = 1;
 mode = 0; %0...通常シミュレーション 1...初期印加位置表示 2...変数表示3...指向性の極グラフ6..へこみ
-mode_plot = 6; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
+mode_plot = 0; %プロットモード選択 0...カラーマップ進行 1...xプロット 2...xプロット進行 3...ある地点の時間変化 4..先行研究 5...ある地点のパワースペクトル
 % 6...3を細かい時間で追う
 hekomi = 0;
-sweep = 1;
+sweep = 0;
 SC = 0;%励振関数 ０なら連続1ならガウシアン2ハニング3正弦波数波4スイープ5インパルス
-stair = 3;%5...ロボットハンド
+stair = 1;%5...ロボットハンド
 
 f1 = figure;
 % f2 = figure;
@@ -21,6 +21,15 @@ freq_a = 1000;
 freq_start = 000*freq_param;
 freq_add = 12000*freq_param;
 % freq = freq_a*freq_param;
+ippa = 1;
+snap1 = 0;
+snap2 = 0;
+snap3 = 0;
+snap4 = 0;
+snap_time1 = 0.075/c;
+snap_time2 = 0.125/c;
+snap_time3 = 0.175/c;
+snap_time4 = 0.225/c;
 
 freq = freq_a;
 
@@ -44,7 +53,7 @@ dt = dx*crn_param/ (c0);
 
 cal_time = 0.18;
 % cal_time = 0.36;
-% cal_time = 0.06;
+cal_time = 0.06;
 
 if range == 0
     xrange = 2.01;
@@ -62,8 +71,8 @@ end
 if range == 1
     xrange = 0.2;
     yrange = 0.2;
-    xrange = 0.2;
-    yrange = 0.2;
+    xrange = 0.2*sqrt(2);
+    yrange = 0.2*sqrt(2);
     xd = xrange / 2 ;
     xd2 = xrange / 2 ;
     yd = yrange / 2 ;
@@ -144,7 +153,7 @@ t1 = 0;
 t2 = 0;
 speed = 0;
 absp0 = - 0.5; % 吸収係数
-b_po = 0.9 ; %凹み位置
+b_po = 0.6 ; %凹み位置
 h = 0.005;%凹み幅
 w = 0.001;%凹みふかさ
 b_po2 = 0.6 ; %凹み位置
@@ -288,7 +297,7 @@ w = 2 * pai * freq ;
                         %freq = 2000 + 7000*(time/cal_time);
                         freq = freq_start + freq_add*(time/cal_time);
                     else
-                        freq = 3000;
+                        freq = 10000;
                     end
 %                 freq = 5000;
                 w = 2 * pai * freq ;
@@ -297,7 +306,12 @@ w = 2 * pai * freq ;
                      pin(tc) = sin(w * time);
 %                     pin(tc) = exp(j * w * time);
                 else
-                     pin(tc) = sin(w * time);
+                    if ippa == 1
+                        pin(tc) = 0;
+                    end
+                    if ippa == 0
+                        pin(tc) = sin(w * time);
+                    end
 %                     pin(tc) = exp(j * w * time);
 %                   pin(t) = 0;
                 end
@@ -814,6 +828,30 @@ for t = 1: tx
             ylabel('y(mm)')
             grid on;
             drawnow
+            if time > snap_time1
+                if snap1 == 0;
+                    snap1 = snap1 + 1;
+                    pause(2)
+                end
+            end
+            if time > snap_time2
+                if snap2 == 0;
+                    snap2 = snap2 + 1;
+                    pause(2)
+                end
+            end
+            if time > snap_time3
+                if snap3 == 0;
+                    snap3 = snap3 + 1;
+                    pause(2)
+                end
+            end
+            if time > snap_time4
+                if snap4 == 0;
+                    snap4 = snap4 + 1;
+                    pause(2)
+                end
+            end
         end
     end
     if mode_plot == 1
@@ -937,8 +975,8 @@ for t = 1: tx
                 p_keisoku_spec_col = p_keisoku_spec.';
                 p_keisoku_taihi = p_keisoku_taihi.';
                 p_keisoku_detail = p_keisoku_detail.';
-                dlmwrite('pownoload_1mm_0to12kHz_180ms_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
-                dlmwrite('pownoload_1mm_0to12kHz_180ms_detail_fin.csv', p_keisoku_detail, 'precision', '%.15f', 'delimiter', ',')
+                dlmwrite('pow600_1mm_0to12kHz_60ms_fin.csv', p_keisoku_taihi, 'precision', '%.15f', 'delimiter', ',')
+                dlmwrite('pow600_1mm_0to12kHz_60ms_detail_fin.csv', p_keisoku_detail, 'precision', '%.15f', 'delimiter', ',')
                 %dlmwrite('pow500_0to4_1cm.csv', p_keisoku_taihi, 'precision', '%.10f', 'delimiter', ',')
                 break;
             end
