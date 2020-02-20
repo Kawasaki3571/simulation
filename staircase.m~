@@ -1062,7 +1062,7 @@ if mode == 3
   end
 end
 
-% 理論式のみのプロット　
+% 
 if mode == 4
     hasu = 2 * pai * freq / 340;
     x = 1 : ix + 1;
@@ -1103,13 +1103,13 @@ if mode == 5
     y_p = y * dx;
     imagesc(y_p,x_p,p1(x,y));
     colorbar
+    %colormap gray ;
+    %   title(['pressure when ',num2str(time),'seconds have passed'])
     title(['pressure when frequency =',num2str(freq),'Hz&&', num2str(time), '(s) have passed'])
     xlabel('y(mm)')
     ylabel('x(mm)')
     grid on;
 end
-
-% 凹みを含んだ境界
 if mode == 6
     for i = 1 : ix + 1
         for j = 1 : jx + 1
@@ -1146,6 +1146,7 @@ if mode == 6
                 p1(i,j) = 10;
             end
         end
+        
         x_i = 1 : ix + 1 ;
         y_i = 1 : jx + 1;
         x = x_i*dx;
@@ -1154,8 +1155,6 @@ if mode == 6
         imagesc(x, y, p1(y_i,x_i));
         colorbar;
 end
-
-% ロボットハンドの初期印加位置と境界の位置表示
 if mode == 7
     if range == 5
         theta = 40;
@@ -1221,5 +1220,6 @@ if mode == 7
         p1 = p1';
         imagesc(x, y, p1(y_i,x_i));
         colorbar;
+%         disp("rangeをロボット用にしてくれ");
     end
 end
